@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Hub — Data Engineering & Beyond</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg: #0f1117;
+  --bg2: #161b27;
+  --bg3: #1e2535;
+  --bg4: #252d40;
+  --border: #2d3650;
+  --border2: #3d4f70;
+  --text: #e2e8f5;
+  --text2: #94a3c0;
+  --text3: #5c6f94;
+  --accent: #4facf7;
+  --accent2: #0ea5e9;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --coral: #f87171;
+  --purple: #a78bfa;
+  --teal: #2dd4bf;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 0 48px;
+}
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text);
+}
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.logo-text {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.logo-text span { color: var(--accent); }
+.header-links {
+  display: flex;
+  gap: 24px;
+}
+.header-links a {
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.header-links a:hover { color: var(--text); }
+
+/* ── HERO ── */
+.hero {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 80px 48px 60px;
+  text-align: center;
+}
+.hero-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  background: rgba(79,172,247,0.12);
+  color: var(--accent);
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(79,172,247,0.2);
+  margin-bottom: 20px;
+  letter-spacing: 0.06em;
+}
+.hero h1 {
+  font-size: 42px;
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.hero h1 strong {
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  font-size: 17px;
+  color: var(--text2);
+  max-width: 600px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--accent);
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+}
+
+/* ── SECTION TITLES ── */
+.section-title {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+.section-title h2 {
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── CONTENT GRID ── */
+.content-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 48px 80px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.content-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.content-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.content-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+.content-card.cat-etl::before     { background: linear-gradient(90deg, var(--accent), var(--purple)); }
+.content-card.cat-data::before    { background: linear-gradient(90deg, var(--green), var(--teal)); }
+.content-card.cat-cloud::before   { background: linear-gradient(90deg, var(--amber), var(--coral)); }
+.content-card.cat-python::before  { background: linear-gradient(90deg, var(--teal), var(--accent)); }
+.content-card.cat-sql::before     { background: linear-gradient(90deg, var(--purple), var(--coral)); }
+.content-card.cat-general::before { background: linear-gradient(90deg, var(--text3), var(--accent)); }
+
+.card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-icon {
+  width: 44px;
+  height: 44px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.card-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+.tag-etl     { background: rgba(79,172,247,0.1); color: var(--accent); border: 1px solid rgba(79,172,247,0.2); }
+.tag-data    { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+.tag-cloud   { background: rgba(251,191,36,0.1); color: var(--amber); border: 1px solid rgba(251,191,36,0.2); }
+.tag-python  { background: rgba(45,212,191,0.1); color: var(--teal); border: 1px solid rgba(45,212,191,0.2); }
+.tag-sql     { background: rgba(167,139,250,0.1); color: var(--purple); border: 1px solid rgba(167,139,250,0.2); }
+.tag-general { background: rgba(148,163,192,0.1); color: var(--text2); border: 1px solid rgba(148,163,192,0.2); }
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.card-desc {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.6;
+  flex: 1;
+}
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+.card-meta span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── EMPTY STATE ── */
+.coming-soon {
+  background: var(--bg2);
+  border: 1px dashed var(--border2);
+  border-radius: 10px;
+  padding: 40px 28px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+.coming-soon .cs-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+.coming-soon .cs-text {
+  font-size: 14px;
+  color: var(--text3);
+  font-weight: 500;
+}
+.coming-soon .cs-sub {
+  font-size: 12px;
+  color: var(--text3);
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* ── FOOTER ── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 32px 48px;
+  text-align: center;
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  font-size: 12px;
+  color: var(--text3);
+}
+.footer-inner a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.footer-inner a:hover { text-decoration: underline; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .hero { padding: 48px 24px 40px; }
+  .hero h1 { font-size: 28px; }
+  .hero-stats { gap: 24px; }
+  .content-grid { padding: 0 24px 48px; grid-template-columns: 1fr; }
+  .section-title { padding: 0 24px; }
+  .site-header { padding: 0 24px; }
+  .site-footer { padding: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">&#9889;</div>
+      <div class="logo-text">Learning<span>Hub</span></div>
+    </a>
+    <div class="header-links">
+      <a href="index.html">Home</a>
+      <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-badge">KNOWLEDGE BASE</div>
+  <h1>My <strong>Learning Hub</strong></h1>
+  <p>A collection of interactive guides, training materials, and reference docs — built while learning data engineering, cloud, and beyond.</p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num" id="topicCount">1</div>
+      <div class="stat-label">Topics</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num" id="categoryCount">1</div>
+      <div class="stat-label">Categories</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">&infin;</div>
+      <div class="stat-label">Curiosity</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTENT CARDS ══ -->
+<div class="section-title">
+  <h2>All Topics</h2>
+</div>
+
+<div class="content-grid" id="contentGrid">
+
+  <!-- ── Informatica PowerCenter 101 ── -->
+  <a href="pages/informatica-powercenter-101.html" class="content-card cat-etl">
+    <div class="card-top">
+      <div class="card-icon">&#9881;</div>
+      <span class="card-tag tag-etl">ETL</span>
+    </div>
+    <div class="card-title">Informatica PowerCenter 101</div>
+    <div class="card-desc">Complete training guide covering architecture, core components, transformations, ETL design patterns, performance tuning, and a knowledge check quiz.</div>
+    <div class="card-meta">
+      <span>&#128218; 14 Sections</span>
+      <span>&#9201; ~3 hrs</span>
+      <span>&#127891; Training Guide</span>
+    </div>
+  </a>
+
+  <!-- ── Placeholder: More coming soon ── -->
+  <div class="coming-soon">
+    <div class="cs-icon">&#128640;</div>
+    <div class="cs-text">More content coming soon</div>
+    <div class="cs-sub">Add new HTML pages to the /pages folder</div>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    Built with curiosity &amp; caffeine &nbsp;&#9749;&nbsp; | &nbsp;
+    Hosted on <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a>
+  </div>
+</footer>
+
+</body>
+</html>
