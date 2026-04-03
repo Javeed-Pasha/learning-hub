@@ -193,10 +193,11 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
   <div class="nav-section">Ecosystem</div>
   <a href="#" onclick="show('s10',this)"><span class="dot"></span>Structured Streaming</a>
   <a href="#" onclick="show('s11',this)"><span class="dot"></span>Delta Lake Basics</a>
+  <a href="#" onclick="show('s12',this)"><span class="dot"></span>Apache Iceberg</a>
 
   <div class="nav-section">Reference</div>
-  <a href="#" onclick="show('s12',this)"><span class="dot"></span>Cheat Sheet</a>
-  <a href="#" onclick="show('s13',this)"><span class="dot"></span>Knowledge Check</a>
+  <a href="#" onclick="show('s13',this)"><span class="dot"></span>Cheat Sheet</a>
+  <a href="#" onclick="show('s14',this)"><span class="dot"></span>Knowledge Check</a>
 </nav>
 
 <main>
@@ -815,8 +816,162 @@ delta_table <span class="op">=</span> DeltaTable.forPath(spark, <span class="str
 delta_table.history().show()</pre>
 </div>
 
-<!-- ═══════════════════ SECTION 12 ═══════════════════ -->
+<!-- ═══════════════════ SECTION 12: ICEBERG ═══════════════════ -->
 <div id="s12" class="section">
+  <h2>Apache <span>Iceberg</span></h2>
+  <div class="section-meta">
+    <span>⏱ 30 min</span><span>📌 Module 12</span><span>🎓 Ecosystem</span>
+  </div>
+
+  <p><strong>Apache Iceberg</strong> is an open table format for huge analytic datasets. Like Delta Lake, it brings ACID transactions and time travel to data lakes — but with a different architecture designed for <strong>engine-agnostic</strong> interoperability (Spark, Trino, Flink, Hive, Dremio, Snowflake, etc.).</p>
+
+  <h3>Iceberg vs Delta Lake</h3>
+  <table>
+    <tr><th>Feature</th><th>Delta Lake</th><th>Apache Iceberg</th></tr>
+    <tr><td><strong>Creator</strong></td><td>Databricks</td><td>Netflix → Apache Foundation</td></tr>
+    <tr><td><strong>Engine Support</strong></td><td>Best with Spark/Databricks</td><td>Engine-agnostic (Spark, Trino, Flink, Snowflake, etc.)</td></tr>
+    <tr><td><strong>ACID Transactions</strong></td><td>Yes</td><td>Yes</td></tr>
+    <tr><td><strong>Time Travel</strong></td><td>Yes</td><td>Yes (snapshot-based)</td></tr>
+    <tr><td><strong>Schema Evolution</strong></td><td>Yes</td><td>Yes (full — add, drop, rename, reorder)</td></tr>
+    <tr><td><strong>Partition Evolution</strong></td><td>No (must rewrite)</td><td>Yes — change partition scheme without rewriting data</td></tr>
+    <tr><td><strong>Hidden Partitioning</strong></td><td>No</td><td>Yes — users don't need to know partition layout</td></tr>
+    <tr><td><strong>Catalog</strong></td><td>Unity Catalog / Hive</td><td>Hive, AWS Glue, Nessie, REST, JDBC</td></tr>
+    <tr><td><strong>File Format</strong></td><td>Parquet</td><td>Parquet, ORC, Avro</td></tr>
+  </table>
+
+  <h3>Key Iceberg Concepts</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Snapshot Isolation</h4>
+      <p>Each write creates a new <strong>snapshot</strong>. Readers always see a consistent snapshot — no dirty reads, even during writes.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Hidden Partitioning</h4>
+      <p>Partition transforms (year, month, bucket, truncate) are applied automatically. Users query with regular filters — no need to know partition layout.</p>
+    </div>
+    <div class="card amber-border">
+      <h4>Partition Evolution</h4>
+      <p>Change the partition scheme <em>without rewriting data</em>. Old data keeps old partitioning; new data uses the new scheme. Both work together.</p>
+    </div>
+    <div class="card blue-border">
+      <h4>Metadata Tree</h4>
+      <p><strong>Catalog → Metadata File → Manifest List → Manifest Files → Data Files.</strong> Enables efficient file pruning without listing directories.</p>
+    </div>
+  </div>
+
+  <h3>Iceberg Architecture</h3>
+  <pre>
+  ┌─────────────────────────────────────────────────┐
+  │                <span class="kw">CATALOG</span>                          │
+  │   (Hive Metastore / Glue / Nessie / REST)       │
+  │   Points to → current metadata file              │
+  └───────────────────────┬─────────────────────────┘
+                          ▼
+  ┌─────────────────────────────────────────────────┐
+  │           <span class="fn">METADATA FILE</span> (JSON)                  │
+  │   Table schema, partition spec, properties       │
+  │   Points to → current snapshot                   │
+  └───────────────────────┬─────────────────────────┘
+                          ▼
+  ┌─────────────────────────────────────────────────┐
+  │          <span class="fn">MANIFEST LIST</span> (Avro)                   │
+  │   List of manifest files for this snapshot       │
+  │   Partition-level stats for pruning              │
+  └───────────────────────┬─────────────────────────┘
+                          ▼
+  ┌─────────────────────────────────────────────────┐
+  │          <span class="fn">MANIFEST FILES</span> (Avro)                  │
+  │   Track individual data files                    │
+  │   Column-level min/max stats for pruning         │
+  └───────────────────────┬─────────────────────────┘
+                          ▼
+  ┌─────────────────────────────────────────────────┐
+  │           <span class="str">DATA FILES</span> (Parquet/ORC)               │
+  │   The actual data on S3 / HDFS / ADLS            │
+  └─────────────────────────────────────────────────┘</pre>
+
+  <h3>Using Iceberg with PySpark</h3>
+  <pre><span class="cm"># Start Spark with Iceberg</span>
+spark <span class="op">=</span> SparkSession.builder \
+    .appName(<span class="str">"IcebergDemo"</span>) \
+    .config(<span class="str">"spark.jars.packages"</span>,
+            <span class="str">"org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.5.0"</span>) \
+    .config(<span class="str">"spark.sql.catalog.my_catalog"</span>, <span class="str">"org.apache.iceberg.spark.SparkCatalog"</span>) \
+    .config(<span class="str">"spark.sql.catalog.my_catalog.type"</span>, <span class="str">"hadoop"</span>) \
+    .config(<span class="str">"spark.sql.catalog.my_catalog.warehouse"</span>, <span class="str">"s3://bucket/warehouse"</span>) \
+    .getOrCreate()</pre>
+
+  <h3>DDL — Creating Tables</h3>
+  <pre><span class="cm"># SQL approach</span>
+spark.sql(<span class="str">"""</span>
+<span class="str">    CREATE TABLE my_catalog.db.events (</span>
+<span class="str">        event_id   BIGINT,</span>
+<span class="str">        event_type STRING,</span>
+<span class="str">        user_id    BIGINT,</span>
+<span class="str">        event_time TIMESTAMP,</span>
+<span class="str">        payload    STRING</span>
+<span class="str">    )</span>
+<span class="str">    USING iceberg</span>
+<span class="str">    PARTITIONED BY (days(event_time))</span>
+<span class="str">"""</span>)
+
+<span class="cm"># Hidden partitioning transforms:</span>
+<span class="cm"># years(ts)       → partition by year</span>
+<span class="cm"># months(ts)      → partition by month</span>
+<span class="cm"># days(ts)        → partition by day</span>
+<span class="cm"># hours(ts)       → partition by hour</span>
+<span class="cm"># bucket(N, col)  → hash into N buckets</span>
+<span class="cm"># truncate(L, col)→ truncate string/int to length L</span></pre>
+
+  <h3>Reading & Writing</h3>
+  <pre><span class="cm"># Read an Iceberg table</span>
+df <span class="op">=</span> spark.read.format(<span class="str">"iceberg"</span>).load(<span class="str">"my_catalog.db.events"</span>)
+<span class="cm"># or</span>
+df <span class="op">=</span> spark.table(<span class="str">"my_catalog.db.events"</span>)
+
+<span class="cm"># Write / Append</span>
+df.writeTo(<span class="str">"my_catalog.db.events"</span>).append()
+df.writeTo(<span class="str">"my_catalog.db.events"</span>).overwritePartitions()
+
+<span class="cm"># Time Travel — read a specific snapshot</span>
+spark.read.format(<span class="str">"iceberg"</span>) \
+    .option(<span class="str">"snapshot-id"</span>, <span class="num">123456789</span>) \
+    .load(<span class="str">"my_catalog.db.events"</span>)
+
+<span class="cm"># Time Travel — read at a timestamp</span>
+spark.read.format(<span class="str">"iceberg"</span>) \
+    .option(<span class="str">"as-of-timestamp"</span>, <span class="str">"1680000000000"</span>) \
+    .load(<span class="str">"my_catalog.db.events"</span>)</pre>
+
+  <h3>MERGE INTO (Upsert)</h3>
+  <pre>spark.sql(<span class="str">"""</span>
+<span class="str">    MERGE INTO my_catalog.db.customers t</span>
+<span class="str">    USING updates s</span>
+<span class="str">    ON t.customer_id = s.customer_id</span>
+<span class="str">    WHEN MATCHED THEN UPDATE SET *</span>
+<span class="str">    WHEN NOT MATCHED THEN INSERT *</span>
+<span class="str">"""</span>)</pre>
+
+  <h3>Schema & Partition Evolution</h3>
+  <pre><span class="cm"># Add a column (no rewrite needed)</span>
+spark.sql(<span class="str">"ALTER TABLE my_catalog.db.events ADD COLUMN region STRING"</span>)
+
+<span class="cm"># Evolve partition scheme — future writes use new scheme,</span>
+<span class="cm"># old data keeps old scheme. Both work together!</span>
+spark.sql(<span class="str">"ALTER TABLE my_catalog.db.events ADD PARTITION FIELD bucket(16, user_id)"</span>)
+
+<span class="cm"># Table maintenance</span>
+spark.sql(<span class="str">"CALL my_catalog.system.rewrite_data_files('db.events')"</span>)   <span class="cm"># compaction</span>
+spark.sql(<span class="str">"CALL my_catalog.system.expire_snapshots('db.events', TIMESTAMP '2026-01-01')"</span>)</pre>
+
+  <div class="callout tip">
+    <span class="icon">🔥</span>
+    <p><strong>When to choose Iceberg over Delta:</strong> If you need engine-agnostic access (Trino + Spark + Flink), partition evolution, hidden partitioning, or you're in an AWS-native stack with Glue Catalog — Iceberg is the better fit.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 13 ═══════════════════ -->
+<div id="s13" class="section">
   <h2>Quick <span>Cheat Sheet</span></h2>
   <div class="section-meta">
     <span>⏱ Reference</span><span>📌 Bookmark This</span>
@@ -865,8 +1020,8 @@ df.explain(<span class="kw">True</span>)                    <span class="cm"># r
   </table>
 </div>
 
-<!-- ═══════════════════ SECTION 13 ═══════════════════ -->
-<div id="s13" class="section">
+<!-- ═══════════════════ SECTION 14 ═══════════════════ -->
+<div id="s14" class="section">
   <h2>Knowledge <span>Check</span></h2>
   <div class="section-meta">
     <span>📝 Quiz</span><span>Score: <strong id="score-display">0 / 8</strong></span>
