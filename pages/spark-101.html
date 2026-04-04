@@ -245,19 +245,43 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
   </table>
 
   <h3>Spark Ecosystem</h3>
-  <pre>
-                    ┌─────────────────────────────────────────┐
-                    │          <span class="kw">Spark Applications</span>         │
-                    ├──────────┬──────────┬─────────┬─────────┤
-                    │ <span class="fn">Spark   </span> │ <span class="fn">Spark   </span> │ <span class="fn">MLlib </span>│ <span class="fn">GraphX</span>│
-                    │ <span class="fn">SQL     </span> │<span class="fn">Streaming</span> │       │       │
-                    ├──────────┴──────────┴─────────┴─────────┤
-                    │          <span class="kw">Spark Core (RDD API)</span>         │
-                    ├─────────────────────────────────────────┤
-                    │    YARN  │  Mesos  │  K8s  │ Standalone │
-                    ├─────────────────────────────────────────┤
-                    │  HDFS  │  S3  │  ADLS  │  GCS  │ Local │
-                    └─────────────────────────────────────────┘</pre>
+  <div class="arch-diagram">
+    <div class="tier driver">
+      <span class="tier-label">SPARK APPLICATIONS</span>
+      <div class="tier-tools" style="margin-top:14px;">
+        <div class="tool-box" style="border-color:rgba(52,211,153,0.4);color:#34d399;">Spark SQL</div>
+        <div class="tool-box" style="border-color:rgba(52,211,153,0.4);color:#34d399;">Spark Streaming</div>
+        <div class="tool-box" style="border-color:rgba(52,211,153,0.4);color:#34d399;">MLlib</div>
+        <div class="tool-box" style="border-color:rgba(52,211,153,0.4);color:#34d399;">GraphX</div>
+      </div>
+    </div>
+    <div class="connector">▼</div>
+    <div class="tier cluster">
+      <span class="tier-label">SPARK CORE</span>
+      <div style="font-size:12px;color:#c4b5fd;margin-top:10px;text-align:center;">RDD API &middot; Task Scheduling &middot; Memory Management &middot; Fault Recovery</div>
+    </div>
+    <div class="connector">▼</div>
+    <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);">
+      <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">CLUSTER MANAGERS</span>
+      <div class="tier-tools" style="margin-top:14px;">
+        <div class="tool-box">YARN</div>
+        <div class="tool-box">Mesos</div>
+        <div class="tool-box">Kubernetes</div>
+        <div class="tool-box">Standalone</div>
+      </div>
+    </div>
+    <div class="connector">▼</div>
+    <div class="tier storage">
+      <span class="tier-label">STORAGE</span>
+      <div class="tier-tools" style="margin-top:14px;">
+        <div class="tool-box">HDFS</div>
+        <div class="tool-box">S3</div>
+        <div class="tool-box">ADLS</div>
+        <div class="tool-box">GCS</div>
+        <div class="tool-box">Local FS</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════ SECTION 2 ═══════════════════ -->
@@ -315,20 +339,32 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
   </div>
 
   <h3>Execution Flow</h3>
-  <pre>
-  <span class="kw">Your Code</span>
-      │
-      ▼
-  <span class="fn">Logical Plan</span> → Catalyst Optimizer → <span class="fn">Physical Plan</span>
-      │
-      ▼
-  <span class="kw">DAG Scheduler</span> → splits into Stages (at shuffle boundaries)
-      │
-      ▼
-  <span class="kw">Task Scheduler</span> → assigns Tasks to Executors
-      │
-      ▼
-  <span class="fn">Executors</span> → run tasks on partitions → return results</pre>
+  <div class="arch-diagram">
+    <div class="tier driver" style="text-align:center;padding:12px 20px;">
+      <span class="tier-label">STEP 1</span>
+      <div style="color:#fca5a5;font-weight:500;font-size:13px;margin-top:6px;">Your Code</div>
+    </div>
+    <div class="connector">▼</div>
+    <div class="tier cluster" style="text-align:center;padding:12px 20px;">
+      <span class="tier-label">STEP 2</span>
+      <div style="color:#c4b5fd;font-weight:500;font-size:13px;margin-top:6px;">Logical Plan → Catalyst Optimizer → Physical Plan</div>
+    </div>
+    <div class="connector">▼</div>
+    <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);text-align:center;padding:12px 20px;">
+      <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">STEP 3</span>
+      <div style="color:#fde68a;font-weight:500;font-size:13px;margin-top:6px;">DAG Scheduler → splits into Stages (at shuffle boundaries)</div>
+    </div>
+    <div class="connector">▼</div>
+    <div class="tier driver" style="text-align:center;padding:12px 20px;">
+      <span class="tier-label">STEP 4</span>
+      <div style="color:#fca5a5;font-weight:500;font-size:13px;margin-top:6px;">Task Scheduler → assigns Tasks to Executors</div>
+    </div>
+    <div class="connector">▼</div>
+    <div class="tier storage" style="text-align:center;padding:12px 20px;">
+      <span class="tier-label">STEP 5</span>
+      <div style="color:#86efac;font-weight:500;font-size:13px;margin-top:6px;">Executors → run tasks on partitions → return results</div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════ SECTION 3 ═══════════════════ -->
@@ -393,29 +429,44 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
   </div>
 
   <h3>Architecture</h3>
-  <pre>
-  ┌─────────────────────────────────────────────────────┐
-  │                  <span class="fn">Docker Network</span> (iceberg_net)       │
-  │                                                     │
-  │  ┌──────────────────┐    ┌──────────────────┐       │
-  │  │ <span class="kw">spark-iceberg</span>    │    │ <span class="kw">iceberg-rest</span>     │       │
-  │  │ Spark + Jupyter   │───▶│ Iceberg Catalog  │       │
-  │  │ :8888 :8080 :4040 │    │ :8181            │       │
-  │  └──────────────────┘    └────────┬─────────┘       │
-  │           │                       │                 │
-  │           ▼                       ▼                 │
-  │  ┌────────────────────────────────────────┐         │
-  │  │ <span class="kw">minio</span>  (S3-compatible Object Storage)  │         │
-  │  │ API :9000  │  Console :9001            │         │
-  │  │ Bucket: s3://warehouse/                │         │
-  │  └────────────────────────────────────────┘         │
-  │           ▲                                         │
-  │  ┌────────┴─────────┐                               │
-  │  │ <span class="kw">mc</span> (init)         │                               │
-  │  │ Creates bucket    │                               │
-  │  │ Sets public policy│                               │
-  │  └──────────────────┘                               │
-  └─────────────────────────────────────────────────────┘</pre>
+  <div class="arch-diagram">
+    <div style="border:1px solid rgba(125,211,252,0.25);border-radius:8px;padding:20px;background:rgba(125,211,252,0.02);position:relative;">
+      <span style="position:absolute;top:-10px;left:16px;font-size:10px;padding:1px 8px;border-radius:3px;font-weight:500;letter-spacing:0.08em;background:rgba(125,211,252,0.2);color:#7dd3fc;">DOCKER NETWORK (iceberg_net)</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px;margin-bottom:14px;">
+        <div class="tier driver" style="margin-bottom:0;">
+          <span class="tier-label">SPARK-ICEBERG</span>
+          <div style="font-size:11px;color:#5c6f94;margin-top:10px;">Spark + Jupyter Notebook</div>
+          <div class="tier-tools" style="margin-top:8px;">
+            <div class="tool-box" style="border-color:rgba(248,113,113,0.3);font-size:10px;">:8888</div>
+            <div class="tool-box" style="border-color:rgba(248,113,113,0.3);font-size:10px;">:8080</div>
+            <div class="tool-box" style="border-color:rgba(248,113,113,0.3);font-size:10px;">:4040</div>
+          </div>
+        </div>
+        <div class="tier cluster" style="margin-bottom:0;">
+          <span class="tier-label">ICEBERG-REST</span>
+          <div style="font-size:11px;color:#5c6f94;margin-top:10px;">Iceberg REST Catalog</div>
+          <div class="tier-tools" style="margin-top:8px;">
+            <div class="tool-box" style="border-color:rgba(167,139,250,0.3);font-size:10px;">:8181</div>
+          </div>
+        </div>
+      </div>
+      <div class="connector">▼ Both connect to ▼</div>
+      <div class="tier storage">
+        <span class="tier-label">MINIO (S3-COMPATIBLE STORAGE)</span>
+        <div style="font-size:11px;color:#5c6f94;margin-top:10px;">S3-compatible object storage</div>
+        <div class="tier-tools" style="margin-top:8px;">
+          <div class="tool-box" style="border-color:rgba(52,211,153,0.3);font-size:10px;">API :9000</div>
+          <div class="tool-box" style="border-color:rgba(52,211,153,0.3);font-size:10px;">Console :9001</div>
+          <div class="tool-box" style="border-color:rgba(52,211,153,0.3);font-size:10px;">s3://warehouse/</div>
+        </div>
+      </div>
+      <div class="connector">▲ Initialised by ▲</div>
+      <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);">
+        <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">MC (INIT CONTAINER)</span>
+        <div style="font-size:11px;color:#5c6f94;margin-top:10px;">Creates warehouse bucket &middot; Sets public access policy</div>
+      </div>
+    </div>
+  </div>
 
   <h3>docker-compose.yaml</h3>
   <p>Create a project folder and save this file:</p>
