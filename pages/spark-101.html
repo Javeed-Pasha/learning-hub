@@ -179,25 +179,26 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
   <a href="#" class="active" onclick="show('s1',this)"><span class="dot"></span>What is Spark?</a>
   <a href="#" onclick="show('s2',this)"><span class="dot"></span>Architecture</a>
   <a href="#" onclick="show('s3',this)"><span class="dot"></span>RDDs, DataFrames, Datasets</a>
+  <a href="#" onclick="show('s4',this)"><span class="dot"></span>Local Lab Setup — Docker</a>
 
   <div class="nav-section">Core APIs</div>
-  <a href="#" onclick="show('s4',this)"><span class="dot"></span>SparkSession & Config</a>
-  <a href="#" onclick="show('s5',this)"><span class="dot"></span>DataFrame Operations</a>
-  <a href="#" onclick="show('s6',this)"><span class="dot"></span>Spark SQL</a>
+  <a href="#" onclick="show('s5',this)"><span class="dot"></span>SparkSession & Config</a>
+  <a href="#" onclick="show('s6',this)"><span class="dot"></span>DataFrame Operations</a>
+  <a href="#" onclick="show('s7',this)"><span class="dot"></span>Spark SQL</a>
 
   <div class="nav-section">Advanced</div>
-  <a href="#" onclick="show('s7',this)"><span class="dot"></span>Joins & Shuffles</a>
-  <a href="#" onclick="show('s8',this)"><span class="dot"></span>Partitioning & Bucketing</a>
-  <a href="#" onclick="show('s9',this)"><span class="dot"></span>Performance Tuning</a>
+  <a href="#" onclick="show('s8',this)"><span class="dot"></span>Joins & Shuffles</a>
+  <a href="#" onclick="show('s9',this)"><span class="dot"></span>Partitioning & Bucketing</a>
+  <a href="#" onclick="show('s10',this)"><span class="dot"></span>Performance Tuning</a>
 
   <div class="nav-section">Ecosystem</div>
-  <a href="#" onclick="show('s10',this)"><span class="dot"></span>Structured Streaming</a>
-  <a href="#" onclick="show('s11',this)"><span class="dot"></span>Delta Lake Basics</a>
-  <a href="#" onclick="show('s12',this)"><span class="dot"></span>Apache Iceberg</a>
+  <a href="#" onclick="show('s11',this)"><span class="dot"></span>Structured Streaming</a>
+  <a href="#" onclick="show('s12',this)"><span class="dot"></span>Delta Lake Basics</a>
+  <a href="#" onclick="show('s13',this)"><span class="dot"></span>Apache Iceberg</a>
 
   <div class="nav-section">Reference</div>
-  <a href="#" onclick="show('s13',this)"><span class="dot"></span>Cheat Sheet</a>
-  <a href="#" onclick="show('s14',this)"><span class="dot"></span>Knowledge Check</a>
+  <a href="#" onclick="show('s14',this)"><span class="dot"></span>Cheat Sheet</a>
+  <a href="#" onclick="show('s15',this)"><span class="dot"></span>Knowledge Check</a>
 </nav>
 
 <main>
@@ -371,9 +372,196 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 
 <!-- ═══════════════════ SECTION 4 ═══════════════════ -->
 <div id="s4" class="section">
+  <h2>Local Lab Setup — <span>Docker</span></h2>
+  <div class="section-meta">
+    <span>⏱ 5 min</span><span>📌 Module 04</span><span>🎓 Hands-On</span>
+  </div>
+
+  <p>This section sets up a <strong>complete local Spark + Iceberg + MinIO environment</strong> using Docker. You'll get a Jupyter notebook with PySpark, an Iceberg REST catalog, and S3-compatible object storage — all in one command.</p>
+
+  <h3>Prerequisites</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Docker Desktop</h4>
+      <p>Install from <strong>docker.com</strong>. Ensure it's running before proceeding. Allocate at least 4 GB RAM in Docker settings.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Ports Free</h4>
+      <p>Ensure these ports are available: <code>8888</code> (Jupyter), <code>8080</code> (Spark UI), <code>9000/9001</code> (MinIO), <code>8181</code> (Iceberg REST).</p>
+    </div>
+  </div>
+
+  <h3>Architecture</h3>
+  <pre>
+  ┌─────────────────────────────────────────────────────┐
+  │                  <span class="fn">Docker Network</span> (iceberg_net)       │
+  │                                                     │
+  │  ┌──────────────────┐    ┌──────────────────┐       │
+  │  │ <span class="kw">spark-iceberg</span>    │    │ <span class="kw">iceberg-rest</span>     │       │
+  │  │ Spark + Jupyter   │───▶│ Iceberg Catalog  │       │
+  │  │ :8888 :8080 :4040 │    │ :8181            │       │
+  │  └──────────────────┘    └────────┬─────────┘       │
+  │           │                       │                 │
+  │           ▼                       ▼                 │
+  │  ┌────────────────────────────────────────┐         │
+  │  │ <span class="kw">minio</span>  (S3-compatible Object Storage)  │         │
+  │  │ API :9000  │  Console :9001            │         │
+  │  │ Bucket: s3://warehouse/                │         │
+  │  └────────────────────────────────────────┘         │
+  │           ▲                                         │
+  │  ┌────────┴─────────┐                               │
+  │  │ <span class="kw">mc</span> (init)         │                               │
+  │  │ Creates bucket    │                               │
+  │  │ Sets public policy│                               │
+  │  └──────────────────┘                               │
+  └─────────────────────────────────────────────────────┘</pre>
+
+  <h3>docker-compose.yaml</h3>
+  <p>Create a project folder and save this file:</p>
+  <pre><span class="cm"># docker-compose.yaml</span>
+<span class="kw">version</span>: <span class="str">"3"</span>
+
+<span class="kw">services</span>:
+  <span class="fn">spark-iceberg</span>:
+    <span class="kw">image</span>: tabulario/spark-iceberg
+    <span class="kw">container_name</span>: spark-iceberg
+    <span class="kw">build</span>: spark/
+    <span class="kw">networks</span>:
+      <span class="op">iceberg_net</span>:
+    <span class="kw">depends_on</span>:
+      - rest
+      - minio
+    <span class="kw">volumes</span>:
+      - ./warehouse:/home/iceberg/warehouse
+      - ./notebooks:/home/iceberg/notebooks/notebooks
+      - ./data:/home/iceberg/data
+    <span class="kw">environment</span>:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    <span class="kw">ports</span>:
+      - <span class="num">8888</span>:8888   <span class="cm"># Jupyter Notebook</span>
+      - <span class="num">8080</span>:8080   <span class="cm"># Spark Master UI</span>
+      - <span class="num">10000</span>:10000 <span class="cm"># Thrift Server</span>
+      - <span class="num">10002</span>:10002
+      - <span class="num">4040</span>-4042:4040-4042  <span class="cm"># Spark App UI</span>
+
+  <span class="fn">rest</span>:
+    <span class="kw">image</span>: tabulario/iceberg-rest
+    <span class="kw">container_name</span>: iceberg-rest
+    <span class="kw">networks</span>:
+      <span class="op">iceberg_net</span>:
+    <span class="kw">ports</span>:
+      - <span class="num">8181</span>:8181
+    <span class="kw">environment</span>:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+      - CATALOG_WAREHOUSE=s3://warehouse/
+      - CATALOG_IO__IMPL=org.apache.iceberg.aws.s3.S3FileIO
+      - CATALOG_S3_ENDPOINT=http://minio:9000
+
+  <span class="fn">minio</span>:
+    <span class="kw">image</span>: minio/minio
+    <span class="kw">container_name</span>: minio
+    <span class="kw">environment</span>:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - MINIO_DOMAIN=minio
+    <span class="kw">networks</span>:
+      <span class="op">iceberg_net</span>:
+        <span class="kw">aliases</span>:
+          - warehouse.minio
+    <span class="kw">ports</span>:
+      - <span class="num">9001</span>:9001  <span class="cm"># MinIO Console</span>
+      - <span class="num">9000</span>:9000  <span class="cm"># S3 API</span>
+    <span class="kw">command</span>: [<span class="str">"server"</span>, <span class="str">"/data"</span>, <span class="str">"--console-address"</span>, <span class="str">":9001"</span>]
+
+  <span class="fn">mc</span>:  <span class="cm"># MinIO Client — init bucket</span>
+    <span class="kw">depends_on</span>:
+      - minio
+    <span class="kw">image</span>: minio/mc
+    <span class="kw">container_name</span>: mc
+    <span class="kw">networks</span>:
+      <span class="op">iceberg_net</span>:
+    <span class="kw">environment</span>:
+      - AWS_ACCESS_KEY_ID=admin
+      - AWS_SECRET_ACCESS_KEY=password
+      - AWS_REGION=us-east-1
+    <span class="kw">entrypoint</span>: &gt;
+      /bin/sh -c <span class="str">"</span>
+      until (/usr/bin/mc alias set minio http://minio:9000 admin password)
+        do echo <span class="str">'...waiting...'</span> &amp;&amp; sleep 1; done;
+      /usr/bin/mc rm -r --force minio/warehouse;
+      /usr/bin/mc mb minio/warehouse;
+      /usr/bin/mc policy set public minio/warehouse;
+      tail -f /dev/null
+      <span class="str">"</span>
+
+<span class="kw">networks</span>:
+  <span class="op">iceberg_net</span>:</pre>
+
+  <h3>Service Breakdown</h3>
+  <table>
+    <tr><th>Service</th><th>Image</th><th>Purpose</th><th>Ports</th></tr>
+    <tr><td><strong>spark-iceberg</strong></td><td><code>tabulario/spark-iceberg</code></td><td>Spark runtime + Jupyter + Iceberg jars pre-installed</td><td>8888, 8080, 4040</td></tr>
+    <tr><td><strong>rest</strong></td><td><code>tabulario/iceberg-rest</code></td><td>Iceberg REST Catalog — tracks table metadata, schemas, snapshots</td><td>8181</td></tr>
+    <tr><td><strong>minio</strong></td><td><code>minio/minio</code></td><td>S3-compatible object storage — stores Parquet data files</td><td>9000, 9001</td></tr>
+    <tr><td><strong>mc</strong></td><td><code>minio/mc</code></td><td>One-time init — creates the <code>warehouse</code> bucket with public policy</td><td>—</td></tr>
+  </table>
+
+  <h3>Start & Stop</h3>
+  <pre><span class="cm"># Start all containers (detached)</span>
+<span class="fn">docker compose up -d</span>
+
+<span class="cm"># Check everything is running</span>
+<span class="fn">docker compose ps</span>
+
+<span class="cm"># View logs for a specific service</span>
+<span class="fn">docker compose logs spark-iceberg</span>
+
+<span class="cm"># Stop and remove everything</span>
+<span class="fn">docker compose down</span></pre>
+
+  <h3>Verify It Works</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Jupyter Notebook</h4>
+      <p>Open <strong>localhost:8888</strong> — you should see the Jupyter interface. Notebooks are in the <code>notebooks/</code> folder.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Spark UI</h4>
+      <p>Open <strong>localhost:8080</strong> for the Spark Master UI. When a job runs, <strong>localhost:4040</strong> shows the application UI.</p>
+    </div>
+    <div class="card blue-border">
+      <h4>MinIO Console</h4>
+      <p>Open <strong>localhost:9001</strong> — login with <code>admin</code> / <code>password</code>. You should see the <code>warehouse</code> bucket.</p>
+    </div>
+    <div class="card coral-border">
+      <h4>Iceberg REST</h4>
+      <p>Test with <code>curl localhost:8181/v1/namespaces</code> — should return a JSON response. This is the catalog the Spark session connects to.</p>
+    </div>
+  </div>
+
+  <h3>Mounted Volumes</h3>
+  <table>
+    <tr><th>Local Path</th><th>Container Path</th><th>Purpose</th></tr>
+    <tr><td><code>./warehouse</code></td><td><code>/home/iceberg/warehouse</code></td><td>Iceberg table data (persists between restarts)</td></tr>
+    <tr><td><code>./notebooks</code></td><td><code>/home/iceberg/notebooks/notebooks</code></td><td>Your Jupyter notebooks (editable from host)</td></tr>
+    <tr><td><code>./data</code></td><td><code>/home/iceberg/data</code></td><td>Input data files (CSV, Parquet, etc.)</td></tr>
+  </table>
+
+  <div class="callout tip">
+    <span class="icon">💡</span>
+    <p><strong>Tip:</strong> This is the same environment you'll use for the <strong>Delta Lake</strong> and <strong>Apache Iceberg</strong> sections later. Any PySpark code in this guide can be run directly in the Jupyter notebook at localhost:8888.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
+<div id="s5" class="section">
   <h2>SparkSession & <span>Configuration</span></h2>
   <div class="section-meta">
-    <span>⏱ 3 min</span><span>📌 Module 04</span><span>🎓 Hands-On</span>
+    <span>⏱ 3 min</span><span>📌 Module 05</span><span>🎓 Hands-On</span>
   </div>
 
   <h3>Creating a SparkSession</h3>
@@ -421,11 +609,11 @@ df <span class="op">=</span> spark.read \
     .load()</pre>
 </div>
 
-<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
-<div id="s5" class="section">
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
+<div id="s6" class="section">
   <h2>DataFrame <span>Operations</span></h2>
   <div class="section-meta">
-    <span>⏱ 6 min</span><span>📌 Module 05</span><span>🎓 Hands-On</span>
+    <span>⏱ 6 min</span><span>📌 Module 06</span><span>🎓 Hands-On</span>
   </div>
 
   <h3>Basic Operations</h3>
@@ -496,11 +684,11 @@ df.write.mode(<span class="str">"overwrite"</span>).option(<span class="str">"he
 df.coalesce(<span class="num">1</span>).write.mode(<span class="str">"overwrite"</span>).csv(<span class="str">"output/single"</span>)</pre>
 </div>
 
-<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
-<div id="s6" class="section">
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
+<div id="s7" class="section">
   <h2>Spark <span>SQL</span></h2>
   <div class="section-meta">
-    <span>⏱ 4 min</span><span>📌 Module 06</span><span>🎓 Hands-On</span>
+    <span>⏱ 4 min</span><span>📌 Module 07</span><span>🎓 Hands-On</span>
   </div>
 
   <p>Spark SQL lets you use standard SQL queries on DataFrames. Register a DataFrame as a temp view, then query it.</p>
@@ -544,11 +732,11 @@ df.filter(F.col(<span class="str">"status"</span>) <span class="op">==</span> <s
   </div>
 </div>
 
-<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
-<div id="s7" class="section">
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
+<div id="s8" class="section">
   <h2>Joins & <span>Shuffles</span></h2>
   <div class="section-meta">
-    <span>⏱ 5 min</span><span>📌 Module 07</span><span>🎓 Advanced</span>
+    <span>⏱ 5 min</span><span>📌 Module 08</span><span>🎓 Advanced</span>
   </div>
 
   <h3>Join Types in Spark</h3>
@@ -594,11 +782,11 @@ result.explain(<span class="kw">True</span>)
   </div>
 </div>
 
-<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
-<div id="s8" class="section">
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
+<div id="s9" class="section">
   <h2>Partitioning & <span>Bucketing</span></h2>
   <div class="section-meta">
-    <span>⏱ 4 min</span><span>📌 Module 08</span><span>🎓 Advanced</span>
+    <span>⏱ 4 min</span><span>📌 Module 09</span><span>🎓 Advanced</span>
   </div>
 
   <h3>Partitioning (File-Level)</h3>
@@ -649,11 +837,11 @@ df.write \
   </table>
 </div>
 
-<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
-<div id="s9" class="section">
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
+<div id="s10" class="section">
   <h2>Performance <span>Tuning</span></h2>
   <div class="section-meta">
-    <span>⏱ 5 min</span><span>📌 Module 09</span><span>🎓 Advanced</span>
+    <span>⏱ 5 min</span><span>📌 Module 10</span><span>🎓 Advanced</span>
   </div>
 
   <h3>Top Performance Tips</h3>
@@ -712,11 +900,11 @@ spark.conf.set(<span class="str">"spark.sql.adaptive.enabled"</span>, <span clas
 <span class="cm"># ✅ Optimizes skewed joins (splits hot partitions)</span></pre>
 </div>
 
-<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
-<div id="s10" class="section">
+<!-- ═══════════════════ SECTION 11 ═══════════════════ -->
+<div id="s11" class="section">
   <h2>Structured <span>Streaming</span></h2>
   <div class="section-meta">
-    <span>⏱ 5 min</span><span>📌 Module 10</span><span>🎓 Ecosystem</span>
+    <span>⏱ 5 min</span><span>📌 Module 11</span><span>🎓 Ecosystem</span>
   </div>
 
   <p>Structured Streaming treats a live data stream as an unbounded table. You write the same DataFrame/SQL code — Spark handles the incremental processing.</p>
@@ -759,11 +947,11 @@ windowed <span class="op">=</span> parsed \
     .count()</pre>
 </div>
 
-<!-- ═══════════════════ SECTION 11 ═══════════════════ -->
-<div id="s11" class="section">
+<!-- ═══════════════════ SECTION 12 ═══════════════════ -->
+<div id="s12" class="section">
   <h2>Delta Lake <span>Basics</span></h2>
   <div class="section-meta">
-    <span>⏱ 4 min</span><span>📌 Module 11</span><span>🎓 Ecosystem</span>
+    <span>⏱ 4 min</span><span>📌 Module 12</span><span>🎓 Ecosystem</span>
   </div>
 
   <p><strong>Delta Lake</strong> is an open-source storage layer that brings ACID transactions, schema enforcement, and time travel to data lakes. Built on Parquet.</p>
@@ -816,11 +1004,11 @@ delta_table <span class="op">=</span> DeltaTable.forPath(spark, <span class="str
 delta_table.history().show()</pre>
 </div>
 
-<!-- ═══════════════════ SECTION 12: ICEBERG ═══════════════════ -->
-<div id="s12" class="section">
+<!-- ═══════════════════ SECTION 13: ICEBERG ═══════════════════ -->
+<div id="s13" class="section">
   <h2>Apache <span>Iceberg</span></h2>
   <div class="section-meta">
-    <span>⏱ 5 min</span><span>📌 Module 12</span><span>🎓 Ecosystem</span>
+    <span>⏱ 5 min</span><span>📌 Module 13</span><span>🎓 Ecosystem</span>
   </div>
 
   <p><strong>Apache Iceberg</strong> is an open table format for huge analytic datasets. Like Delta Lake, it brings ACID transactions and time travel to data lakes — but with a different architecture designed for <strong>engine-agnostic</strong> interoperability (Spark, Trino, Flink, Hive, Dremio, Snowflake, etc.).</p>
@@ -970,8 +1158,8 @@ spark.sql(<span class="str">"CALL my_catalog.system.expire_snapshots('db.events'
   </div>
 </div>
 
-<!-- ═══════════════════ SECTION 13 ═══════════════════ -->
-<div id="s13" class="section">
+<!-- ═══════════════════ SECTION 14 ═══════════════════ -->
+<div id="s14" class="section">
   <h2>Quick <span>Cheat Sheet</span></h2>
   <div class="section-meta">
     <span>⏱ Reference</span><span>📌 Bookmark This</span>
@@ -1020,8 +1208,8 @@ df.explain(<span class="kw">True</span>)                    <span class="cm"># r
   </table>
 </div>
 
-<!-- ═══════════════════ SECTION 14 ═══════════════════ -->
-<div id="s14" class="section">
+<!-- ═══════════════════ SECTION 15 ═══════════════════ -->
+<div id="s15" class="section">
   <h2>Knowledge <span>Check</span></h2>
   <div class="section-meta">
     <span>📝 Quiz</span><span>Score: <strong id="score-display">0 / 8</strong></span>
