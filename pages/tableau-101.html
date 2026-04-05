@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tableau 101 — Complete Training Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0f1117;
+  --bg2: #161b27;
+  --bg3: #1e2535;
+  --bg4: #252d40;
+  --border: #2d3650;
+  --border2: #3d4f70;
+  --text: #e2e8f5;
+  --text2: #94a3c0;
+  --text3: #5c6f94;
+  --accent: #2dd4bf;
+  --accent2: #14b8a6;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --coral: #f87171;
+  --blue: #4facf7;
+  --purple: #a78bfa;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.shell { display: flex; min-height: 100vh; margin-top: 40px; }
+
+.home-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 40px;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 20px; z-index: 999; font-family: var(--sans);
+}
+.home-bar a { color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: color 0.15s; }
+.home-bar a:hover { color: var(--text); }
+
+nav { width: 240px; min-width: 240px; background: var(--bg2); border-right: 1px solid var(--border); padding: 0 0 40px; position: sticky; top: 40px; height: calc(100vh - 40px); overflow-y: auto; }
+.nav-logo { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+.nav-logo .badge { display: inline-block; font-family: var(--mono); font-size: 10px; background: var(--accent); color: #0a1628; padding: 2px 8px; border-radius: 3px; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.08em; }
+.nav-logo h1 { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
+.nav-section { padding: 4px 20px 2px; font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 14px; }
+nav a { display: flex; align-items: center; gap: 8px; padding: 7px 20px; color: var(--text2); text-decoration: none; font-size: 13px; border-left: 2px solid transparent; transition: all 0.15s; }
+nav a:hover { color: var(--text); background: var(--bg3); }
+nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(45,212,191,0.07); }
+nav a .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+nav a.active .dot { background: var(--accent); }
+
+main { flex: 1; padding: 48px 56px; max-width: 900px; }
+.section { display: none; }
+.section.active { display: block; }
+
+h2 { font-size: 28px; font-weight: 300; color: var(--text); margin-bottom: 6px; letter-spacing: -0.02em; }
+h2 span { color: var(--accent); font-weight: 500; }
+.section-meta { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-bottom: 32px; display: flex; gap: 20px; }
+.section-meta span { display: flex; align-items: center; gap: 4px; }
+h3 { font-size: 17px; font-weight: 500; color: var(--text); margin: 36px 0 14px; padding-left: 12px; border-left: 3px solid var(--accent); }
+h4 { font-size: 14px; font-weight: 600; color: var(--accent); margin: 24px 0 10px; font-family: var(--mono); letter-spacing: 0.03em; }
+p { color: var(--text2); margin-bottom: 14px; }
+strong { color: var(--text); font-weight: 500; }
+
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 16px; }
+.card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
+.card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+.card.accent-border { border-left: 3px solid var(--accent); }
+.card.green-border  { border-left: 3px solid var(--green); }
+.card.amber-border  { border-left: 3px solid var(--amber); }
+.card.coral-border  { border-left: 3px solid var(--coral); }
+.card.blue-border   { border-left: 3px solid var(--blue); }
+.card.purple-border { border-left: 3px solid var(--purple); }
+.card h4 { margin: 0 0 8px; }
+.card p { margin: 0; font-size: 13px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+th { background: var(--bg3); color: var(--text); font-weight: 500; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border2); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--bg3); color: var(--text); }
+
+pre, code { font-family: var(--mono); }
+pre { background: #0a0d14; border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; color: #c8d6ef; }
+pre * { font-family: inherit !important; font-style: normal !important; }
+code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-radius: 3px; font-size: 12.5px; }
+.kw  { color: #5eead4; }
+.fn  { color: #34d399; }
+.str { color: #fbbf24; }
+.cm  { color: #4b5a7a; }
+.num { color: #f87171; }
+.op  { color: #a78bfa; }
+
+.callout { border-radius: 6px; padding: 14px 18px; margin-bottom: 18px; font-size: 13.5px; display: flex; gap: 12px; align-items: flex-start; }
+.callout .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout p { margin: 0; }
+.callout.tip    { background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.2); }
+.callout.tip p  { color: #5eead4; }
+.callout.warn   { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); }
+.callout.warn p { color: #fde68a; }
+.callout.rule   { background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); }
+.callout.rule p { color: #6ee7b7; }
+
+.arch-diagram { background: #0a0d14; border: 1px solid var(--border); border-radius: 8px; padding: 28px; margin-bottom: 24px; font-family: var(--mono); font-size: 12px; }
+.tier { border: 1px solid; border-radius: 6px; padding: 16px 20px; margin-bottom: 12px; position: relative; }
+.tier.driver  { border-color: rgba(45,212,191,0.4); background: rgba(45,212,191,0.04); }
+.tier.cluster { border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.04); }
+.tier.storage { border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.03); }
+.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 500; letter-spacing: 0.08em; }
+.tier.driver  .tier-label { background: rgba(45,212,191,0.2); color: var(--accent); }
+.tier.cluster .tier-label { background: rgba(167,139,250,0.2); color: var(--purple); }
+.tier.storage .tier-label { background: rgba(52,211,153,0.2);  color: var(--green); }
+.tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.tool-box { background: var(--bg3); border: 1px solid var(--border2); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: var(--text); }
+.connector { text-align: center; color: var(--text3); font-size: 11px; margin: 4px 0; letter-spacing: 0.05em; }
+
+.quiz-q { margin-bottom: 24px; }
+.quiz-q .qtext { font-size: 14px; color: var(--text); margin-bottom: 12px; font-weight: 500; }
+.quiz-option { display: block; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all 0.15s; }
+.quiz-option:hover { border-color: var(--border2); color: var(--text); }
+.quiz-option.correct { border-color: var(--green); background: rgba(52,211,153,0.08); color: #6ee7b7; }
+.quiz-option.wrong   { border-color: var(--coral); background: rgba(248,113,113,0.08); color: #fca5a5; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+@media print { nav { display: none; } .section { display: block !important; } }
+</style>
+</head>
+<body>
+
+<div class="home-bar">
+  <a href="../index.html">&#9664; Learning Hub</a>
+</div>
+
+<div class="shell">
+<nav id="sidebar">
+  <div class="nav-logo">
+    <div class="badge">TRAINING</div>
+    <h1>Tableau 101 — Complete Guide</h1>
+  </div>
+
+  <div class="nav-section">Foundations</div>
+  <a href="#" class="active" onclick="show('s1',this)"><span class="dot"></span>What is Tableau?</a>
+  <a href="#" onclick="show('s2',this)"><span class="dot"></span>Tableau Product Suite</a>
+  <a href="#" onclick="show('s3',this)"><span class="dot"></span>Connecting to Data</a>
+
+  <div class="nav-section">Core Concepts</div>
+  <a href="#" onclick="show('s4',this)"><span class="dot"></span>Dimensions vs Measures</a>
+  <a href="#" onclick="show('s5',this)"><span class="dot"></span>Chart Types</a>
+  <a href="#" onclick="show('s6',this)"><span class="dot"></span>Filters &amp; Parameters</a>
+
+  <div class="nav-section">Intermediate</div>
+  <a href="#" onclick="show('s7',this)"><span class="dot"></span>Calculated Fields</a>
+  <a href="#" onclick="show('s8',this)"><span class="dot"></span>Table Calculations</a>
+  <a href="#" onclick="show('s9',this)"><span class="dot"></span>LOD Expressions</a>
+
+  <div class="nav-section">Advanced</div>
+  <a href="#" onclick="show('s10',this)"><span class="dot"></span>Dashboards &amp; Stories</a>
+  <a href="#" onclick="show('s11',this)"><span class="dot"></span>Performance &amp; Best Practices</a>
+  <a href="#" onclick="show('s12',this)"><span class="dot"></span>Tableau Server / Cloud</a>
+
+  <div class="nav-section">Reference</div>
+  <a href="#" onclick="show('s13',this)"><span class="dot"></span>Cheat Sheet</a>
+  <a href="#" onclick="show('s14',this)"><span class="dot"></span>Knowledge Check</a>
+</nav>
+
+<main>
+
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
+<div id="s1" class="section active">
+  <h2>What is <span>Tableau</span>?</h2>
+  <div class="section-meta">
+    <span>&#9201; 4 min</span><span>&#128204; Module 01</span><span>&#127891; Introduction</span>
+  </div>
+
+  <p><strong>Tableau</strong> is the industry-leading data visualization and business intelligence platform. It lets you connect to data, create interactive visualizations, and share insights — all without writing code.</p>
+
+  <h3>Why Tableau?</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Visual Analytics</h4>
+      <p>Drag-and-drop interface. Create charts, maps, and dashboards in minutes — not hours.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Connect Anywhere</h4>
+      <p>Native connectors for SQL Server, PostgreSQL, Snowflake, BigQuery, Excel, CSV, APIs, and 80+ sources.</p>
+    </div>
+    <div class="card amber-border">
+      <h4>Self-Service BI</h4>
+      <p>Business users can explore data independently. No need to wait for IT to build reports.</p>
+    </div>
+    <div class="card purple-border">
+      <h4>Powerful Calculations</h4>
+      <p>Table calculations, LOD expressions, and statistical functions for deep analysis.</p>
+    </div>
+  </div>
+
+  <h3>Tableau vs Other BI Tools</h3>
+  <table>
+    <tr><th>Feature</th><th>Tableau</th><th>Power BI</th><th>Looker</th></tr>
+    <tr><td><strong>Strength</strong></td><td>Visual exploration</td><td>Microsoft ecosystem</td><td>Data modeling (LookML)</td></tr>
+    <tr><td><strong>Data Engine</strong></td><td>Hyper (in-memory)</td><td>VertiPaq</td><td>SQL push-down</td></tr>
+    <tr><td><strong>Pricing</strong></td><td>Per-user (Creator/Explorer/Viewer)</td><td>Per-user (low cost)</td><td>Per-user (enterprise)</td></tr>
+    <tr><td><strong>Learning Curve</strong></td><td>Moderate</td><td>Easy (Excel-like)</td><td>Steep (LookML required)</td></tr>
+    <tr><td><strong>Deployment</strong></td><td>Desktop + Server/Cloud</td><td>Desktop + Service</td><td>Cloud-only</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
+<div id="s2" class="section">
+  <h2>Tableau <span>Product Suite</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 4 min</span><span>&#128204; Module 02</span><span>&#127891; Overview</span>
+  </div>
+
+  <h3>Product Lineup</h3>
+  <div class="arch-diagram">
+    <div class="tier driver">
+      <span class="tier-label">AUTHORING</span>
+      <div class="tier-tools" style="margin-top:14px;">
+        <div class="tool-box" style="border-color:rgba(45,212,191,0.4);color:#5eead4;">Tableau Desktop</div>
+        <div class="tool-box" style="border-color:rgba(45,212,191,0.4);color:#5eead4;">Tableau Prep</div>
+      </div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:8px;">Desktop: Build visualizations &middot; Prep: Clean &amp; shape data</div>
+    </div>
+    <div class="connector">&#9660; Publish &#9660;</div>
+    <div class="tier cluster">
+      <span class="tier-label">SHARING &amp; COLLABORATION</span>
+      <div class="tier-tools" style="margin-top:14px;">
+        <div class="tool-box" style="border-color:rgba(167,139,250,0.3);">Tableau Server</div>
+        <div class="tool-box" style="border-color:rgba(167,139,250,0.3);">Tableau Cloud</div>
+        <div class="tool-box" style="border-color:rgba(167,139,250,0.3);">Tableau Public</div>
+      </div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:8px;">Server: On-prem hosting &middot; Cloud: SaaS &middot; Public: Free, public sharing</div>
+    </div>
+    <div class="connector">&#9660; View &#9660;</div>
+    <div class="tier storage">
+      <span class="tier-label">CONSUMPTION</span>
+      <div class="tier-tools" style="margin-top:14px;">
+        <div class="tool-box" style="border-color:rgba(52,211,153,0.3);">Web Browser</div>
+        <div class="tool-box" style="border-color:rgba(52,211,153,0.3);">Tableau Mobile</div>
+        <div class="tool-box" style="border-color:rgba(52,211,153,0.3);">Embedded Analytics</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>License Tiers</h3>
+  <table>
+    <tr><th>Role</th><th>Can Do</th><th>Use Case</th></tr>
+    <tr><td><strong>Creator</strong></td><td>Build workbooks, data sources, Prep flows, web authoring</td><td>Analysts, data engineers</td></tr>
+    <tr><td><strong>Explorer</strong></td><td>Edit existing workbooks, web authoring (limited)</td><td>Business power users</td></tr>
+    <tr><td><strong>Viewer</strong></td><td>View and interact with dashboards only</td><td>Executives, stakeholders</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
+<div id="s3" class="section">
+  <h2>Connecting to <span>Data</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 4 min</span><span>&#128204; Module 03</span><span>&#127891; Foundations</span>
+  </div>
+
+  <h3>Connection Types</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Live Connection</h4>
+      <p>Queries the database in real-time. Always up-to-date. Can be slow for large datasets or complex queries.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Extract (.hyper)</h4>
+      <p>Imports data into Tableau's Hyper engine (columnar, in-memory). Very fast. Schedule refreshes to stay current.</p>
+    </div>
+  </div>
+
+  <h3>Common Data Sources</h3>
+  <table>
+    <tr><th>Category</th><th>Sources</th></tr>
+    <tr><td><strong>Databases</strong></td><td>SQL Server, PostgreSQL, MySQL, Oracle, Snowflake, BigQuery, Redshift, Databricks</td></tr>
+    <tr><td><strong>Files</strong></td><td>Excel, CSV, JSON, PDF, Spatial files (.shp, .kml)</td></tr>
+    <tr><td><strong>Cloud</strong></td><td>Google Sheets, Salesforce, Azure SQL, Amazon S3</td></tr>
+    <tr><td><strong>Other</strong></td><td>ODBC, OData, Web Data Connector, REST API (via WDC)</td></tr>
+  </table>
+
+  <h3>Data Source Best Practices</h3>
+  <div class="callout tip">
+    <span class="icon">&#128161;</span>
+    <p><strong>Use Extracts for dashboards</strong> — they're orders of magnitude faster than live connections. Use live only when you need real-time data (e.g., operational dashboards).</p>
+  </div>
+
+  <div class="callout rule">
+    <span class="icon">&#9989;</span>
+    <p><strong>Published Data Sources:</strong> Create and publish shared data sources to Tableau Server/Cloud. This ensures consistent definitions, reduces duplication, and simplifies governance.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
+<div id="s4" class="section">
+  <h2>Dimensions vs <span>Measures</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 4 min</span><span>&#128204; Module 04</span><span>&#127891; Core Concepts</span>
+  </div>
+
+  <p>Understanding the difference between <strong>Dimensions</strong> and <strong>Measures</strong> is the foundation of everything in Tableau.</p>
+
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Dimensions (Qualitative)</h4>
+      <p>Categorical fields that segment your data. They define the <em>level of detail</em> in your view. Examples: Region, Product Category, Customer Name, Date.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Measures (Quantitative)</h4>
+      <p>Numeric fields that are aggregated. They answer "how much?" or "how many?". Examples: Sales, Quantity, Profit, Discount.</p>
+    </div>
+  </div>
+
+  <h3>Blue vs Green</h3>
+  <table>
+    <tr><th>Color</th><th>Type</th><th>Behavior</th></tr>
+    <tr><td><strong style="color:#4facf7;">Blue</strong></td><td>Discrete</td><td>Creates distinct, individual values (headers). Adds rows/columns to the view.</td></tr>
+    <tr><td><strong style="color:#34d399;">Green</strong></td><td>Continuous</td><td>Creates an axis with a range. Produces smooth gradients.</td></tr>
+  </table>
+
+  <div class="callout tip">
+    <span class="icon">&#128161;</span>
+    <p><strong>Key Rule:</strong> Dimensions slice your data into categories. Measures give you the numbers for each category. Dragging a dimension to Rows/Columns creates headers; dragging a measure creates an axis.</p>
+  </div>
+
+  <h3>Aggregation</h3>
+  <p>Measures are always aggregated in Tableau. The default is <code>SUM()</code>, but you can change it:</p>
+  <table>
+    <tr><th>Aggregation</th><th>Use</th></tr>
+    <tr><td><code>SUM</code></td><td>Total (default for most measures)</td></tr>
+    <tr><td><code>AVG</code></td><td>Average value</td></tr>
+    <tr><td><code>COUNT</code></td><td>Number of rows</td></tr>
+    <tr><td><code>COUNTD</code></td><td>Distinct count</td></tr>
+    <tr><td><code>MIN / MAX</code></td><td>Extremes</td></tr>
+    <tr><td><code>MEDIAN</code></td><td>Middle value</td></tr>
+    <tr><td><code>ATTR</code></td><td>Returns value if all are the same, else *</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
+<div id="s5" class="section">
+  <h2>Chart <span>Types</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 5 min</span><span>&#128204; Module 05</span><span>&#127891; Core Concepts</span>
+  </div>
+
+  <h3>Choosing the Right Chart</h3>
+  <table>
+    <tr><th>Goal</th><th>Chart Type</th><th>When to Use</th></tr>
+    <tr><td><strong>Comparison</strong></td><td>Bar Chart</td><td>Compare values across categories</td></tr>
+    <tr><td><strong>Trend</strong></td><td>Line Chart</td><td>Show change over time</td></tr>
+    <tr><td><strong>Composition</strong></td><td>Stacked Bar / Pie</td><td>Part-to-whole relationships</td></tr>
+    <tr><td><strong>Distribution</strong></td><td>Histogram / Box Plot</td><td>Spread and outliers</td></tr>
+    <tr><td><strong>Relationship</strong></td><td>Scatter Plot</td><td>Correlation between two measures</td></tr>
+    <tr><td><strong>Geographic</strong></td><td>Map (Symbol / Filled)</td><td>Location-based data</td></tr>
+    <tr><td><strong>KPI</strong></td><td>Text / BANs</td><td>Single numbers (Big Ass Numbers)</td></tr>
+    <tr><td><strong>Detail</strong></td><td>Crosstab (Text Table)</td><td>Exact values in table format</td></tr>
+    <tr><td><strong>Flow</strong></td><td>Gantt Chart</td><td>Timelines, project schedules</td></tr>
+    <tr><td><strong>Ranking</strong></td><td>Bullet Chart</td><td>Actual vs target performance</td></tr>
+  </table>
+
+  <h3>The Marks Card</h3>
+  <p>The Marks Card is where you control <em>how</em> data points look. Every mark has these properties:</p>
+
+  <div class="card-grid-3">
+    <div class="card accent-border">
+      <h4>Color</h4>
+      <p>Encode a dimension or measure with color. Dimensions = distinct palette; Measures = gradient.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Size</h4>
+      <p>Scale marks by a measure. Larger values = bigger marks.</p>
+    </div>
+    <div class="card amber-border">
+      <h4>Shape</h4>
+      <p>Different shapes per category (circle, square, triangle, etc.).</p>
+    </div>
+    <div class="card blue-border">
+      <h4>Label</h4>
+      <p>Show values directly on marks. Can display any field.</p>
+    </div>
+    <div class="card purple-border">
+      <h4>Detail</h4>
+      <p>Add granularity without visual encoding. Increases the level of detail.</p>
+    </div>
+    <div class="card coral-border">
+      <h4>Tooltip</h4>
+      <p>Information shown on hover. Fully customizable with rich text and viz-in-tooltip.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
+<div id="s6" class="section">
+  <h2>Filters & <span>Parameters</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 5 min</span><span>&#128204; Module 06</span><span>&#127891; Core Concepts</span>
+  </div>
+
+  <h3>Filter Order of Operations</h3>
+  <p>Tableau applies filters in a specific order. Understanding this is critical for correct results:</p>
+
+  <div class="arch-diagram">
+    <div class="tier driver" style="text-align:center;padding:12px 20px;">
+      <span class="tier-label">1</span>
+      <div style="color:#5eead4;font-weight:500;font-size:13px;margin-top:6px;">Extract Filters</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied when creating an extract — limits rows imported</div>
+    </div>
+    <div class="connector">&#9660;</div>
+    <div class="tier cluster" style="text-align:center;padding:12px 20px;">
+      <span class="tier-label">2</span>
+      <div style="color:#c4b5fd;font-weight:500;font-size:13px;margin-top:6px;">Data Source Filters</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied before any calculations — reduces data sent to Tableau</div>
+    </div>
+    <div class="connector">&#9660;</div>
+    <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);text-align:center;padding:12px 20px;">
+      <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">3</span>
+      <div style="color:#fde68a;font-weight:500;font-size:13px;margin-top:6px;">Context Filters</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Creates a temporary table — subsequent filters operate on this subset</div>
+    </div>
+    <div class="connector">&#9660;</div>
+    <div class="tier driver" style="text-align:center;padding:12px 20px;">
+      <span class="tier-label">4</span>
+      <div style="color:#5eead4;font-weight:500;font-size:13px;margin-top:6px;">Dimension Filters → Measure Filters</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Standard filters on the Filters shelf</div>
+    </div>
+    <div class="connector">&#9660;</div>
+    <div class="tier storage" style="text-align:center;padding:12px 20px;">
+      <span class="tier-label">5</span>
+      <div style="color:#86efac;font-weight:500;font-size:13px;margin-top:6px;">Table Calculation Filters</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied last — hides marks but doesn't change the underlying calculation</div>
+    </div>
+  </div>
+
+  <h3>Parameters</h3>
+  <p>Parameters are user-input variables. Unlike filters, they don't directly filter data — they're used in calculations, reference lines, and dynamic controls.</p>
+
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Dynamic Measure Selector</h4>
+      <p>Let users choose which measure to display (Sales, Profit, Quantity) using a parameter + calculated field.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Dynamic Top N</h4>
+      <p>Parameter controls how many items to show (Top 5, Top 10, etc.). Combined with an index() or RANK().</p>
+    </div>
+    <div class="card amber-border">
+      <h4>Reference Lines</h4>
+      <p>Use a parameter as a target/threshold line. Users can adjust the target value interactively.</p>
+    </div>
+    <div class="card purple-border">
+      <h4>Date Range</h4>
+      <p>Start/End date parameters let users define custom date ranges beyond built-in filter options.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
+<div id="s7" class="section">
+  <h2>Calculated <span>Fields</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 5 min</span><span>&#128204; Module 07</span><span>&#127891; Intermediate</span>
+  </div>
+
+  <h3>Types of Calculations</h3>
+  <div class="card-grid-3">
+    <div class="card accent-border">
+      <h4>Row-Level</h4>
+      <p>Calculated per row before aggregation. Example: <code>[Sales] - [Cost]</code></p>
+    </div>
+    <div class="card green-border">
+      <h4>Aggregate</h4>
+      <p>Uses aggregate functions. Example: <code>SUM([Sales]) / SUM([Quantity])</code></p>
+    </div>
+    <div class="card purple-border">
+      <h4>Table Calculation</h4>
+      <p>Computed after aggregation in the view. Example: Running total, percent of total.</p>
+    </div>
+  </div>
+
+  <h3>Commonly Used Calculations</h3>
+<pre><span class="cm">// Profit Ratio</span>
+<span class="fn">SUM</span>([Profit]) / <span class="fn">SUM</span>([Sales])
+
+<span class="cm">// Year-over-Year Growth</span>
+(<span class="fn">SUM</span>([Sales]) - <span class="fn">LOOKUP</span>(<span class="fn">SUM</span>([Sales]), <span class="num">-1</span>))
+  / <span class="fn">ABS</span>(<span class="fn">LOOKUP</span>(<span class="fn">SUM</span>([Sales]), <span class="num">-1</span>))
+
+<span class="cm">// Dynamic Measure (with Parameter)</span>
+<span class="kw">CASE</span> [Measure Selector Parameter]
+  <span class="kw">WHEN</span> <span class="str">"Sales"</span>    <span class="kw">THEN</span> <span class="fn">SUM</span>([Sales])
+  <span class="kw">WHEN</span> <span class="str">"Profit"</span>   <span class="kw">THEN</span> <span class="fn">SUM</span>([Profit])
+  <span class="kw">WHEN</span> <span class="str">"Quantity"</span> <span class="kw">THEN</span> <span class="fn">SUM</span>([Quantity])
+<span class="kw">END</span>
+
+<span class="cm">// IF / ELSE</span>
+<span class="kw">IF</span> [Profit] &gt; <span class="num">0</span> <span class="kw">THEN</span> <span class="str">"Profitable"</span>
+<span class="kw">ELSEIF</span> [Profit] = <span class="num">0</span> <span class="kw">THEN</span> <span class="str">"Break Even"</span>
+<span class="kw">ELSE</span> <span class="str">"Loss"</span>
+<span class="kw">END</span>
+
+<span class="cm">// Date: Fiscal Year (starting April)</span>
+<span class="kw">IF</span> <span class="fn">MONTH</span>([Order Date]) &gt;= <span class="num">4</span>
+<span class="kw">THEN</span> <span class="fn">YEAR</span>([Order Date])
+<span class="kw">ELSE</span> <span class="fn">YEAR</span>([Order Date]) - <span class="num">1</span>
+<span class="kw">END</span></pre>
+
+  <h3>String Functions</h3>
+<pre><span class="fn">CONTAINS</span>([Product Name], <span class="str">"Widget"</span>)  <span class="cm">// Boolean check</span>
+<span class="fn">LEFT</span>([ID], <span class="num">3</span>)                       <span class="cm">// First 3 characters</span>
+<span class="fn">SPLIT</span>([Full Name], <span class="str">" "</span>, <span class="num">1</span>)           <span class="cm">// First word</span>
+<span class="fn">REPLACE</span>([Code], <span class="str">"-"</span>, <span class="str">""</span>)            <span class="cm">// Remove dashes</span>
+<span class="fn">TRIM</span>(<span class="fn">UPPER</span>([Category]))              <span class="cm">// Clean &amp; uppercase</span></pre>
+</div>
+
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
+<div id="s8" class="section">
+  <h2>Table <span>Calculations</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 5 min</span><span>&#128204; Module 08</span><span>&#127891; Intermediate</span>
+  </div>
+
+  <p>Table calculations are computed <strong>after</strong> the query returns results. They operate on the aggregated values already in the view — not on raw data.</p>
+
+  <h3>Key Table Calculations</h3>
+  <table>
+    <tr><th>Calculation</th><th>What It Does</th><th>Example</th></tr>
+    <tr><td><strong>Running Total</strong></td><td>Cumulative sum across marks</td><td>Cumulative sales over months</td></tr>
+    <tr><td><strong>Percent of Total</strong></td><td>Each mark as % of all marks</td><td>Category share of total sales</td></tr>
+    <tr><td><strong>Difference</strong></td><td>Change from previous mark</td><td>Month-over-month change</td></tr>
+    <tr><td><strong>Percent Difference</strong></td><td>% change from previous mark</td><td>Growth rate</td></tr>
+    <tr><td><strong>Moving Average</strong></td><td>Average of N surrounding values</td><td>3-month moving average</td></tr>
+    <tr><td><strong>RANK</strong></td><td>Rank marks by a measure</td><td>Top performing products</td></tr>
+    <tr><td><strong>INDEX</strong></td><td>Sequential number per mark</td><td>Row numbering</td></tr>
+  </table>
+
+  <h3>Addressing &amp; Partitioning</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Addressing (Compute Using)</h4>
+      <p>The direction the calculation moves through. "Table across" = left to right. "Table down" = top to bottom.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Partitioning</h4>
+      <p>Defines the scope/group for the calculation. The calc restarts at each partition boundary.</p>
+    </div>
+  </div>
+
+<pre><span class="cm">// Running Sum (across months, restarting per category)</span>
+<span class="fn">RUNNING_SUM</span>(<span class="fn">SUM</span>([Sales]))
+<span class="cm">// Addressing: Month (compute using)</span>
+<span class="cm">// Partitioning: Category (restarts for each)</span>
+
+<span class="cm">// Rank within each region</span>
+<span class="fn">RANK</span>(<span class="fn">SUM</span>([Sales]))
+<span class="cm">// Address across products, partition by region</span></pre>
+</div>
+
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
+<div id="s9" class="section">
+  <h2>LOD <span>Expressions</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 5 min</span><span>&#128204; Module 09</span><span>&#127891; Advanced</span>
+  </div>
+
+  <p><strong>Level of Detail (LOD) Expressions</strong> let you compute aggregations at a different granularity than what's in the view. They're computed at the data source level, before view-level filters.</p>
+
+  <h3>LOD Types</h3>
+  <div class="card-grid-3">
+    <div class="card accent-border">
+      <h4>FIXED</h4>
+      <p>Compute at a specific level, ignoring the view's level of detail. Most commonly used.</p>
+    </div>
+    <div class="card green-border">
+      <h4>INCLUDE</h4>
+      <p>Add a dimension to the view's level of detail. Makes the calculation more granular.</p>
+    </div>
+    <div class="card amber-border">
+      <h4>EXCLUDE</h4>
+      <p>Remove a dimension from the view's level of detail. Makes the calculation less granular.</p>
+    </div>
+  </div>
+
+  <h3>Syntax &amp; Examples</h3>
+<pre><span class="cm">// FIXED: Total sales per customer (regardless of view)</span>
+{ <span class="kw">FIXED</span> [Customer ID] : <span class="fn">SUM</span>([Sales]) }
+
+<span class="cm">// FIXED: First purchase date per customer</span>
+{ <span class="kw">FIXED</span> [Customer ID] : <span class="fn">MIN</span>([Order Date]) }
+
+<span class="cm">// INCLUDE: Average sales per order per category</span>
+{ <span class="kw">INCLUDE</span> [Order ID] : <span class="fn">SUM</span>([Sales]) }
+<span class="cm">// Then wrap with AVG() to get avg order value per category</span>
+
+<span class="cm">// EXCLUDE: Category sales as % of total</span>
+<span class="fn">SUM</span>([Sales]) / <span class="fn">SUM</span>({ <span class="kw">EXCLUDE</span> [Category] : <span class="fn">SUM</span>([Sales]) })
+
+<span class="cm">// Cohort analysis: assign each customer to their first order month</span>
+{ <span class="kw">FIXED</span> [Customer ID] : <span class="fn">MIN</span>(<span class="fn">DATETRUNC</span>(<span class="str">'month'</span>, [Order Date])) }</pre>
+
+  <div class="callout warn">
+    <span class="icon">&#9888;</span>
+    <p><strong>Filter Interaction:</strong> FIXED LODs are computed <em>before</em> dimension filters (but after context filters). If you need a FIXED calculation to respect a filter, add that filter as a <strong>context filter</strong>.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
+<div id="s10" class="section">
+  <h2>Dashboards & <span>Stories</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 5 min</span><span>&#128204; Module 10</span><span>&#127891; Advanced</span>
+  </div>
+
+  <h3>Dashboard Design Principles</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Purpose First</h4>
+      <p>Start with the question: "What decision will this dashboard help make?" Every element should earn its place.</p>
+    </div>
+    <div class="card green-border">
+      <h4>5-Second Rule</h4>
+      <p>A user should understand the main insight within 5 seconds. Use clear titles, KPIs at the top, and visual hierarchy.</p>
+    </div>
+    <div class="card amber-border">
+      <h4>Limit to 3-4 Views</h4>
+      <p>Don't overcrowd. Each view should answer one question. Use drill-down or navigation for more detail.</p>
+    </div>
+    <div class="card purple-border">
+      <h4>Consistent Formatting</h4>
+      <p>Same colors, fonts, and layout patterns. Use the same color for the same measure across all views.</p>
+    </div>
+  </div>
+
+  <h3>Dashboard Actions</h3>
+  <table>
+    <tr><th>Action Type</th><th>Behavior</th><th>Use Case</th></tr>
+    <tr><td><strong>Filter</strong></td><td>Click a mark in one sheet to filter all other sheets</td><td>Click a bar to drill into detail</td></tr>
+    <tr><td><strong>Highlight</strong></td><td>Gray out non-related marks</td><td>Hover to spotlight a category</td></tr>
+    <tr><td><strong>URL</strong></td><td>Opens a web page</td><td>Link to external documentation</td></tr>
+    <tr><td><strong>Go to Sheet</strong></td><td>Navigate to another dashboard/sheet</td><td>Build multi-page navigation</td></tr>
+    <tr><td><strong>Set Action</strong></td><td>User selection populates a set</td><td>Dynamic "compare to" analysis</td></tr>
+    <tr><td><strong>Parameter Action</strong></td><td>Click to update a parameter value</td><td>Click a bar to set a reference target</td></tr>
+  </table>
+
+  <h3>Stories</h3>
+  <p>A <strong>Story</strong> is a sequence of dashboards/sheets (story points) arranged to present a guided narrative. Think of it like a slide deck where each slide is an interactive Tableau view.</p>
+</div>
+
+<!-- ═══════════════════ SECTION 11 ═══════════════════ -->
+<div id="s11" class="section">
+  <h2>Performance & <span>Best Practices</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 4 min</span><span>&#128204; Module 11</span><span>&#127891; Advanced</span>
+  </div>
+
+  <h3>Performance Optimization</h3>
+  <table>
+    <tr><th>#</th><th>Strategy</th><th>Impact</th></tr>
+    <tr><td><strong>1</strong></td><td>Use Extracts instead of live connections</td><td>&#128308; High</td></tr>
+    <tr><td><strong>2</strong></td><td>Reduce row count at the source (filter early)</td><td>&#128308; High</td></tr>
+    <tr><td><strong>3</strong></td><td>Hide unused fields from the data source</td><td>&#128993; Medium</td></tr>
+    <tr><td><strong>4</strong></td><td>Use FIXED LODs over INCLUDE/EXCLUDE when possible</td><td>&#128993; Medium</td></tr>
+    <tr><td><strong>5</strong></td><td>Limit the number of marks rendered (< 10K ideal)</td><td>&#128308; High</td></tr>
+    <tr><td><strong>6</strong></td><td>Use context filters for dependent filters</td><td>&#128993; Medium</td></tr>
+    <tr><td><strong>7</strong></td><td>Avoid blending — use joins or relationships instead</td><td>&#128993; Medium</td></tr>
+    <tr><td><strong>8</strong></td><td>Use Performance Recorder (Help → Settings → Start Performance Recording)</td><td>&#128993; Diagnostics</td></tr>
+  </table>
+
+  <h3>Design Best Practices</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Use Relationships (not Joins)</h4>
+      <p>Tableau's relationship model (introduced in 2020.2) is smarter about aggregation and avoids unnecessary joins.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Publish Data Sources</h4>
+      <p>Centralize data definitions on Server/Cloud. Consistent field names, calculations, and security.</p>
+    </div>
+    <div class="card amber-border">
+      <h4>Name Fields Clearly</h4>
+      <p>Rename fields to business-friendly names. Use folders to organize. Add comments on complex calcs.</p>
+    </div>
+    <div class="card purple-border">
+      <h4>Dashboard Sizing</h4>
+      <p>Use "Automatic" or "Range" sizing for responsive dashboards. Design for the smallest target screen first.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 12 ═══════════════════ -->
+<div id="s12" class="section">
+  <h2>Tableau Server / <span>Cloud</span></h2>
+  <div class="section-meta">
+    <span>&#9201; 4 min</span><span>&#128204; Module 12</span><span>&#127891; Platform</span>
+  </div>
+
+  <h3>Server vs Cloud</h3>
+  <div class="card-grid">
+    <div class="card accent-border">
+      <h4>Tableau Server</h4>
+      <p>Self-hosted on your infrastructure (Windows/Linux). Full control over hardware, security, and networking. You manage upgrades.</p>
+    </div>
+    <div class="card green-border">
+      <h4>Tableau Cloud</h4>
+      <p>Fully managed SaaS by Salesforce. No infrastructure to manage. Automatic updates. Per-user pricing.</p>
+    </div>
+  </div>
+
+  <h3>Key Platform Features</h3>
+  <table>
+    <tr><th>Feature</th><th>Description</th></tr>
+    <tr><td><strong>Publishing</strong></td><td>Publish workbooks and data sources from Desktop to Server/Cloud</td></tr>
+    <tr><td><strong>Scheduling</strong></td><td>Schedule extract refreshes (full or incremental) and subscription emails</td></tr>
+    <tr><td><strong>Row-Level Security</strong></td><td>Filter data based on the logged-in user. Use <code>USERNAME()</code> or <code>ISMEMBEROF()</code></td></tr>
+    <tr><td><strong>Data Governance</strong></td><td>Certified data sources, data quality warnings, lineage tracking</td></tr>
+    <tr><td><strong>Permissions</strong></td><td>Project → Workbook → View level permissions. Lock or inherit from parent.</td></tr>
+    <tr><td><strong>Prep Conductor</strong></td><td>Schedule Tableau Prep flows on Server (requires Data Management add-on)</td></tr>
+  </table>
+
+  <h3>Row-Level Security Example</h3>
+<pre><span class="cm">// Calculated field for RLS</span>
+[Region Manager] = <span class="fn">USERNAME</span>()
+
+<span class="cm">// Or group-based</span>
+<span class="fn">ISMEMBEROF</span>(<span class="str">"North America Team"</span>)</pre>
+
+  <div class="callout tip">
+    <span class="icon">&#128161;</span>
+    <p><strong>Tip:</strong> Use <strong>published data sources</strong> with embedded RLS. This way, security is enforced regardless of which workbook connects to the data.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 13 ═══════════════════ -->
+<div id="s13" class="section">
+  <h2>Cheat <span>Sheet</span></h2>
+  <div class="section-meta">
+    <span>&#128204; Quick Reference</span>
+  </div>
+
+  <h3>Date Functions</h3>
+<pre><span class="fn">YEAR</span>([Date])                   <span class="cm">// Extract year</span>
+<span class="fn">MONTH</span>([Date])                  <span class="cm">// Extract month (1-12)</span>
+<span class="fn">DATETRUNC</span>(<span class="str">'month'</span>, [Date])     <span class="cm">// First day of month</span>
+<span class="fn">DATEDIFF</span>(<span class="str">'day'</span>, [Start], [End])<span class="cm">// Days between dates</span>
+<span class="fn">DATEADD</span>(<span class="str">'month'</span>, <span class="num">3</span>, [Date])    <span class="cm">// Add 3 months</span>
+<span class="fn">DATENAME</span>(<span class="str">'weekday'</span>, [Date])    <span class="cm">// Day name ("Monday")</span>
+<span class="fn">TODAY</span>()                        <span class="cm">// Current date</span>
+<span class="fn">NOW</span>()                          <span class="cm">// Current date+time</span></pre>
+
+  <h3>String Functions</h3>
+<pre><span class="fn">CONTAINS</span>([Name], <span class="str">"Corp"</span>)       <span class="cm">// Boolean match</span>
+<span class="fn">LEFT</span>([Code], <span class="num">3</span>)                <span class="cm">// First N chars</span>
+<span class="fn">RIGHT</span>([Code], <span class="num">4</span>)               <span class="cm">// Last N chars</span>
+<span class="fn">MID</span>([Code], <span class="num">2</span>, <span class="num">5</span>)              <span class="cm">// Substring</span>
+<span class="fn">REPLACE</span>([Text],<span class="str">"-"</span>,<span class="str">""</span>)         <span class="cm">// Remove dashes</span>
+<span class="fn">SPLIT</span>([Name], <span class="str">" "</span>, <span class="num">1</span>)          <span class="cm">// First word</span>
+<span class="fn">TRIM</span>(<span class="fn">UPPER</span>([Code]))             <span class="cm">// Clean + uppercase</span>
+<span class="fn">LEN</span>([Description])              <span class="cm">// String length</span></pre>
+
+  <h3>LOD Quick Reference</h3>
+<pre>{ <span class="kw">FIXED</span> [Dim] : <span class="fn">AGG</span>([Measure]) }     <span class="cm">// Compute at Dim level</span>
+{ <span class="kw">INCLUDE</span> [Dim] : <span class="fn">AGG</span>([Measure]) }   <span class="cm">// Add Dim to view LOD</span>
+{ <span class="kw">EXCLUDE</span> [Dim] : <span class="fn">AGG</span>([Measure]) }   <span class="cm">// Remove Dim from view LOD</span>
+{ <span class="fn">AGG</span>([Measure]) }                    <span class="cm">// Table-scoped (no dims)</span></pre>
+
+  <h3>Table Calculation Functions</h3>
+<pre><span class="fn">RUNNING_SUM</span>(<span class="fn">SUM</span>([Sales]))       <span class="cm">// Cumulative total</span>
+<span class="fn">RUNNING_AVG</span>(<span class="fn">SUM</span>([Sales]))       <span class="cm">// Cumulative average</span>
+<span class="fn">WINDOW_SUM</span>(<span class="fn">SUM</span>([Sales]))        <span class="cm">// Sum across entire partition</span>
+<span class="fn">WINDOW_AVG</span>(<span class="fn">SUM</span>([Sales]),<span class="num">-2</span>,<span class="num">0</span>)  <span class="cm">// 3-period moving avg</span>
+<span class="fn">RANK</span>(<span class="fn">SUM</span>([Sales]))               <span class="cm">// Rank marks</span>
+<span class="fn">INDEX</span>()                         <span class="cm">// Row number</span>
+<span class="fn">FIRST</span>()                         <span class="cm">// Offset from first mark</span>
+<span class="fn">LAST</span>()                          <span class="cm">// Offset from last mark</span>
+<span class="fn">LOOKUP</span>(<span class="fn">SUM</span>([Sales]), <span class="num">-1</span>)        <span class="cm">// Previous period value</span>
+<span class="fn">ZN</span>(<span class="fn">LOOKUP</span>(<span class="fn">SUM</span>([Sales]),<span class="num">-1</span>))     <span class="cm">// Previous (null-safe)</span></pre>
+
+  <h3>Logical Functions</h3>
+<pre><span class="kw">IF</span> [X] &gt; <span class="num">0</span> <span class="kw">THEN</span> <span class="str">"Pos"</span> <span class="kw">ELSE</span> <span class="str">"Neg"</span> <span class="kw">END</span>
+<span class="fn">IIF</span>([X] &gt; <span class="num">0</span>, <span class="str">"Pos"</span>, <span class="str">"Neg"</span>)               <span class="cm">// Inline IF</span>
+<span class="kw">CASE</span> [Region]
+  <span class="kw">WHEN</span> <span class="str">"East"</span> <span class="kw">THEN</span> <span class="num">1</span>
+  <span class="kw">WHEN</span> <span class="str">"West"</span> <span class="kw">THEN</span> <span class="num">2</span>
+  <span class="kw">ELSE</span> <span class="num">3</span>
+<span class="kw">END</span>
+<span class="fn">ZN</span>([Value])                              <span class="cm">// Replace null with 0</span>
+<span class="fn">IFNULL</span>([Value], <span class="str">"N/A"</span>)                  <span class="cm">// Replace null</span></pre>
+</div>
+
+<!-- ═══════════════════ SECTION 14 ═══════════════════ -->
+<div id="s14" class="section">
+  <h2>Knowledge <span>Check</span></h2>
+  <div class="section-meta">
+    <span>&#128204; Quiz</span><span>&#127891; 8 Questions</span>
+  </div>
+  <p>Score: <strong id="score-display">0 / 8</strong></p>
+
+  <div class="quiz-q">
+    <div class="qtext">1. What is the difference between a Dimension and a Measure in Tableau?</div>
+    <div class="quiz-option" onclick="answer(this,false,'Dimensions are categorical (qualitative), Measures are numeric (quantitative).')">Dimensions are numeric, Measures are categorical</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Dimensions are qualitative (categories), Measures are quantitative (numbers that get aggregated).')">Dimensions are categorical, Measures are numeric</div>
+    <div class="quiz-option" onclick="answer(this,false,'Both can be used on any shelf, but they behave differently.')">There is no difference — they can be used interchangeably</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="qtext">2. Which LOD expression computes at a specific grain regardless of the view?</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! FIXED computes at the specified dimension level, ignoring the view.')">FIXED</div>
+    <div class="quiz-option" onclick="answer(this,false,'INCLUDE adds dimensions to the view level — it does not ignore the view.')">INCLUDE</div>
+    <div class="quiz-option" onclick="answer(this,false,'EXCLUDE removes dimensions — it still depends on the view\'s LOD.')">EXCLUDE</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="qtext">3. In the filter order of operations, which filter type runs first?</div>
+    <div class="quiz-option" onclick="answer(this,false,'Dimension filters run in the middle of the order.')">Dimension Filters</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Extract filters run first — they limit data at the extraction stage.')">Extract Filters</div>
+    <div class="quiz-option" onclick="answer(this,false,'Context filters run after extract and data source filters.')">Context Filters</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="qtext">4. What does a Blue (discrete) pill create in the view?</div>
+    <div class="quiz-option" onclick="answer(this,false,'Green (continuous) pills create axes.')">An axis</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Discrete (blue) pills create individual headers for each value.')">Individual headers</div>
+    <div class="quiz-option" onclick="answer(this,false,'Filters are created from the Filters shelf, not pill color.')">A filter</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="qtext">5. Which is faster for dashboards: Live Connection or Extract?</div>
+    <div class="quiz-option" onclick="answer(this,false,'Live connections query the database each time — slower for most dashboards.')">Live Connection</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Extracts use the Hyper engine (columnar, in-memory) — much faster for analytics.')">Extract (.hyper)</div>
+    <div class="quiz-option" onclick="answer(this,false,'It depends on the scenario, but Extracts are faster for the vast majority of dashboards.')">They perform the same</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="qtext">6. What is the Marks Card used for?</div>
+    <div class="quiz-option" onclick="answer(this,false,'Data connections are managed in the Data pane, not the Marks card.')">Managing data connections</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! The Marks Card controls visual properties: Color, Size, Shape, Label, Detail, and Tooltip.')">Controlling visual properties of marks (color, size, shape, etc.)</div>
+    <div class="quiz-option" onclick="answer(this,false,'Filters are applied from the Filters shelf.')">Filtering data</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="qtext">7. When are Table Calculations computed?</div>
+    <div class="quiz-option" onclick="answer(this,false,'LOD expressions are computed at the data source level, not table calculations.')">Before the query runs</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Table calculations are computed after the aggregate query returns — they operate on the values already in the view.')">After aggregation, on the results in the view</div>
+    <div class="quiz-option" onclick="answer(this,false,'They are not computed per row — they work on aggregated values in the view.')">Row by row during data processing</div>
+  </div>
+
+  <div class="quiz-q">
+    <div class="qtext">8. How do you implement Row-Level Security in Tableau?</div>
+    <div class="quiz-option" onclick="answer(this,false,'Hiding sheets controls navigation, not data security.')">Hide sheets from certain users</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Create a calculated field using USERNAME() or ISMEMBEROF() and use it as a data source filter.')">Calculated field with USERNAME() used as a data source filter</div>
+    <div class="quiz-option" onclick="answer(this,false,'Permissions control workbook/view access, not row-level data filtering.')">Set permission levels on the workbook</div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function show(id, link) {
+  document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('nav a').forEach(function(a) { a.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  link.classList.add('active');
+  window.scrollTo(0, 0);
+  return false;
+}
+
+var correctCount = 0;
+function answer(el, isCorrect, explanation) {
+  var qEl = el.closest('.quiz-q');
+  if (qEl.dataset.answered) return;
+  qEl.dataset.answered = '1';
+  qEl.querySelectorAll('.quiz-option').forEach(function(opt) {
+    opt.style.pointerEvents = 'none';
+    opt.style.opacity = '0.5';
+  });
+  el.style.opacity = '1';
+  el.classList.add(isCorrect ? 'correct' : 'wrong');
+  if (isCorrect) correctCount++;
+  var fb = document.createElement('div');
+  fb.style.color = isCorrect ? 'var(--green)' : 'var(--coral)';
+  fb.style.fontSize = '13px';
+  fb.style.marginTop = '10px';
+  fb.style.padding = '10px 14px';
+  fb.style.background = isCorrect ? 'rgba(52,211,153,0.06)' : 'rgba(248,113,113,0.06)';
+  fb.style.borderRadius = '6px';
+  fb.style.border = '1px solid ' + (isCorrect ? 'rgba(52,211,153,0.2)' : 'rgba(248,113,113,0.2)');
+  fb.textContent = explanation;
+  qEl.appendChild(fb);
+  document.getElementById('score-display').textContent = correctCount + ' / 8';
+}
+</script>
+</body>
+</html>
