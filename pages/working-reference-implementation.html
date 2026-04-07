@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Working Reference Implementation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0f1117;
+  --bg2: #161b27;
+  --bg3: #1e2535;
+  --bg4: #252d40;
+  --border: #2d3650;
+  --border2: #3d4f70;
+  --text: #e2e8f5;
+  --text2: #94a3c0;
+  --text3: #5c6f94;
+  --accent: #22c55e;
+  --accent2: #4facf7;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --coral: #f87171;
+  --purple: #a78bfa;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.7; }
+.shell { display: flex; min-height: 100vh; margin-top: 40px; }
+.home-bar { position: fixed; top: 0; left: 0; right: 0; height: 40px; background: var(--bg2); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; z-index: 999; }
+.home-bar a { color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 500; }
+.home-bar a:hover { color: var(--text); }
+nav { width: 280px; min-width: 280px; background: var(--bg2); border-right: 1px solid var(--border); padding: 0 0 40px; position: sticky; top: 40px; height: calc(100vh - 40px); overflow-y: auto; }
+.nav-logo { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+.badge { display: inline-block; font-family: var(--mono); font-size: 10px; background: var(--accent); color: #06210f; padding: 2px 8px; border-radius: 3px; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.08em; }
+.nav-logo h1 { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
+.nav-section { padding: 4px 20px 2px; font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 14px; }
+nav a { display: flex; align-items: center; gap: 8px; padding: 7px 20px; color: var(--text2); text-decoration: none; font-size: 13px; border-left: 2px solid transparent; }
+nav a:hover { color: var(--text); background: var(--bg3); }
+nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(34,197,94,0.07); }
+nav a .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+nav a.active .dot { background: var(--accent); }
+main { flex: 1; padding: 48px 56px; max-width: 1040px; }
+.section { display: none; }
+.section.active { display: block; }
+h2 { font-size: 30px; font-weight: 300; margin-bottom: 6px; letter-spacing: -0.02em; }
+h2 span { color: var(--accent); font-weight: 500; }
+.section-meta { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-bottom: 32px; display: flex; gap: 20px; flex-wrap: wrap; }
+h3 { font-size: 17px; font-weight: 500; margin: 36px 0 14px; padding-left: 12px; border-left: 3px solid var(--accent); }
+h4 { font-size: 14px; font-weight: 600; color: var(--accent); margin: 0 0 8px; font-family: var(--mono); letter-spacing: 0.03em; }
+p { color: var(--text2); margin-bottom: 14px; }
+strong { color: var(--text); font-weight: 500; }
+main a { color: var(--accent2); text-decoration: none; }
+main a:hover { text-decoration: underline; }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+.card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
+.card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+.accent-border { border-left: 3px solid var(--accent); }
+.green-border { border-left: 3px solid var(--green); }
+.amber-border { border-left: 3px solid var(--amber); }
+.purple-border { border-left: 3px solid var(--purple); }
+.coral-border { border-left: 3px solid var(--coral); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+th { background: var(--bg3); color: var(--text); font-weight: 500; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border2); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+.callout { border-radius: 8px; padding: 14px 18px; margin-bottom: 18px; font-size: 13.5px; display: flex; gap: 12px; align-items: flex-start; }
+.callout.tip { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
+.callout.warn { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); }
+.callout.rule { background: rgba(79,172,247,0.08); border: 1px solid rgba(79,172,247,0.2); }
+.arch-diagram { background: #0a0d14; border: 1px solid var(--border); border-radius: 10px; padding: 26px; margin-bottom: 24px; }
+.tier { border: 1px solid; border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; position: relative; }
+.tier.source { border-color: rgba(79,172,247,0.35); background: rgba(79,172,247,0.04); }
+.tier.control { border-color: rgba(167,139,250,0.35); background: rgba(167,139,250,0.04); }
+.tier.compute { border-color: rgba(34,197,94,0.30); background: rgba(34,197,94,0.03); }
+.tier.publish { border-color: rgba(251,191,36,0.30); background: rgba(251,191,36,0.03); }
+.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 500; letter-spacing: 0.08em; background: var(--bg4); color: var(--text); }
+.tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.tool-box { background: var(--bg3); border: 1px solid var(--border2); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: var(--text); }
+.connector { text-align: center; color: var(--text3); font-size: 11px; margin: 6px 0; letter-spacing: 0.05em; }
+pre { background: #0a0d14; border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; color: #c8d6ef; font-family: var(--mono); }
+code { background: var(--bg3); color: var(--accent2); padding: 1px 6px; border-radius: 3px; font-size: 12.5px; font-family: var(--mono); }
+@media (max-width: 900px) { .shell { display: block; } nav { position: relative; width: auto; min-width: 0; height: auto; top: 40px; border-right: none; border-bottom: 1px solid var(--border); } main { padding: 32px 24px 48px; } }
+@media (max-width: 768px) { .card-grid, .card-grid-3 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="home-bar">
+  <a href="../index.html">&#8592; Back to Learning Hub</a>
+</div>
+<div class="shell">
+<nav>
+  <div class="nav-logo">
+    <div class="badge">WORKING EXAMPLE</div>
+    <h1>Working Reference Implementation</h1>
+  </div>
+  <div class="nav-section">Overview</div>
+  <a href="#" class="active" onclick="show('s1',this)"><span class="dot"></span>Implementation Goal</a>
+  <a href="#" onclick="show('s2',this)"><span class="dot"></span>Reference Architecture</a>
+  <div class="nav-section">Build</div>
+  <a href="#" onclick="show('s3',this)"><span class="dot"></span>Control Tables</a>
+  <a href="#" onclick="show('s4',this)"><span class="dot"></span>Transformation Logic</a>
+  <a href="#" onclick="show('s5',this)"><span class="dot"></span>Quality and Audit</a>
+  <div class="nav-section">Operate</div>
+  <a href="#" onclick="show('s6',this)"><span class="dot"></span>Orchestration Flow</a>
+  <a href="#" onclick="show('s7',this)"><span class="dot"></span>Release and Support</a>
+  <a href="#" onclick="show('s8',this)"><span class="dot"></span>Management Value</a>
+</nav>
+<main>
+<div id="s1" class="section active">
+  <h2>Implementation <span>Goal</span></h2>
+  <div class="section-meta"><span>Concrete Example</span><span>End-to-End Delivery</span><span>Execution Proof</span></div>
+  <p>This page turns the architecture story into a concrete build pattern. The example is a certified daily sales data product that ingests ERP, CRM, and e-commerce data, standardizes it, applies business rules, publishes curated outputs, and surfaces operational controls needed for production support.</p>
+  <p>In this reference pattern, bronze, silver, and gold are implemented as Apache Iceberg tables in the data lakehouse so the platform can support schema evolution, partition-aware processing, snapshot-based recovery, and consistent table management across all layers.</p>
+  <p>The notebook walkthrough is still useful as a learning aid, but the actual metadata-driven runtime in this repo now lives in <code>spark/runtime_framework.py</code>, <code>spark/run_pipeline.py</code>, <code>spark/replay_runner.py</code>, and <code>ddl/demo_metadata_framework.sql</code>.</p>
+  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Execution note:</strong> the implementation pattern itself is platform-agnostic. In this repository, the example can be executed locally using the included Spark-Iceberg Docker Compose setup, but Docker is only the demo environment for this repo, not part of the architecture definition. For the local run steps, see the <a href="spark-iceberg-demo-setup.html">Docker Setup page</a>.</p></div>
+  <h3>Business Context</h3>
+  <p>The reference scenario is a daily consolidated sales data product used by finance reporting, supply-chain dashboards, and executive KPI packs. The real challenge is not only integrating multiple systems. It is producing a result that is trustworthy, observable, and repeatable across environments.</p>
+  <div class="card-grid">
+    <div class="card amber-border"><h4>Business Need</h4><p>One certified sales dataset with predictable daily availability, reconciled totals, and clear ownership for downstream reporting.</p></div>
+    <div class="card purple-border"><h4>Engineering Need</h4><p>A pipeline that supports incremental loading, recovery from partial failures, controlled publication, and future onboarding of additional sources without redesign.</p></div>
+  </div>
+  <div class="card-grid">
+    <div class="card accent-border"><h4>What this proves</h4><p>The platform narrative is backed by implementation details: control-driven ingestion, reusable transformations, auditability, quality enforcement, and controlled promotion across environments.</p></div>
+    <div class="card green-border"><h4>What this avoids</h4><p>Purely conceptual architecture. This is meant to show how design principles become operating code and measurable delivery behavior.</p></div>
+  </div>
+  <h3>What This Implementation Should Be</h3>
+  <table>
+    <tr><th>This Page Should Show</th><th>Why It Matters</th></tr>
+    <tr><td><strong>One reusable delivery pattern</strong></td><td>Turns the blueprint into something buildable instead of leaving it at architecture language only.</td></tr>
+    <tr><td><strong>Metadata-driven behavior</strong></td><td>Shows how source onboarding, load mode selection, quality checks, and replay are controlled without custom code per source.</td></tr>
+    <tr><td><strong>Iceberg-backed medallion layers</strong></td><td>Makes the physical implementation explicit: bronze, silver, and gold are managed as Iceberg tables rather than loosely defined folders or unmanaged files.</td></tr>
+    <tr><td><strong>Silver rebuild logic</strong></td><td>Demonstrates how current and history tables are derived from preserved bronze inputs.</td></tr>
+    <tr><td><strong>Operational mechanics</strong></td><td>Shows how validation, replay, promotion, and support are executed in practice.</td></tr>
+  </table>
+  <h3>How This Implements the Blueprint</h3>
+  <table>
+    <tr><th>Blueprint Expectation</th><th>How This Reference Pattern Implements It</th></tr>
+    <tr><td><strong>Reusable ingestion patterns</strong></td><td>Source registration, load modes, watermarks, and validation rules are driven by control metadata instead of pipeline-specific hardcoding.</td></tr>
+    <tr><td><strong>Layered storage model</strong></td><td>Data is landed into bronze, standardized in silver, and published in gold as Iceberg tables so recovery, conformance, and consumption are handled separately with consistent table semantics.</td></tr>
+    <tr><td><strong>Replay and recovery</strong></td><td>Append-preserved bronze, batch tracking, and replay modes allow silver rebuilds and controlled repair without redesigning the pipeline.</td></tr>
+    <tr><td><strong>Audit and quality controls</strong></td><td>Batch-run logging, data-quality checks, reconciliation, and publish gating make support and trust part of the implementation itself.</td></tr>
+    <tr><td><strong>Delivery operating model</strong></td><td>Promotion, environment separation, and support-ready runbooks turn the architecture into a production-capable delivery pattern.</td></tr>
+  </table>
+  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Positioning note:</strong> this is not intended as a full product specification. It is a reference implementation pattern that management and engineering leads can recognize as executable, supportable, and reusable.</p></div>
+</div>
+<div id="s2" class="section">
+  <h2>Reference <span>Architecture</span></h2>
+  <div class="section-meta"><span>Source to Curated</span><span>Control-Driven</span></div>
+  <p>This reference architecture is a lakehouse-style implementation of the enterprise blueprint. It combines platform controls such as orchestration, metadata, audit, and quality with medallion-style data refinement across bronze, silver, and gold layers, all implemented on Apache Iceberg tables.</p>
+  <div class="arch-diagram">
+    <div class="tier source"><span class="tier-label">SOURCES</span><div class="tier-tools"><div class="tool-box">ERP Orders</div><div class="tool-box">CRM Customers</div><div class="tool-box">Web Transactions</div><div class="tool-box">Reference Data</div></div></div>
+    <div class="connector">&#9660; source registration + load mode resolution &#9660;</div>
+    <div class="tier control"><span class="tier-label">CONTROL FRAMEWORK</span><div class="tier-tools"><div class="tool-box">Batch Control</div><div class="tool-box">Watermarks</div><div class="tool-box">Schema Registry</div><div class="tool-box">DQ Rules</div></div></div>
+    <div class="connector">&#9660; extract, standardize, transform &#9660;</div>
+    <div class="tier compute"><span class="tier-label">PROCESSING</span><div class="tier-tools"><div class="tool-box">Spark / SQL</div><div class="tool-box">Bronze Iceberg</div><div class="tool-box">Silver Iceberg</div><div class="tool-box">Gold Iceberg</div></div></div>
+    <div class="connector">&#9660; publish, monitor, reconcile &#9660;</div>
+    <div class="tier publish"><span class="tier-label">CONSUMPTION + OPS</span><div class="tier-tools"><div class="tool-box">Certified Tables</div><div class="tool-box">BI Views</div><div class="tool-box">Audit Dashboards</div><div class="tool-box">Alerts</div></div></div>
+  </div>
+  <h3>Why This Is a Lakehouse Pattern</h3>
+  <table>
+    <tr><th>Architecture Characteristic</th><th>How It Appears Here</th></tr>
+    <tr><td><strong>Shared storage foundation</strong></td><td>Raw, standardized, and curated data are managed as connected layers instead of separate one-off delivery stores.</td></tr>
+    <tr><td><strong>Mixed processing model</strong></td><td>Spark and SQL style processing are both part of the pattern, aligned with orchestration and metadata controls.</td></tr>
+    <tr><td><strong>Governed data reuse</strong></td><td>Certified outputs, quality checks, audit results, and replay controls are built around reusable data assets.</td></tr>
+    <tr><td><strong>Operationalized analytics platform</strong></td><td>The implementation is not just storage plus transforms. It includes release flow, support behavior, and consumption controls.</td></tr>
+  </table>
+  <h3>Why Iceberg Is Used Across Bronze, Silver, and Gold</h3>
+  <table>
+    <tr><th>Layer</th><th>How Iceberg Helps</th></tr>
+    <tr><td><strong>Bronze</strong></td><td>Supports append-preserved landing with partition-aware reads, schema evolution, and snapshot-based recovery for replay and audit.</td></tr>
+    <tr><td><strong>Silver</strong></td><td>Supports deterministic rebuilds, merge/upsert behavior for current tables, and managed history-oriented derivations without relying on unmanaged files.</td></tr>
+    <tr><td><strong>Gold</strong></td><td>Supports stable curated tables with governed schema changes, efficient incremental refresh patterns, and consistent consumer-facing table contracts.</td></tr>
+  </table>
+  <h3>Lakehouse and Medallion Are Related, Not Identical</h3>
+  <table>
+    <tr><th>Concept</th><th>What It Means Here</th></tr>
+    <tr><td><strong>Lakehouse</strong></td><td>The broader platform style combining scalable data storage, transformation, governance, and analytics-oriented consumption on one managed foundation.</td></tr>
+    <tr><td><strong>Medallion architecture</strong></td><td>The data-layering pattern inside that platform, where bronze captures landed source state, silver standardizes and derives reusable structures, and gold publishes curated outputs.</td></tr>
+  </table>
+  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Simple distinction:</strong> lakehouse describes the overall platform architecture, while medallion describes the refinement path of the data inside that architecture. In this page, the implementation uses a lakehouse-style platform with medallion-style layers.</p></div>
+</div>
+<div id="s3" class="section">
+  <h2>Control <span>Tables</span></h2>
+  <div class="section-meta"><span>Metadata-Driven Delivery</span></div>
+  <p>A working reference implementation should not hardcode every source in orchestration logic. It should read source intent, load mode, table format, schema expectations, and quality rules from control tables.</p>
+  <h3>Source Registration Example</h3>
+<pre>CREATE TABLE demo.ctl.source_registration (
+    source_name STRING,
+    domain_name STRING,
+    source_type STRING,
+    source_object STRING,
+    enabled BOOLEAN,
+    load_mode STRING,
+    base_extract_sql STRING,
+    watermark_column STRING,
+    watermark_type STRING,
+    primary_keys ARRAY&lt;STRING&gt;,
+    sequence_column STRING,
+    delete_indicator_column STRING,
+    bronze_table STRING,
+    silver_current_table STRING,
+    silver_history_table STRING,
+    gold_table STRING,
+    silver_transform_name STRING,
+    gold_publish_name STRING,
+    quality_rule_set STRING,
+    replay_mode_default STRING,
+    options_json STRING,
+    last_successful_watermark STRING,
+    last_batch_id BIGINT,
+    created_ts TIMESTAMP,
+    updated_ts TIMESTAMP
+);</pre>
+  <h3>Batch Run Control Example</h3>
+<pre>CREATE TABLE demo.ctl.pipeline_run (
+    batch_id BIGINT,
+    source_name STRING,
+    run_mode STRING,
+    run_status STRING,
+    requested_by STRING,
+    replay_request_id BIGINT,
+    run_start_ts TIMESTAMP,
+    run_end_ts TIMESTAMP,
+    rows_read BIGINT,
+    bronze_rows_written BIGINT,
+    silver_rows_written BIGINT,
+    gold_rows_written BIGINT,
+    quality_status STRING,
+    watermark_value STRING,
+    error_message STRING
+);</pre>
+  <h3>Example Source Registration Rows</h3>
+  <p>The seeded demo metadata now covers five source tables. The runtime can loop through all active sources, while the page keeps <strong>customer</strong> as the detailed walkthrough.</p>
+  <table>
+    <tr><th>Source</th><th>Load Mode</th><th>Bronze Target</th><th>Silver Targets</th><th>Gold Target</th></tr>
+    <tr><td><strong>customer</strong></td><td>INCREMENTAL_TS</td><td>demo.bronze.customer_incremental_iceberg</td><td>demo.silver.customer_current_iceberg<br>demo.silver.customer_history_iceberg</td><td>demo.gold.customer_serving_iceberg</td></tr>
+    <tr><td><strong>orders</strong></td><td>INCREMENTAL_TS</td><td>demo.bronze.orders_incremental_iceberg</td><td>demo.silver.orders_current_iceberg<br>demo.silver.orders_history_iceberg</td><td>demo.gold.orders_serving_iceberg</td></tr>
+    <tr><td><strong>product</strong></td><td>FULL</td><td>demo.bronze.product_snapshot_iceberg</td><td>demo.silver.product_current_iceberg<br>demo.silver.product_history_iceberg</td><td>demo.gold.product_serving_iceberg</td></tr>
+    <tr><td><strong>invoice</strong></td><td>INCREMENTAL_TS</td><td>demo.bronze.invoice_incremental_iceberg</td><td>demo.silver.invoice_current_iceberg<br>demo.silver.invoice_history_iceberg</td><td>demo.gold.invoice_serving_iceberg</td></tr>
+    <tr><td><strong>shipment</strong></td><td>INCREMENTAL_TS</td><td>demo.bronze.shipment_incremental_iceberg</td><td>demo.silver.shipment_current_iceberg<br>demo.silver.shipment_history_iceberg</td><td>demo.gold.shipment_serving_iceberg</td></tr>
+  </table>
+<pre>SELECT source_name, load_mode, bronze_table, silver_current_table, gold_table
+FROM demo.ctl.source_registration
+ORDER BY source_name;
+
+customer | INCREMENTAL_TS | demo.bronze.customer_incremental_iceberg | demo.silver.customer_current_iceberg | demo.gold.customer_serving_iceberg
+invoice  | INCREMENTAL_TS | demo.bronze.invoice_incremental_iceberg  | demo.silver.invoice_current_iceberg  | demo.gold.invoice_serving_iceberg
+orders   | INCREMENTAL_TS | demo.bronze.orders_incremental_iceberg   | demo.silver.orders_current_iceberg   | demo.gold.orders_serving_iceberg
+product  | FULL           | demo.bronze.product_snapshot_iceberg     | demo.silver.product_current_iceberg  | demo.gold.product_serving_iceberg
+shipment | INCREMENTAL_TS | demo.bronze.shipment_incremental_iceberg | demo.silver.shipment_current_iceberg | demo.gold.shipment_serving_iceberg</pre>
+  <h3>Example Replay Request Row</h3>
+<pre>CREATE TABLE demo.ctl.replay_request (
+    replay_request_id BIGINT,
+    source_name STRING,
+    replay_mode STRING,
+    start_watermark STRING,
+    end_watermark STRING,
+    entity_predicate STRING,
+    snapshot_id BIGINT,
+    target_table STRING,
+    requested_by STRING,
+    request_status STRING,
+    requested_ts TIMESTAMP,
+    started_ts TIMESTAMP,
+    completed_ts TIMESTAMP,
+    notes STRING
+);</pre>
+  <h3>Reusable Ingestion Pattern Matrix</h3>
+  <table>
+    <tr><th>load_mode</th><th>How the Same Framework Behaves</th></tr>
+    <tr><td><strong>FULL</strong></td><td>Truncates or snapshots target state according to source configuration and reloads the entire source set.</td></tr>
+    <tr><td><strong>INCREMENTAL_TS</strong></td><td>Uses configured watermark columns and appends each changed extracted version into bronze Iceberg tables.</td></tr>
+    <tr><td><strong>CDC</strong></td><td>Reads ordered change events, preserves operation type and sequence metadata, and derives current/history in silver Iceberg tables.</td></tr>
+    <tr><td><strong>FILE</strong></td><td>Validates file naming, schema, and checksum rules before landing data into bronze Iceberg tables and starting standardization.</td></tr>
+    <tr><td><strong>EVENT</strong></td><td>Uses checkpointing and event offsets while preserving replayability by partition or event window.</td></tr>
+  </table>
+  <h3>What Iceberg Does and Does Not Do</h3>
+  <table>
+    <tr><th>Concern</th><th>Iceberg Helps With</th><th>Iceberg Does Not Replace</th></tr>
+    <tr><td><strong>CDC handling</strong></td><td>Efficient storage of landed change data, merge operations, snapshot history, and table-level recovery behavior.</td><td>Source-side CDC capture. If the source does not emit ordered change events, Iceberg does not invent them for you.</td></tr>
+    <tr><td><strong>Location change example</strong></td><td>Preserving both extracted versions, such as London and later Bangalore, when the bronze landing appends each extract into Iceberg.</td><td>Guaranteeing every intermediate source event unless the upstream extraction pattern is true CDC.</td></tr>
+    <tr><td><strong>Replay</strong></td><td>Snapshot-aware restore options, table versioning semantics, and governed overwrite or merge behavior.</td><td>The need for a defined replay design based on preserved bronze inputs, business keys, and ordering metadata.</td></tr>
+  </table>
+  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Why it matters:</strong> once control metadata exists, onboarding a new source becomes mostly configuration and validation rather than copy-paste pipeline construction.</p></div>
+  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Repo alignment:</strong> the control model shown here now exists as runnable DDL in <code>ddl/demo_metadata_framework.sql</code> for the <code>demo</code> Iceberg catalog, and it now seeds <code>customer</code>, <code>orders</code>, <code>product</code>, <code>invoice</code>, and <code>shipment</code>.</p></div>
+</div>
+<div id="s4" class="section">
+  <h2>Transformation <span>Logic</span></h2>
+  <div class="section-meta"><span>Concrete Build Pattern</span></div>
+  <h3>Load Orchestration Pseudocode</h3>
+<pre>for source in active_sources:  # customer, orders, product, invoice, shipment
+    batch = create_batch_run(source)
+    extract_window = resolve_window(source)
+    raw_df = extract_incremental(source, extract_window)
+    validate_schema(raw_df, source)
+    write_bronze_iceberg(raw_df, batch)
+    standardized_df = standardize_columns(raw_df)
+    write_silver_iceberg(standardized_df, batch)
+    curated_df = build_sales_curated(standardized_df, dim_customer, dim_product)
+    run_quality_checks(curated_df, source)
+    publish_gold_iceberg(curated_df, source)
+    close_batch_run(batch, status="SUCCESS")</pre>
+  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Execution boundary:</strong> the notebook cells are illustrative. The real runtime path is <code>spark/run_pipeline.py</code> and <code>spark/replay_runner.py</code>, both calling shared logic in <code>spark/runtime_framework.py</code>.</p></div>
+    <h3>Batch Runner Script Example</h3>
+  <pre>def run_pipeline_for_source(
+    spark,
+    source_name,
+    catalog='demo',
+    forced_batch_id=None,
+    requested_by='runtime',
+):
+    config = get_source_registration(spark, source_name, catalog)
+    batch_id = create_batch_run(
+        spark,
+        source_name,
+        f'PIPELINE_{config.load_mode}',
+        requested_by,
+        catalog,
+        forced_batch_id=forced_batch_id,
+    )
+
+    upper_bound = resolve_upper_bound(spark, config)
+    source_df = build_extract_df(
+        spark,
+        config,
+        config.last_successful_watermark,
+        upper_bound,
+    )
+    bronze_df = append_bronze(spark, source_df, config, batch_id, config.load_mode)
+    history_df, current_df, gold_df = run_transform(
+        spark,
+        config,
+        spark.table(config.bronze_table),
+        impacted_keys_df=None,
+    )
+    max_observed_watermark = max_observed_watermark(bronze_df, config.ordering_column)
+    update_source_watermark(spark, source_name, batch_id, max_observed_watermark)
+    finalize_batch_run(spark, batch_id, source_name, catalog, status='SUCCESS')</pre>
+    <h3>Bronze Load Script Example</h3>
+  <pre>def append_bronze(spark, extract_df, config, batch_id, run_mode):
+    bronze_df = (
+      extract_df
+      .withColumn("pipeline_batch_id", F.lit(batch_id))
+      .withColumn("bronze_load_ts", F.current_timestamp())
+      .withColumn("source_name", F.lit(config.source_name))
+      .withColumn("load_mode", F.lit(run_mode))
+      .withColumn("record_hash", F.sha2(F.to_json(F.struct(*extract_df.columns)), 256))
+    )
+
+    bronze_df.writeTo(config.bronze_table).append()</pre>
+    <h3>Silver Build Script Example</h3>
+  <pre>def build_scd2_frames(bronze_df, config):
+    current_window = Window.partitionBy(*config.primary_keys).orderBy(
+        F.col(config.ordering_column).desc_nulls_last(),
+        F.col('bronze_load_ts').desc_nulls_last(),
+    )
+    history_window = Window.partitionBy(*config.primary_keys).orderBy(
+        F.col(config.ordering_column).asc_nulls_last(),
+        F.col('bronze_load_ts').asc_nulls_last(),
+    )
+
+    ranked_df = (
+        bronze_df
+        .withColumn('_row_rank', F.row_number().over(current_window))
+        .withColumn('_next_effective_from', F.lead(F.col(config.ordering_column)).over(history_window))
+    )
+
+    history_df = ranked_df.select(
+        'customer_id',
+        'location',
+        'source_change_ts',
+        F.col(config.ordering_column).alias('effective_from'),
+        F.col('_next_effective_from').alias('effective_to'),
+        (F.col('_row_rank') == 1).alias('is_current'),
+        'pipeline_batch_id',
+        'bronze_load_ts',
+        'record_hash',
+    )
+    current_df = history_df.where(F.col('is_current') == True)</pre>
+    <h3>Gold Publish Script Example</h3>
+  <pre>def publish_current_snapshot(spark, config, current_df):
+    replace_table(spark, current_df, config.gold_table)
+    return spark.table(config.gold_table)</pre>
+  <h3>Iceberg Table Strategy Across Layers</h3>
+  <table>
+    <tr><th>Layer</th><th>Implementation Logic</th></tr>
+    <tr><td><strong>Bronze Iceberg</strong></td><td>Append each extracted source version with ingestion metadata such as batch ID, extract time, and source change timestamp. Avoid overwrite-by-default behavior.</td></tr>
+    <tr><td><strong>Silver Iceberg</strong></td><td>Derive standardized current and history-oriented tables from bronze using ordered logic, merge patterns where needed, and repeatable rebuild rules.</td></tr>
+    <tr><td><strong>Gold Iceberg</strong></td><td>Publish curated fact and dimension style outputs as governed Iceberg tables with stable contracts for BI and downstream consumption.</td></tr>
+  </table>
+  <h3>Worked Example Portfolio</h3>
+  <p>The demo runtime is now seeded for <strong>customer</strong>, <strong>orders</strong>, <strong>product</strong>, <strong>invoice</strong>, and <strong>shipment</strong>. The detailed walkthrough below stays focused on <strong>customer</strong> because it is the clearest way to show history reconstruction, current-state derivation, and replay behavior end to end.</p>
+  <table>
+    <tr><th>Source</th><th>Role in the Sales Product</th><th>Example Key</th></tr>
+    <tr><td><strong>customer</strong></td><td>Customer master and location history</td><td>customer_id</td></tr>
+    <tr><td><strong>orders</strong></td><td>Order lifecycle and status changes</td><td>order_id</td></tr>
+    <tr><td><strong>product</strong></td><td>Product dimension and category attributes</td><td>product_id</td></tr>
+    <tr><td><strong>invoice</strong></td><td>Invoice state and financial document tracking</td><td>invoice_id</td></tr>
+    <tr><td><strong>shipment</strong></td><td>Shipment execution and delivery state</td><td>shipment_id</td></tr>
+  </table>
+  <h3>Detailed Walkthrough: Customer Location Change End to End</h3>
+  <p>This is the detailed single-source walkthrough. It uses the same customer location change example discussed earlier, where the source first lands London and later lands Bangalore for the same customer.</p>
+  <h4>1. Register the Source</h4>
+<pre>INSERT INTO demo.ctl.source_registration (
+    source_name,
+    domain_name,
+    source_type,
+    source_object,
+    enabled,
+    load_mode,
+    base_extract_sql,
+    watermark_column,
+    watermark_type,
+    primary_keys,
+    sequence_column,
+    delete_indicator_column,
+    bronze_table,
+    silver_current_table,
+    silver_history_table,
+    gold_table,
+    silver_transform_name,
+    gold_publish_name,
+    quality_rule_set,
+    replay_mode_default,
+    options_json,
+    last_successful_watermark,
+    last_batch_id,
+    created_ts,
+    updated_ts
+) VALUES (
+    'customer',
+    'sales',
+    'RDBMS',
+    'demo.staging.customer_source',
+    true,
+    'INCREMENTAL_TS',
+    NULL,
+    'source_change_ts',
+    'TIMESTAMP',
+    ARRAY('customer_id'),
+    NULL,
+    NULL,
+    'demo.bronze.customer_incremental_iceberg',
+    'demo.silver.customer_current_iceberg',
+    'demo.silver.customer_history_iceberg',
+    'demo.gold.customer_serving_iceberg',
+    'scd2_current_history',
+    'publish_current_snapshot',
+    'customer_core',
+    'FULL_REBUILD',
+    '{"required_columns":["customer_id","location","source_change_ts"]}',
+    NULL,
+    NULL,
+    current_timestamp(),
+    current_timestamp()
+);</pre>
+  <h4>2. Run Batch 1001 and Batch 1002</h4>
+<pre>from runtime_framework import run_pipeline_for_source
+
+run_pipeline_for_source(spark, source_name='customer', catalog='demo', forced_batch_id=1001)
+run_pipeline_for_source(spark, source_name='orders', catalog='demo', forced_batch_id=1101)
+run_pipeline_for_source(spark, source_name='product', catalog='demo', forced_batch_id=1201)
+run_pipeline_for_source(spark, source_name='invoice', catalog='demo', forced_batch_id=1301)
+run_pipeline_for_source(spark, source_name='shipment', catalog='demo', forced_batch_id=1401)
+
+run_pipeline_for_source(spark, source_name='customer', catalog='demo', forced_batch_id=1002)</pre>
+  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Runnable setup:</strong> the repo now includes <code>ddl/demo_staging_sources.sql</code>, <code>ddl/demo_seed_batch_1001.sql</code>, and <code>ddl/demo_seed_batch_1002.sql</code> so you can create demo source tables and simulate batch-to-batch source changes in a Spark plus Iceberg container.</p></div>
+  <h4>3. Bronze After Two Loads</h4>
+<pre>SELECT customer_id, location, source_change_ts, pipeline_batch_id, bronze_load_ts
+FROM demo.bronze.customer_incremental_iceberg
+ORDER BY customer_id, bronze_load_ts;
+
+customer_id | location   | source_change_ts     | pipeline_batch_id | bronze_load_ts
+1           | London     | 2026-04-01 08:00:00  | 1001     | 2026-04-01 23:00:00
+1           | Bangalore  | 2026-04-02 09:00:00  | 1002     | 2026-04-02 23:00:00</pre>
+  <h4>4. Silver Current and Silver History</h4>
+<pre>SELECT customer_id, location, source_change_ts, effective_from, bronze_load_ts
+FROM demo.silver.customer_current_iceberg;
+
+customer_id | location   | source_change_ts     | effective_from       | bronze_load_ts
+1           | Bangalore  | 2026-04-02 09:00:00  | 2026-04-02 09:00:00  | 2026-04-02 23:00:00
+
+SELECT * FROM demo.silver.customer_history_iceberg ORDER BY customer_id, effective_from;
+
+customer_id | location   | effective_from       | effective_to         | is_current
+1           | London     | 2026-04-01 08:00:00  | 2026-04-02 09:00:00  | false
+1           | Bangalore  | 2026-04-02 09:00:00  | null                 | true</pre>
+  <h4>5. Gold Publish Result</h4>
+<pre>SELECT customer_id, location, source_change_ts, effective_from
+FROM demo.gold.customer_serving_iceberg;
+
+customer_id | location   | source_change_ts     | effective_from
+1           | Bangalore  | 2026-04-02 09:00:00  | 2026-04-02 09:00:00</pre>
+  <h4>6. Replay Request to Rebuild Silver</h4>
+  <pre>INSERT INTO demo.ctl.replay_request (
+    replay_request_id,
+    source_name,
+    replay_mode,
+    start_watermark,
+    end_watermark,
+    entity_predicate,
+    snapshot_id,
+    target_table,
+    requested_by,
+    request_status,
+    requested_ts,
+    notes
+) VALUES (
+    9001,
+    'customer',
+    'FULL_REBUILD',
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    'platform-support',
+    'REQUESTED',
+    current_timestamp(),
+    'Rebuild customer current and history from preserved bronze'
+);
+
+  from runtime_framework import run_replay_request
+
+  run_replay_request(spark, replay_request_id=9001, catalog='demo')</pre>
+  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>What this example proves:</strong> the rebuild path does not depend on silver surviving. As long as bronze Iceberg preserves the landed extracted states and the transformation logic is deterministic, current and history silver tables can be recreated from first principles.</p></div>
+  <h3>Timestamp-Based Incremental Load vs True CDC</h3>
+  <p>Many enterprise systems do not expose log-based CDC. In those cases, teams often use timestamp-based incremental extraction. That pattern works, but it should be described accurately: it captures changed source state over time, not necessarily every source change event.</p>
+<pre>SELECT *
+FROM source_customer
+WHERE COALESCE(update_ts, insert_ts) > watermark;</pre>
+  <table>
+    <tr><th>Pattern</th><th>What You Get</th><th>Main Limitation</th></tr>
+    <tr><td><strong>True CDC</strong></td><td>Ordered insert, update, and delete events with sequence metadata.</td><td>Usually needs source-log access or a CDC-capable platform.</td></tr>
+    <tr><td><strong>Timestamp incremental</strong></td><td>The latest changed row as seen at extract time.</td><td>May miss intermediate changes and often misses hard deletes unless handled separately.</td></tr>
+  </table>
+  <div class="card-grid">
+    <div class="card amber-border"><h4>Bronze behavior</h4><p>Even with timestamp-based extraction, bronze Iceberg tables should append each extracted version with load metadata rather than overwriting prior landed records. That preserves replayability and snapshot-based recovery.</p></div>
+    <div class="card purple-border"><h4>Silver behavior</h4><p>Silver Iceberg current and history tables are then rebuilt by ordering the extracted versions using source change timestamp plus landing metadata such as batch ID or extract time.</p></div>
+  </div>
+  <div class="callout.warn"><span class="icon">&#9888;</span><p><strong>Important distinction:</strong> if customer 1 was extracted once with London and later with Bangalore, Iceberg can preserve both landed states in bronze. That is useful extracted-state history, but it is not automatically the same as source CDC unless the upstream source delivered ordered change events.</p></div>
+  <h3>Example of Preserved Extracted State</h3>
+<pre>customer_id | location   | source_change_ts     | pipeline_batch_id | bronze_load_ts
+1           | London     | 2026-04-01 08:00:00  | 2026-04-01 23:00:00
+1           | Bangalore  | 2026-04-02 09:00:00  | 2026-04-02 23:00:00</pre>
+  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Practical takeaway:</strong> this pattern still supports silver rebuild and replay if bronze preserves each extracted state over time. What it does not guarantee is complete event-level history like true CDC.</p></div>
+  <h3>How Silver Current and Silver History Are Derived</h3>
+<pre>WITH ranked AS (
+    SELECT
+        customer_id,
+        location,
+        source_change_ts,
+        bronze_load_ts,
+        ROW_NUMBER() OVER (
+            PARTITION BY customer_id
+            ORDER BY source_change_ts DESC, bronze_load_ts DESC
+        ) AS rn,
+        LEAD(source_change_ts) OVER (
+            PARTITION BY customer_id
+            ORDER BY source_change_ts, bronze_load_ts
+        ) AS next_change_ts
+    FROM bronze_customer_incremental
+)
+SELECT * FROM ranked;</pre>
+  <table>
+    <tr><th>Silver Output</th><th>How It Uses Ranked Bronze Rows</th></tr>
+    <tr><td><strong>silver_customer_current</strong></td><td>Keeps only rows where <code>rn = 1</code>, then writes the result into an Iceberg current table using repeatable merge or replace logic.</td></tr>
+    <tr><td><strong>silver_customer_history</strong></td><td>Uses <code>source_change_ts</code> as <code>effective_from</code>, <code>next_change_ts</code> as <code>effective_to</code>, and flags the last row as <code>is_current = true</code> in a history-oriented Iceberg table.</td></tr>
+  </table>
+  <h3>Example Silver Merge Pattern</h3>
+<pre>remaining_current_df = spark.table('demo.silver.customer_current_iceberg') \
+  .join(impacted_keys_df, ['customer_id'], 'left_anti')
+
+combined_current_df = remaining_current_df.unionByName(
+  rebuilt_current_df,
+  allowMissingColumns=True,
+)
+
+replace_table(spark, combined_current_df, 'demo.silver.customer_current_iceberg')</pre>
+  <h3>How Silver Rebuild Works If Silver Is Corrupted or Deleted</h3>
+  <table>
+    <tr><th>Recovery Option</th><th>When to Use It</th><th>How It Works</th></tr>
+    <tr><td><strong>Snapshot restore</strong></td><td>Fast recovery from a recent accidental delete, bad write, or corruption event where the required Iceberg metadata and snapshots are still available.</td><td>Restore the affected silver Iceberg table to a known good snapshot or table version.</td></tr>
+    <tr><td><strong>Authoritative rebuild from bronze</strong></td><td>Preferred recovery path when silver logic must be rerun cleanly or when you want deterministic reconstruction of current and history tables.</td><td>Read preserved bronze Iceberg inputs, reapply ordering and transformation rules, then recreate <code>silver_customer_current</code> and <code>silver_customer_history</code>.</td></tr>
+  </table>
+  <p>The important design point is that Iceberg improves restore and table management, but the durable business rebuild strategy still depends on preserved bronze history plus deterministic silver logic.</p>
+  <h3>Authoritative Rebuild Flow for Silver Current and Silver History</h3>
+<pre>1. Read bronze_customer_incremental_iceberg for the required scope
+2. Order records by business key, source_change_ts, and bronze_load_ts
+3. Recompute ranked rows and effective date boundaries
+4. Recreate silver_customer_history_iceberg from the ordered result
+5. Recreate silver_customer_current_iceberg using rows where rn = 1
+6. Re-run quality checks and publish only after validation passes</pre>
+  <h3>Example Rebuild Logic</h3>
+<pre>CREATE OR REPLACE TABLE silver.customer_history_iceberg AS
+WITH ranked AS (
+    SELECT
+        customer_id,
+        location,
+        source_change_ts,
+        bronze_load_ts,
+        ROW_NUMBER() OVER (
+            PARTITION BY customer_id
+            ORDER BY source_change_ts DESC, bronze_load_ts DESC
+        ) AS rn,
+        LEAD(source_change_ts) OVER (
+            PARTITION BY customer_id
+            ORDER BY source_change_ts, bronze_load_ts
+        ) AS next_change_ts
+    FROM bronze.customer_incremental_iceberg
+)
+SELECT
+    customer_id,
+    location,
+    source_change_ts AS effective_from,
+    next_change_ts AS effective_to,
+    CASE WHEN rn = 1 THEN true ELSE false END AS is_current,
+    bronze_load_ts
+FROM ranked;
+
+CREATE OR REPLACE TABLE silver.customer_current_iceberg AS
+SELECT customer_id, location, effective_from AS source_change_ts, bronze_load_ts
+FROM silver.customer_history_iceberg
+WHERE is_current = true;</pre>
+  <h3>Curated Sales Example</h3>
+<pre>CREATE OR REPLACE TABLE demo.gold.sales_order_fulfillment_iceberg AS
+SELECT
+    o.order_id,
+    o.customer_id,
+    c.customer_name,
+    c.location AS customer_location,
+    o.product_id,
+    p.product_name,
+    p.category,
+    o.order_status,
+    i.invoice_id,
+    i.invoice_status,
+    s.shipment_id,
+    s.shipment_status,
+    s.warehouse_code,
+    o.order_amount,
+    i.invoice_amount,
+    p.unit_price,
+    o.order_date
+FROM demo.gold.orders_serving_iceberg o
+LEFT JOIN demo.gold.customer_serving_iceberg c ON o.customer_id = c.customer_id
+LEFT JOIN demo.gold.product_serving_iceberg p ON o.product_id = p.product_id
+LEFT JOIN demo.gold.invoice_serving_iceberg i ON o.order_id = i.order_id
+LEFT JOIN demo.gold.shipment_serving_iceberg s ON o.order_id = s.order_id;</pre>
+  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Implementation note:</strong> the repo now includes this combined serving query as runnable SQL in <code>ddl/demo_sales_serving.sql</code>, so the five source tables can be materialized into one end-to-end sales-serving table after the individual gold snapshots are built.</p></div>
+  <h3>Reference Repository Shape</h3>
+<pre>learning-hub/
+  pages/
+    working-reference-implementation.html
+  ddl/
+    demo_metadata_framework.sql
+    demo_staging_sources.sql
+    demo_seed_batch_1001.sql
+    demo_seed_batch_1002.sql
+    demo_sales_serving.sql
+  spark/
+    runtime_framework.py
+    run_pipeline.py
+    replay_runner.py
+  README.md</pre>
+  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Practical distinction:</strong> the notebook remains a proof-of-pattern and exploration surface. The real reusable ingestion behavior now sits in the shared runtime module plus the two entrypoint scripts.</p></div>
+</div>
+<div id="s5" class="section">
+  <h2>Quality and <span>Audit</span></h2>
+  <div class="section-meta"><span>Trust Controls</span><span>Operational Evidence</span></div>
+  <table>
+    <tr><th>Control</th><th>Example Rule</th><th>Failure Action</th></tr>
+    <tr><td><strong>Completeness</strong></td><td>Current load row count must not fall below 85% of trailing seven-day median without an approved exception.</td><td>Block publish and alert engineering + data owner.</td></tr>
+    <tr><td><strong>Freshness</strong></td><td>Source delivery must arrive before the agreed SLA cutoff.</td><td>Mark pipeline unhealthy and notify consumers.</td></tr>
+    <tr><td><strong>Schema stability</strong></td><td>Required columns and data types must match the registered contract.</td><td>Quarantine payload and open investigation.</td></tr>
+    <tr><td><strong>Business reconciliation</strong></td><td>Curated net sales total must reconcile to finance control totals within tolerance.</td><td>Hold certified output until reconciled.</td></tr>
+  </table>
+<pre>INSERT INTO ops.data_quality_result (
+    batch_id,
+    rule_name,
+    rule_status,
+    observed_value,
+    threshold_value,
+    evaluated_ts
+)
+VALUES (?, 'sales_row_count_variance', 'FAILED', 182341, 245000, CURRENT_TIMESTAMP);</pre>
+</div>
+<div id="s6" class="section">
+  <h2>Orchestration <span>Flow</span></h2>
+  <div class="section-meta"><span>Execution Lifecycle</span></div>
+  <table>
+    <tr><th>Step</th><th>Control Intent</th></tr>
+    <tr><td><strong>1. Intake validation</strong></td><td>Confirm source availability, schema version, and run eligibility.</td></tr>
+    <tr><td><strong>2. Bronze load</strong></td><td>Persist raw records with correlation identifiers and source lineage.</td></tr>
+    <tr><td><strong>3. Silver standardization</strong></td><td>Type cast, normalize columns, deduplicate, and enrich with reference data.</td></tr>
+    <tr><td><strong>4. Gold publish</strong></td><td>Build certified fact and dimension outputs for downstream consumption.</td></tr>
+    <tr><td><strong>5. Quality gate</strong></td><td>Allow publish only after technical and business checks pass.</td></tr>
+    <tr><td><strong>6. Audit closeout</strong></td><td>Record final counts, status, timings, and update watermark state.</td></tr>
+  </table>
+  <h3>Failure Handling Model</h3>
+  <table>
+    <tr><th>Failure Type</th><th>Expected Response</th></tr>
+    <tr><td><strong>Missing source delivery</strong></td><td>Fail early, alert owners, and avoid publishing stale success status.</td></tr>
+    <tr><td><strong>Schema drift</strong></td><td>Quarantine the payload or route to controlled remediation with clear drift details.</td></tr>
+    <tr><td><strong>Quality threshold breach</strong></td><td>Block curated publication and expose the dataset as unhealthy until resolved.</td></tr>
+    <tr><td><strong>Transient infrastructure issue</strong></td><td>Retry automatically with bounded attempts before escalating to support.</td></tr>
+    <tr><td><strong>Downstream publish failure</strong></td><td>Preserve the curated build and reopen only the publication step where possible.</td></tr>
+  </table>
+  <h3>Replay Modes</h3>
+  <table>
+    <tr><th>Replay Mode</th><th>When It Applies</th><th>What It Actually Does</th></tr>
+    <tr><td><strong>Normal incremental continuation</strong></td><td>Routine scheduled execution after the last successful batch.</td><td>Reads only new source data or bronze ranges newer than the recorded watermark.</td></tr>
+    <tr><td><strong>Iceberg snapshot restore</strong></td><td>A recent bad write, accidental delete, or corruption event affected a silver table and the required snapshot still exists.</td><td>Restores the damaged Iceberg table to a known good table snapshot without recomputing all logic.</td></tr>
+    <tr><td><strong>Date-range logical replay</strong></td><td>A limited time window in silver must be recomputed due to bad source data, incorrect logic, or repair needs.</td><td>Reprocesses preserved bronze rows for the selected start and end timestamps, then rewrites the affected silver outputs.</td></tr>
+    <tr><td><strong>Entity-specific logical replay</strong></td><td>Only a subset of business keys such as specific customers or products must be repaired.</td><td>Filters bronze inputs by entity scope and recomputes only the relevant current and history outputs.</td></tr>
+    <tr><td><strong>Full logical rebuild</strong></td><td>Silver must be reconstructed from scratch or a deterministic re-creation is required.</td><td>Re-reads all preserved bronze inputs and rebuilds silver current and silver history from first principles.</td></tr>
+  </table>
+<pre>if run_mode == "FULL_REBUILD":
+    recreate_silver_tables()
+    source_window = all_bronze_history
+elif run_mode == "DATE_RANGE_REPLAY":
+    source_window = bronze_between(start_ts, end_ts)
+else:
+    source_window = bronze_after(last_successful_watermark)</pre>
+    <h3>Replay Runner Script Example</h3>
+  <pre>def run_replay(spark, replay_request_id):
+    request = spark.sql(f"""
+      SELECT *
+      FROM ctl.replay_request
+      WHERE replay_request_id = {replay_request_id}
+    """).first()
+
+    if request.replay_mode == 'ICEBERG_RESTORE':
+      restore_iceberg_snapshot(
+        table_name='silver.customer_current_iceberg',
+        snapshot_id=request.entity_filter
+      )
+      return
+
+    if request.replay_mode == 'DATE_RANGE':
+      bronze_df = spark.table('bronze.customer_incremental_iceberg') \
+        .where((F.col('source_change_ts') >= request.start_ts) &
+             (F.col('source_change_ts') < request.end_ts))
+    elif request.replay_mode == 'ENTITY':
+      bronze_df = spark.table('bronze.customer_incremental_iceberg') \
+        .where(F.expr(request.entity_filter))
+    elif request.replay_mode == 'FULL_REBUILD':
+      bronze_df = spark.table('bronze.customer_incremental_iceberg')
+    else:
+      raise ValueError(f"Unsupported replay mode: {request.replay_mode}")
+
+    rebuild_silver_from_bronze(spark, bronze_df)</pre>
+    <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Precision point:</strong> snapshot restore is a physical recovery option for Iceberg tables. Date-range, entity, and full rebuild modes are logical reprocessing strategies driven by preserved bronze history.</p></div>
+  <div class="callout.warn"><span class="icon">&#9888;</span><p><strong>Support principle:</strong> orchestration should isolate failure domains. A downstream publication issue should not force re-extracting all source data unless integrity actually requires it.</p></div>
+</div>
+<div id="s7" class="section">
+  <h2>Release and <span>Support</span></h2>
+  <div class="section-meta"><span>Promotion Discipline</span></div>
+  <div class="card-grid-3">
+    <div class="card accent-border"><h4>Development</h4><p>Build with versioned config, unit-tested transforms, and representative lower-environment data.</p></div>
+    <div class="card purple-border"><h4>Promotion</h4><p>Deploy through CI/CD with configuration substitution, approvals, and rollback support.</p></div>
+    <div class="card amber-border"><h4>Operations</h4><p>Expose runbooks, support ownership, alert routing, and replay procedures before go-live.</p></div>
+  </div>
+<pre>pull request approved
+ -> deployment package built
+ -> integration tests executed
+ -> environment config injected
+ -> production approval granted
+ -> release deployed
+ -> smoke checks run
+ -> support dashboard updated</pre>
+</div>
+<div id="s8" class="section">
+  <h2>Management <span>Value</span></h2>
+  <div class="section-meta"><span>Leadership Framing</span><span>Execution Proof</span></div>
+  <div class="card-grid">
+    <div class="card green-border"><h4>Why this strengthens the story</h4><p>It shows the architecture pages are backed by implementation detail, delivery controls, and operating reality.</p></div>
+    <div class="card coral-border"><h4>What management can infer</h4><p>This reflects engineering judgment about reliability, maintainability, support readiness, and scale, not only coding ability.</p></div>
+    <div class="card amber-border"><h4>What teams can reuse</h4><p>The patterns here can seed onboarding templates, design reviews, and implementation standards for future pipelines.</p></div>
+    <div class="card purple-border"><h4>How to position it</h4><p>This is a practical reference model for enterprise delivery, not an academic example or a one-off proof of concept.</p></div>
+  </div>
+  <div class="callout.rule"><span class="icon">&#9989;</span><p><strong>Management takeaway:</strong> this implementation pattern demonstrates predictable delivery, embedded controls, and a reusable operating model rather than a one-time technical exercise.</p></div>
+</div>
+</main>
+</div>
+<script>
+function show(id, link) {
+  document.querySelectorAll('.section').forEach(function(section) { section.classList.remove('active'); });
+  document.querySelectorAll('nav a').forEach(function(anchor) { anchor.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  link.classList.add('active');
+  window.scrollTo(0, 0);
+  return false;
+}
+</script>
+</body>
+</html>
