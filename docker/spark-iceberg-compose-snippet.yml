@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  spark-iceberg:
+    volumes:
+      - ./warehouse:/home/iceberg/warehouse
+      - ./notebooks:/home/iceberg/notebooks/notebooks
+      - ./data:/home/iceberg/data
+      - c:/dataengineering_workspace/learning-hub:/home/iceberg/work/learning-hub
+      - c:/dataengineering_workspace/learning-hub/notebooks:/home/iceberg/notebooks/learning-hub
