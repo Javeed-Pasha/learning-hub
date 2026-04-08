@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -63,6 +63,10 @@ main a:hover { text-decoration: underline; }
 .amber-border { border-left: 3px solid var(--amber); }
 .purple-border { border-left: 3px solid var(--purple); }
 .coral-border { border-left: 3px solid var(--coral); }
+.link-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.link-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text); text-decoration: none; font-size: 12px; font-family: var(--mono); }
+.bullet-list { margin: 0 0 18px 20px; color: var(--text2); }
+.bullet-list li { margin-bottom: 8px; }
 table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
 th { background: var(--bg3); color: var(--text); font-weight: 500; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border2); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
 td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
@@ -71,6 +75,9 @@ tr:last-child td { border-bottom: none; }
 .callout.tip { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2); }
 .callout.warn { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); }
 .callout.rule { background: rgba(79,172,247,0.08); border: 1px solid rgba(79,172,247,0.2); }
+.callout .icon { display: inline-flex; align-items: center; line-height: 1; margin-top: 2px; flex-shrink: 0; }
+.callout p { margin-bottom: 0; }
+.callout p > strong:first-child { white-space: nowrap; }
 .arch-diagram { background: #0a0d14; border: 1px solid var(--border); border-radius: 10px; padding: 26px; margin-bottom: 24px; }
 .tier { border: 1px solid; border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; position: relative; }
 .tier.source { border-color: rgba(79,172,247,0.35); background: rgba(79,172,247,0.04); }
@@ -113,10 +120,32 @@ code { background: var(--bg3); color: var(--accent2); padding: 1px 6px; border-r
 <div id="s1" class="section active">
   <h2>Implementation <span>Goal</span></h2>
   <div class="section-meta"><span>Concrete Example</span><span>End-to-End Delivery</span><span>Execution Proof</span></div>
+  <div class="callout rule"><span class="icon">&#128161;</span><p><strong>This is the living reference implementation</strong> of the <a href="enterprise-data-platform-blueprint.html">Enterprise Data Platform Blueprint</a>. Every pattern, control table, and layer you see here was designed to the same standards and decisions documented in the blueprint.</p></div>
+  <div class="link-strip">
+    <a class="link-chip" href="enterprise-data-platform-blueprint.html">Blueprint Page</a>
+    <a class="link-chip" href="https://github.com/Javeed-Pasha/learning-hub" target="_blank" rel="noopener">GitHub Repo</a>
+    <a class="link-chip" href="spark-iceberg-demo-setup.html">Docker Setup</a>
+  </div>
+  <h3>Clone &amp; Run in 5 Minutes</h3>
+<pre>git clone https://github.com/Javeed-Pasha/learning-hub.git
+cd learning-hub
+docker compose -f docker-compose.learning-hub.yml up -d
+
+# Then open:
+# http://localhost:8888
+# notebooks/learning_hub_demo.ipynb</pre>
   <p>This page turns the architecture story into a concrete build pattern. The example is a certified daily sales data product that ingests ERP, CRM, and e-commerce data, standardizes it, applies business rules, publishes curated outputs, and surfaces operational controls needed for production support.</p>
   <p>In this reference pattern, bronze, silver, and gold are implemented as Apache Iceberg tables in the data lakehouse so the platform can support schema evolution, partition-aware processing, snapshot-based recovery, and consistent table management across all layers.</p>
   <p>The notebook walkthrough is still useful as a learning aid, but the actual metadata-driven runtime in this repo now lives in <code>spark/runtime_framework.py</code>, <code>spark/run_pipeline.py</code>, <code>spark/replay_runner.py</code>, and <code>ddl/demo_metadata_framework.sql</code>.</p>
-  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Execution note:</strong> the implementation pattern itself is platform-agnostic. In this repository, the example can be executed locally using the included Spark-Iceberg Docker Compose setup, but Docker is only the demo environment for this repo, not part of the architecture definition. For the local run steps, see the <a href="spark-iceberg-demo-setup.html">Docker Setup page</a>.</p></div>
+  <div class="callout rule"><span class="icon">&#128161;</span><p><strong>Execution note:</strong> the implementation pattern itself is platform-agnostic. In this repository, the example can be executed locally using the included Spark-Iceberg Docker Compose setup, but Docker is only the demo environment for this repo, not part of the architecture definition. For the local run steps, see the <a href="spark-iceberg-demo-setup.html">Docker Setup page</a>.</p></div>
+  <h3>Mapping to Blueprint</h3>
+  <table>
+    <tr><th>Blueprint Principle</th><th>How It Is Implemented Here</th><th>Benefit Demonstrated</th></tr>
+    <tr><td><strong>Metadata-driven orchestration</strong></td><td>Control tables plus generic Spark runners determine source behavior, load mode, and target tables.</td><td>New sources can be onboarded without rewriting the pipeline engine.</td></tr>
+    <tr><td><strong>Replayability and rebuild-from-bronze</strong></td><td>Bronze preservation, watermark tracking, replay requests, and deterministic silver rebuild logic.</td><td>Recovery is possible without source-side re-extract for every failure scenario.</td></tr>
+    <tr><td><strong>Layered lakehouse</strong></td><td>Bronze, silver, and gold are implemented as Iceberg tables with quality checks and controlled publish flow.</td><td>Trusted gold outputs are separated from raw landing and standardization logic.</td></tr>
+    <tr><td><strong>Built-in observability</strong></td><td><code>pipeline_run</code>, <code>quality_result</code>, and replay control tables capture runtime evidence and support diagnostics.</td><td>Teams can trace batch status, quality results, and repair actions end to end.</td></tr>
+  </table>
   <h3>Business Context</h3>
   <p>The reference scenario is a daily consolidated sales data product used by finance reporting, supply-chain dashboards, and executive KPI packs. The real challenge is not only integrating multiple systems. It is producing a result that is trustworthy, observable, and repeatable across environments.</p>
   <div class="card-grid">
@@ -145,7 +174,7 @@ code { background: var(--bg3); color: var(--accent2); padding: 1px 6px; border-r
     <tr><td><strong>Audit and quality controls</strong></td><td>Batch-run logging, data-quality checks, reconciliation, and publish gating make support and trust part of the implementation itself.</td></tr>
     <tr><td><strong>Delivery operating model</strong></td><td>Promotion, environment separation, and support-ready runbooks turn the architecture into a production-capable delivery pattern.</td></tr>
   </table>
-  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Positioning note:</strong> this is not intended as a full product specification. It is a reference implementation pattern that management and engineering leads can recognize as executable, supportable, and reusable.</p></div>
+  <div class="callout tip"><span class="icon">&#9989;</span><p><strong>Positioning note:</strong>&nbsp;this is not intended as a full product specification. It is a reference implementation pattern that management and engineering leads can recognize as executable, supportable, and reusable.</p></div>
 </div>
 <div id="s2" class="section">
   <h2>Reference <span>Architecture</span></h2>
@@ -181,7 +210,7 @@ code { background: var(--bg3); color: var(--accent2); padding: 1px 6px; border-r
     <tr><td><strong>Lakehouse</strong></td><td>The broader platform style combining scalable data storage, transformation, governance, and analytics-oriented consumption on one managed foundation.</td></tr>
     <tr><td><strong>Medallion architecture</strong></td><td>The data-layering pattern inside that platform, where bronze captures landed source state, silver standardizes and derives reusable structures, and gold publishes curated outputs.</td></tr>
   </table>
-  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Simple distinction:</strong> lakehouse describes the overall platform architecture, while medallion describes the refinement path of the data inside that architecture. In this page, the implementation uses a lakehouse-style platform with medallion-style layers.</p></div>
+  <div class="callout rule"><span class="icon">&#128161;</span><p><strong>Simple distinction:</strong> lakehouse describes the overall platform architecture, while medallion describes the refinement path of the data inside that architecture. In this page, the implementation uses a lakehouse-style platform with medallion-style layers.</p></div>
 </div>
 <div id="s3" class="section">
   <h2>Control <span>Tables</span></h2>
@@ -285,8 +314,8 @@ shipment | INCREMENTAL_TS | demo.bronze.shipment_incremental_iceberg | demo.silv
     <tr><td><strong>Location change example</strong></td><td>Preserving both extracted versions, such as London and later Bangalore, when the bronze landing appends each extract into Iceberg.</td><td>Guaranteeing every intermediate source event unless the upstream extraction pattern is true CDC.</td></tr>
     <tr><td><strong>Replay</strong></td><td>Snapshot-aware restore options, table versioning semantics, and governed overwrite or merge behavior.</td><td>The need for a defined replay design based on preserved bronze inputs, business keys, and ordering metadata.</td></tr>
   </table>
-  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Why it matters:</strong> once control metadata exists, onboarding a new source becomes mostly configuration and validation rather than copy-paste pipeline construction.</p></div>
-  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Repo alignment:</strong> the control model shown here now exists as runnable DDL in <code>ddl/demo_metadata_framework.sql</code> for the <code>demo</code> Iceberg catalog, and it now seeds <code>customer</code>, <code>orders</code>, <code>product</code>, <code>invoice</code>, and <code>shipment</code>.</p></div>
+  <div class="callout rule"><span class="icon">&#128161;</span><p><strong>Why it matters:</strong>&nbsp;once control metadata exists, onboarding a new source becomes mostly configuration and validation rather than copy-paste pipeline construction.</p></div>
+  <div class="callout tip"><span class="icon">&#9989;</span><p><strong>Repo alignment:</strong>&nbsp;the control model shown here now exists as runnable DDL in ddl/demo_metadata_framework.sql for the demo Iceberg catalog, and it now seeds customer, orders, product, invoice, and shipment.</p></div>
 </div>
 <div id="s4" class="section">
   <h2>Transformation <span>Logic</span></h2>
@@ -304,7 +333,7 @@ shipment | INCREMENTAL_TS | demo.bronze.shipment_incremental_iceberg | demo.silv
     run_quality_checks(curated_df, source)
     publish_gold_iceberg(curated_df, source)
     close_batch_run(batch, status="SUCCESS")</pre>
-  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Execution boundary:</strong> the notebook cells are illustrative. The real runtime path is <code>spark/run_pipeline.py</code> and <code>spark/replay_runner.py</code>, both calling shared logic in <code>spark/runtime_framework.py</code>.</p></div>
+  <div class="callout rule"><span class="icon">&#128161;</span><p><strong>Execution boundary:</strong> the notebook cells are illustrative. The real runtime path is <code>spark/run_pipeline.py</code> and <code>spark/replay_runner.py</code>, both calling shared logic in <code>spark/runtime_framework.py</code>.</p></div>
     <h3>Batch Runner Script Example</h3>
   <pre>def run_pipeline_for_source(
     spark,
@@ -468,7 +497,7 @@ run_pipeline_for_source(spark, source_name='invoice', catalog='demo', forced_bat
 run_pipeline_for_source(spark, source_name='shipment', catalog='demo', forced_batch_id=1401)
 
 run_pipeline_for_source(spark, source_name='customer', catalog='demo', forced_batch_id=1002)</pre>
-  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Runnable setup:</strong> the repo now includes <code>ddl/demo_staging_sources.sql</code>, <code>ddl/demo_seed_batch_1001.sql</code>, and <code>ddl/demo_seed_batch_1002.sql</code> so you can create demo source tables and simulate batch-to-batch source changes in a Spark plus Iceberg container.</p></div>
+  <div class="callout tip"><span class="icon">&#9989;</span><p><strong>Runnable setup:</strong> the repo now includes <code>ddl/demo_staging_sources.sql</code>, <code>ddl/demo_seed_batch_1001.sql</code>, and <code>ddl/demo_seed_batch_1002.sql</code> so you can create demo source tables and simulate batch-to-batch source changes in a Spark plus Iceberg container.</p></div>
   <h4>3. Bronze After Two Loads</h4>
 <pre>SELECT customer_id, location, source_change_ts, pipeline_batch_id, bronze_load_ts
 FROM demo.bronze.customer_incremental_iceberg
@@ -527,7 +556,7 @@ customer_id | location   | source_change_ts     | effective_from
   from runtime_framework import run_replay_request
 
   run_replay_request(spark, replay_request_id=9001, catalog='demo')</pre>
-  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>What this example proves:</strong> the rebuild path does not depend on silver surviving. As long as bronze Iceberg preserves the landed extracted states and the transformation logic is deterministic, current and history silver tables can be recreated from first principles.</p></div>
+  <div class="callout tip"><span class="icon">&#9989;</span><p><strong>What this example proves:</strong> the rebuild path does not depend on silver surviving. As long as bronze Iceberg preserves the landed extracted states and the transformation logic is deterministic, current and history silver tables can be recreated from first principles.</p></div>
   <h3>Timestamp-Based Incremental Load vs True CDC</h3>
   <p>Many enterprise systems do not expose log-based CDC. In those cases, teams often use timestamp-based incremental extraction. That pattern works, but it should be described accurately: it captures changed source state over time, not necessarily every source change event.</p>
 <pre>SELECT *
@@ -542,12 +571,12 @@ WHERE COALESCE(update_ts, insert_ts) > watermark;</pre>
     <div class="card amber-border"><h4>Bronze behavior</h4><p>Even with timestamp-based extraction, bronze Iceberg tables should append each extracted version with load metadata rather than overwriting prior landed records. That preserves replayability and snapshot-based recovery.</p></div>
     <div class="card purple-border"><h4>Silver behavior</h4><p>Silver Iceberg current and history tables are then rebuilt by ordering the extracted versions using source change timestamp plus landing metadata such as batch ID or extract time.</p></div>
   </div>
-  <div class="callout.warn"><span class="icon">&#9888;</span><p><strong>Important distinction:</strong> if customer 1 was extracted once with London and later with Bangalore, Iceberg can preserve both landed states in bronze. That is useful extracted-state history, but it is not automatically the same as source CDC unless the upstream source delivered ordered change events.</p></div>
+  <div class="callout warn"><span class="icon">&#9888;</span><p><strong>Important distinction:</strong> if customer 1 was extracted once with London and later with Bangalore, Iceberg can preserve both landed states in bronze. That is useful extracted-state history, but it is not automatically the same as source CDC unless the upstream source delivered ordered change events.</p></div>
   <h3>Example of Preserved Extracted State</h3>
 <pre>customer_id | location   | source_change_ts     | pipeline_batch_id | bronze_load_ts
 1           | London     | 2026-04-01 08:00:00  | 2026-04-01 23:00:00
 1           | Bangalore  | 2026-04-02 09:00:00  | 2026-04-02 23:00:00</pre>
-  <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Practical takeaway:</strong> this pattern still supports silver rebuild and replay if bronze preserves each extracted state over time. What it does not guarantee is complete event-level history like true CDC.</p></div>
+  <div class="callout rule"><span class="icon">&#128161;</span><p><strong>Practical takeaway:</strong> this pattern still supports silver rebuild and replay if bronze preserves each extracted state over time. What it does not guarantee is complete event-level history like true CDC.</p></div>
   <h3>How Silver Current and Silver History Are Derived</h3>
 <pre>WITH ranked AS (
     SELECT
@@ -651,7 +680,7 @@ LEFT JOIN demo.gold.customer_serving_iceberg c ON o.customer_id = c.customer_id
 LEFT JOIN demo.gold.product_serving_iceberg p ON o.product_id = p.product_id
 LEFT JOIN demo.gold.invoice_serving_iceberg i ON o.order_id = i.order_id
 LEFT JOIN demo.gold.shipment_serving_iceberg s ON o.order_id = s.order_id;</pre>
-  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Implementation note:</strong> the repo now includes this combined serving query as runnable SQL in <code>ddl/demo_sales_serving.sql</code>, so the five source tables can be materialized into one end-to-end sales-serving table after the individual gold snapshots are built.</p></div>
+  <div class="callout tip"><span class="icon">&#9989;</span><p><strong>Implementation note:</strong> the repo now includes this combined serving query as runnable SQL in <code>ddl/demo_sales_serving.sql</code>, so the five source tables can be materialized into one end-to-end sales-serving table after the individual gold snapshots are built.</p></div>
   <h3>Reference Repository Shape</h3>
 <pre>learning-hub/
   pages/
@@ -667,7 +696,7 @@ LEFT JOIN demo.gold.shipment_serving_iceberg s ON o.order_id = s.order_id;</pre>
     run_pipeline.py
     replay_runner.py
   README.md</pre>
-  <div class="callout.tip"><span class="icon">&#9989;</span><p><strong>Practical distinction:</strong> the notebook remains a proof-of-pattern and exploration surface. The real reusable ingestion behavior now sits in the shared runtime module plus the two entrypoint scripts.</p></div>
+  <div class="callout tip"><span class="icon">&#9989;</span><p><strong>Practical distinction:</strong> the notebook remains a proof-of-pattern and exploration surface. The real reusable ingestion behavior now sits in the shared runtime module plus the two entrypoint scripts.</p></div>
 </div>
 <div id="s5" class="section">
   <h2>Quality and <span>Audit</span></h2>
@@ -754,8 +783,8 @@ else:
       raise ValueError(f"Unsupported replay mode: {request.replay_mode}")
 
     rebuild_silver_from_bronze(spark, bronze_df)</pre>
-    <div class="callout.rule"><span class="icon">&#128161;</span><p><strong>Precision point:</strong> snapshot restore is a physical recovery option for Iceberg tables. Date-range, entity, and full rebuild modes are logical reprocessing strategies driven by preserved bronze history.</p></div>
-  <div class="callout.warn"><span class="icon">&#9888;</span><p><strong>Support principle:</strong> orchestration should isolate failure domains. A downstream publication issue should not force re-extracting all source data unless integrity actually requires it.</p></div>
+    <div class="callout rule"><span class="icon">&#128161;</span><p><strong>Precision point:</strong> snapshot restore is a physical recovery option for Iceberg tables. Date-range, entity, and full rebuild modes are logical reprocessing strategies driven by preserved bronze history.</p></div>
+  <div class="callout warn"><span class="icon">&#9888;</span><p><strong>Support principle:</strong> orchestration should isolate failure domains. A downstream publication issue should not force re-extracting all source data unless integrity actually requires it.</p></div>
 </div>
 <div id="s7" class="section">
   <h2>Release and <span>Support</span></h2>
@@ -783,7 +812,18 @@ else:
     <div class="card amber-border"><h4>What teams can reuse</h4><p>The patterns here can seed onboarding templates, design reviews, and implementation standards for future pipelines.</p></div>
     <div class="card purple-border"><h4>How to position it</h4><p>This is a practical reference model for enterprise delivery, not an academic example or a one-off proof of concept.</p></div>
   </div>
-  <div class="callout.rule"><span class="icon">&#9989;</span><p><strong>Management takeaway:</strong> this implementation pattern demonstrates predictable delivery, embedded controls, and a reusable operating model rather than a one-time technical exercise.</p></div>
+  <div class="callout rule"><span class="icon">&#9989;</span><p><strong>Management takeaway:</strong> this implementation pattern demonstrates predictable delivery, embedded controls, and a reusable operating model rather than a one-time technical exercise.</p></div>
+  <h3>How This Reference Implementation Delivers the Promised Value</h3>
+  <ul class="bullet-list">
+    <li><strong>40-60% less custom engineering</strong> -> Every new source uses the same generic ingestion and transformation patterns.</li>
+    <li><strong>No more "we cannot recover" incidents</strong> -> Replay from bronze and deterministic rebuild logic are part of the design.</li>
+    <li><strong>Weeks, not months, to onboard new domains</strong> -> The same control-table and runtime structure can be reused across multiple source types.</li>
+  </ul>
+
+  <div class="card accent-border">
+    <h4>Next Steps / How to Contribute</h4>
+    <p>Use this page as the implementation companion to the blueprint, then extend it by adding more source registrations, stronger monitoring visuals, and additional quality or reconciliation rules as the runtime matures.</p>
+  </div>
 </div>
 </main>
 </div>
