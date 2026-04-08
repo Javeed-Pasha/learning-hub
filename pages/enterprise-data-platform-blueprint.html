@@ -180,6 +180,13 @@ h4 {
 p { color: var(--text2); margin-bottom: 14px; }
 strong { color: var(--text); font-weight: 500; }
 
+main a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+main a:hover { text-decoration: underline; }
+
 .card {
   background: var(--bg2);
   border: 1px solid var(--border);
@@ -227,7 +234,15 @@ tr:last-child td { border-bottom: none; }
   align-items: flex-start;
 }
 
-.callout .icon { flex-shrink: 0; }
+.callout .icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.callout p { margin-bottom: 0; }
 .callout.tip { background: rgba(79,172,247,0.08); border: 1px solid rgba(79,172,247,0.2); }
 .callout.warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); }
 .callout.rule { background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); }
@@ -307,6 +322,18 @@ code {
   font-family: var(--mono);
 }
 
+.page-footer-note {
+  margin-top: 32px;
+  color: var(--text2);
+  font-size: 13px;
+}
+
+.page-footer-note hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
 @media (max-width: 900px) {
   .shell {
     display: block;
@@ -376,11 +403,6 @@ code {
 
 <div id="s1" class="section active">
   <h2>Executive <span>Summary</span></h2>
-  <div class="section-meta">
-    <span>Management View</span>
-    <span>Scalable Platform Thinking</span>
-    <span>Architecture Narrative</span>
-  </div>
 
   <p>This page is intended to show platform judgment, not just tool familiarity. It presents a practical view of how an enterprise data platform should be designed and operated: multi-source ingestion, standardized controls, layered storage, governed publishing, and an operating model that supports both scale and trust.</p>
 
@@ -492,7 +514,7 @@ code {
     <span>Architecture Guidance</span>
   </div>
 
-  <p>A blueprint becomes useful when it helps teams choose the right platform pattern instead of defaulting to habit or vendor preference. This section defines the decision rules that should guide solution design before implementation begins.</p>
+  <p>A blueprint becomes useful when it gives teams clear decision rules instead of defaulting to habit or vendor preference. This section defines the decision rules that should guide solution design before implementation begins.</p>
 
   <table>
     <tr><th>Decision Area</th><th>Use When</th><th>Avoid When</th></tr>
@@ -877,29 +899,49 @@ code {
   </div>
 
   <div class="card accent-border card">
-    <h4>How to position this work</h4>
-    <p>This hub is not just a set of tutorials. It is a knowledge platform that translates enterprise data engineering topics into reusable internal assets. It demonstrates the ability to define architecture patterns, explain platform tradeoffs, and enable teams to work more consistently.</p>
+    <h4>How to position this blueprint with leadership</h4>
+    <p>This is not another set of tutorials. It is a <strong>repeatable enterprise operating model</strong> for data platforms - designed to shorten delivery time, reduce risk, and deliver trusted, governed data products at scale.</p>
   </div>
 
-  <h3>Suggested Management Messages</h3>
+  <h3>Ready-to-use messages</h3>
   <div class="card-grid">
     <div class="card green-border">
-      <h4>Capability Building</h4>
-      <p>"I am building reusable knowledge assets that reduce onboarding friction and improve shared engineering standards across the data stack."</p>
+      <h4>For capability building</h4>
+      <p>"We are moving from one-off pipelines to a true platform. This blueprint gives every team standardized patterns, quality gates, and recovery mechanisms so we stop reinventing the wheel on every new source."</p>
     </div>
     <div class="card purple-border">
-      <h4>Architecture Thinking</h4>
-      <p>"I want to be seen not only as someone who can build pipelines, but as someone who can shape a scalable operating model for enterprise data platforms."</p>
+      <h4>For architecture &amp; speed</h4>
+      <p>"The real differentiator is the layered lakehouse, metadata-driven orchestration, and built-in observability - letting us onboard new domains in weeks instead of months while keeping full enterprise controls."</p>
     </div>
     <div class="card amber-border">
-      <h4>Business Value</h4>
-      <p>"This kind of material helps teams align faster on platform patterns, quality controls, and delivery expectations, which lowers execution risk."</p>
+      <h4>For business &amp; risk reduction</h4>
+      <p>"This directly solves our biggest pain points: data freshness SLAs, audit traceability, and expensive downstream rework."</p>
+      <p>"Replayability and rebuild-from-bronze logic eliminate the 'we can't recover from that failure' scenarios that have cost us days of downtime."</p>
     </div>
     <div class="card coral-border">
-      <h4>Next Step</h4>
-      <p>"The natural extension is to build a working reference pipeline with logging, quality checks, and environment promotion to demonstrate these principles in code."</p>
+      <h4>Investment / next step</h4>
+      <p>"With this foundation we can cut custom engineering effort by 40-60% on new sources and significantly lower operational risk."</p>
     </div>
   </div>
+
+  <h3>One-slide summary</h3>
+  <table>
+    <tr><th>Area</th><th>Message</th></tr>
+    <tr><td><strong>Problem</strong></td><td>Fragmented pipelines, brittle recovery, inconsistent quality, slow onboarding.</td></tr>
+    <tr><td><strong>Solution</strong></td><td>Standardized blueprint plus reference implementation using a layered lakehouse, control tables, reusable patterns, and full audit, quality, and lineage controls.</td></tr>
+    <tr><td><strong>Outcome</strong></td><td>Faster delivery, higher trust, lower risk, and a scalable operating model.</td></tr>
+  </table>
+
+  <div class="callout tip">
+    <span class="icon">&#128161;</span>
+    <p><strong>Use this section when needed:</strong> it gives you leadership-ready language without turning the rest of the blueprint into a management deck.</p>
+  </div>
+</div>
+
+<div class="page-footer-note">
+  <hr>
+  <p><strong>Last updated:</strong> April 2026 - Version 1.0<br>
+  Connects directly to the <a href="working-reference-implementation.html">Working Reference Implementation</a></p>
 </div>
 
 </main>
