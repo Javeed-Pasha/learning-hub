@@ -1,735 +1,292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Learning Hub — Enterprise Data Engineering</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap');
-
-:root {
-  --bg: #0f1117;
-  --bg2: #161b27;
-  --bg3: #1e2535;
-  --bg4: #252d40;
-  --border: #2d3650;
-  --border2: #3d4f70;
-  --text: #e2e8f5;
-  --text2: #94a3c0;
-  --text3: #5c6f94;
-  --accent: #4facf7;
-  --accent2: #0ea5e9;
-  --green: #34d399;
-  --amber: #fbbf24;
-  --coral: #f87171;
-  --purple: #a78bfa;
-  --teal: #2dd4bf;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'IBM Plex Sans', sans-serif;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: var(--sans);
-  background:
-    radial-gradient(circle at top left, rgba(79,172,247,0.12), transparent 26%),
-    linear-gradient(180deg, rgba(37,45,64,0.20), transparent 16%),
-    var(--bg);
-  color: var(--text);
-  font-size: 15px;
-  line-height: 1.7;
-  min-height: 100vh;
-}
-
-.site-header {
-  border-bottom: 1px solid var(--border);
-  background: rgba(22,27,39,0.92);
-  backdrop-filter: blur(10px);
-  padding: 0 48px;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.header-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 64px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  text-decoration: none;
-  color: var(--text);
-}
-
-.logo-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--accent), var(--purple));
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-}
-
-.logo-text {
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.logo-text span { color: var(--accent); }
-
-.header-links {
-  display: flex;
-  gap: 24px;
-}
-
-.header-links a {
-  color: var(--text2);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  transition: color 0.15s;
-}
-
-.header-links a:hover { color: var(--text); }
-
-.hero {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 76px 48px 26px;
-  display: grid;
-  grid-template-columns: 1.08fr 0.92fr;
-  gap: 26px;
-  align-items: stretch;
-}
-
-.hero-copy,
-.hero-panel,
-.category-panel {
-  background: rgba(22,27,39,0.94);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-}
-
-.hero-copy { padding: 34px 34px 30px; }
-.hero-panel { padding: 24px; }
-
-.hero-badge,
-.section-kicker {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 11px;
-  background: rgba(79,172,247,0.12);
-  color: var(--accent);
-  padding: 4px 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(79,172,247,0.2);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.hero-badge { margin-bottom: 18px; }
-
-.hero h1 {
-  font-size: 40px;
-  font-weight: 300;
-  letter-spacing: -0.04em;
-  line-height: 1.12;
-  margin-bottom: 16px;
-}
-
-.hero h1 strong {
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), var(--teal));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero p {
-  font-size: 16px;
-  color: var(--text2);
-  margin: 0 0 22px;
-}
-
-.hero-impact {
-  margin: -6px 0 22px;
-  color: var(--text);
-  font-size: 13.5px;
-  font-weight: 500;
-  letter-spacing: 0.01em;
-}
-
-.stat-link:hover,
-.content-card:hover,
-.track-link:hover {
-  transform: translateY(-2px);
-}
-
-.hero-points {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.hero-point {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
-}
-
-.hero-point strong {
-  display: block;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
-.hero-point span {
-  color: var(--text2);
-  font-size: 12.5px;
-}
-
-.panel-title {
-  font-size: 12px;
-  font-family: var(--mono);
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 18px;
-}
-
-.hero-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 14px;
-}
-
-.stat-link {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.18s;
-}
-
-.stat {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  transition: border-color 0.18s, box-shadow 0.18s;
-}
-
-.stat-link:hover .stat,
-.content-card:hover,
-.track-link:hover {
-  border-color: var(--border2);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.24);
-}
-
-.stat-num {
-  font-family: var(--mono);
-  font-size: 28px;
-  color: var(--accent);
-}
-
-.stat-label {
-  font-size: 12px;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-top: 4px;
-}
-
-.hero-note {
-  margin-top: 16px;
-  border-left: 3px solid var(--green);
-  background: rgba(52,211,153,0.05);
-  border-radius: 0 8px 8px 0;
-  padding: 12px 14px;
-  color: var(--text2);
-  font-size: 13px;
-}
-
-.hero-stack {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-}
-
-.stack-items {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.stack-chip {
-  padding: 8px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(79,172,247,0.18);
-  background: rgba(79,172,247,0.08);
-  color: var(--text2);
-  font-size: 12px;
-  font-family: var(--mono);
-}
-
-.section-title,
-.grouped-tutorials,
-.featured-architecture {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 48px;
-}
-
-.section-title {
-  margin-bottom: 24px;
-}
-
-.section-title h2 {
-  font-size: 12px;
-  font-family: var(--mono);
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 12px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border);
-}
-
-.section-intro {
-  max-width: 760px;
-  color: var(--text2);
-  font-size: 15px;
-  line-height: 1.7;
-}
-
-.featured-architecture {
-  padding-bottom: 28px;
-}
-
-.featured-grid,
-.group-grid {
-  display: grid;
-  gap: 20px;
-}
-
-.featured-grid {
-  grid-template-columns: repeat(2, 1fr);
-}
-
-.group-grid {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.category-panel {
-  padding: 22px;
-}
-
-.category-panel h3 {
-  font-size: 20px;
-  margin: 10px 0 8px;
-  letter-spacing: -0.02em;
-}
-
-.category-panel p {
-  color: var(--text2);
-  font-size: 13.5px;
-  margin-bottom: 18px;
-}
-
-.track-list {
-  display: grid;
-  gap: 12px;
-}
-
-.track-link,
-.content-card {
-  display: block;
-  text-decoration: none;
-  color: inherit;
-  border: 1px solid var(--border);
-  background: var(--bg2);
-  border-radius: 12px;
-  transition: all 0.2s;
-}
-
-.track-link {
-  padding: 16px;
-}
-
-.track-placeholder {
-  cursor: default;
-}
-
-.track-tag,
-.card-tag {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.track-tag {
-  color: var(--text3);
-  margin-bottom: 6px;
-}
-
-.track-link h4 {
-  font-size: 16px;
-  margin-bottom: 4px;
-}
-
-.track-link p {
-  font-size: 12.5px;
-  color: var(--text2);
-  margin: 0;
-}
-
-.content-card {
-  padding: 28px;
-  position: relative;
-  overflow: hidden;
-}
-
-.content-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-}
-
-.content-card.cat-architecture::before { background: linear-gradient(90deg, var(--accent), var(--teal)); }
-
-.card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 14px;
-}
-
-.card-icon {
-  width: 44px;
-  height: 44px;
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-}
-
-.tag-architecture {
-  background: rgba(79,172,247,0.12);
-  color: var(--accent);
-  border: 1px solid rgba(79,172,247,0.24);
-  padding: 3px 8px;
-  border-radius: 4px;
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  letter-spacing: -0.01em;
-}
-
-.card-desc {
-  font-size: 13.5px;
-  color: var(--text2);
-  line-height: 1.6;
-}
-
-.card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid var(--border);
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text3);
-}
-
-.site-footer {
-  border-top: 1px solid var(--border);
-  background: var(--bg2);
-  padding: 32px 48px;
-  text-align: center;
-}
-
-.footer-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  font-size: 12px;
-  color: var(--text3);
-}
-
-.footer-inner a {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.footer-inner a:hover { text-decoration: underline; }
-
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
-
-@media (max-width: 900px) {
-  .hero,
-  .featured-grid,
-  .group-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .hero {
-    padding: 40px 24px 24px;
-  }
-
-  .section-title,
-  .grouped-tutorials,
-  .featured-architecture {
-    padding: 0 24px;
-  }
-
-  .site-header,
-  .site-footer {
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  .hero h1 {
-    font-size: 30px;
-  }
-
-  .hero-points,
-  .hero-stats {
-    grid-template-columns: 1fr;
-  }
-
-  .header-links {
-    gap: 14px;
-  }
-
-  .header-links a {
-    font-size: 12px;
-  }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Enterprise Data Engineering Learning Hub by Javeed Pasha - Architecture blueprints, reference implementations, and hands-on tutorials">
+    <title>Javeed Pasha | Enterprise Data Engineering Learning Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+      if (localStorage.getItem('lh-theme') === 'dark') document.documentElement.classList.add('dark-mode');
+    </script>
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; transition: background-color 0.3s, color 0.3s; }
+        .hero-bg { background: linear-gradient(135deg, #0f172a 0%, #1e2937 100%); }
+        .card-hover:hover { transform: translateY(-4px); transition: all 0.3s ease; }
+
+        /* Theme toggle button */
+        #theme-toggle { background: none; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; cursor: pointer; color: #475569; font-size: 16px; transition: all 0.2s; display: flex; align-items: center; }
+        #theme-toggle:hover { border-color: #2563eb; color: #2563eb; }
+
+        /* Tutorials dropdown */
+        .nav-dropdown { position: relative; }
+        .nav-dropdown-toggle { display: flex; align-items: center; gap: 4px; }
+        .nav-dropdown-toggle i.fa-chevron-down { transition: transform 0.2s; }
+        .nav-dropdown:hover .nav-dropdown-toggle i.fa-chevron-down { transform: rotate(180deg); }
+        .nav-dropdown-menu {
+          display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+          margin-top: 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+          padding: 8px 0; min-width: 240px; box-shadow: 0 12px 32px rgba(0,0,0,0.12); z-index: 100;
+        }
+        .nav-dropdown:hover .nav-dropdown-menu { display: block; }
+        .nav-dropdown-menu a {
+          display: flex; align-items: center; gap: 10px; padding: 9px 18px;
+          color: #475569 !important; text-decoration: none !important; font-size: 13px; transition: all 0.12s;
+        }
+        .nav-dropdown-menu a:hover { background: #f1f5f9; color: #2563eb !important; }
+        .nav-dropdown-menu a .dd-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+        .dd-blue { background: #2563eb; } .dd-violet { background: #7c3aed; } .dd-amber { background: #d97706; }
+        .dd-emerald { background: #059669; } .dd-sky { background: #2563eb; } .dd-teal { background: #0d9488; }
+
+        /* Dark mode dropdown overrides */
+        .dark-mode .nav-dropdown-menu { background: #1e293b; border-color: #334155; box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
+        .dark-mode .nav-dropdown-menu a { color: #94a3b8 !important; }
+        .dark-mode .nav-dropdown-menu a:hover { background: #111827; color: #60a5fa !important; }
+
+        /* ── Dark mode overrides ── */
+        .dark-mode body, .dark-mode { background-color: #0f172a !important; color: #f1f5f9 !important; }
+        .dark-mode .bg-white { background-color: #1e293b !important; }
+        .dark-mode .bg-slate-50 { background-color: #0f172a !important; }
+        .dark-mode .bg-slate-100 { background-color: #111827 !important; }
+        .dark-mode .text-slate-900 { color: #f1f5f9 !important; }
+        .dark-mode .text-slate-700 { color: #cbd5e1 !important; }
+        .dark-mode .text-slate-600 { color: #94a3b8 !important; }
+        .dark-mode .text-slate-500 { color: #64748b !important; }
+        .dark-mode .text-slate-400 { color: #94a3b8 !important; }
+        .dark-mode .border-b { border-color: #334155 !important; }
+        .dark-mode .border-slate-200 { border-color: #334155 !important; }
+        .dark-mode .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important; }
+        .dark-mode .shadow-md { box-shadow: 0 4px 6px rgba(0,0,0,0.4) !important; }
+        .dark-mode p strong { color: #f1f5f9; }
+        .dark-mode .bg-blue-100 { background-color: rgba(37,99,235,0.2) !important; }
+        .dark-mode .bg-emerald-100 { background-color: rgba(5,150,105,0.2) !important; }
+        .dark-mode .text-blue-700 { color: #93c5fd !important; }
+        .dark-mode .text-emerald-700 { color: #6ee7b7 !important; }
+        .dark-mode footer.bg-slate-900 { background-color: #020617 !important; }
+        .dark-mode #theme-toggle { border-color: #475569; color: #94a3b8; }
+        .dark-mode #theme-toggle:hover { border-color: #60a5fa; color: #60a5fa; }
+        .dark-mode .rounded-3xl { border-color: #334155; }
+        .dark-mode a.block.bg-white:hover { background-color: #263550 !important; }
+        /* Hero section in dark mode - use a lighter gradient so it stands out from dark body */
+        .dark-mode .hero-bg { background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important; border-bottom: 1px solid #475569; }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-900">
 
-<header class="site-header">
-  <div class="header-inner">
-    <a href="index.html" class="logo">
-      <div class="logo-icon">&#9889;</div>
-      <div class="logo-text">Learning<span>Hub</span></div>
-    </a>
-    <div class="header-links">
-      <a href="#grouped-guides">Learning Paths</a>
-      <a href="#featured-architecture">Architecture</a>
-      <a href="https://github.com/Javeed-Pasha/learning-hub" target="_blank" rel="noopener">GitHub</a>
-    </div>
-  </div>
-</header>
-
-<section class="hero">
-  <div class="hero-copy">
-    <div class="hero-badge">Data Engineering Hub</div>
-    <h1><strong>Enterprise data engineering</strong>, from learning to runnable platforms</h1>
-    <p>A collection of interactive guides, architecture references, and hands-on implementation patterns using Spark, Iceberg, SQL, and enterprise ETL tools to build scalable data platforms.</p>
-    <div class="hero-impact">Built for data engineers, platform teams, and architects working on modern lakehouse platforms.</div>
-    <div class="hero-points">
-      <div class="hero-point">
-        <strong>Hands-on coverage</strong>
-        <span>Covers core data engineering tools and concepts including Spark, SQL, dimensional modeling, Informatica, SSIS, and Tableau.</span>
-      </div>
-      <div class="hero-point">
-        <strong>Architecture signal</strong>
-        <span>Selected architecture pages now show platform thinking alongside the training content.</span>
-      </div>
-      <div class="hero-point">
-        <strong>Execution focus</strong>
-        <span>Includes a runnable reference implementation with Docker Compose, Spark + Iceberg runtime, DDL, and notebooks for end-to-end pipeline execution.</span>
-      </div>
-      <div class="hero-point">
-        <strong>Reusable assets</strong>
-        <span>Designed to help onboarding, alignment, and delivery consistency across enterprise data work.</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-panel">
-    <div class="panel-title">At A Glance</div>
-    <div class="hero-stats">
-      <a href="#grouped-guides" class="stat-link">
-        <div class="stat">
-          <div class="stat-num">3</div>
-          <div class="stat-label">Learning Categories</div>
+    <!-- Navbar -->
+    <nav class="bg-white border-b shadow-sm sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-between">
+            <a href="./index.html" class="flex items-center gap-3 hover:text-blue-600" style="text-decoration:none;color:inherit;" title="Home">
+                <i class="fa-solid fa-database text-3xl text-blue-600"></i>
+                <span class="text-2xl font-semibold tracking-tight">Learning Hub</span>
+            </a>
+            <div class="flex items-center gap-8 text-sm font-medium">
+                <a href="./pages/enterprise-data-platform-blueprint.html" class="hover:text-blue-600 transition-colors">Blueprint</a>
+                <a href="./pages/working-reference-implementation.html" class="hover:text-blue-600 transition-colors">Reference Implementation</a>
+                <div class="nav-dropdown">
+                    <span class="nav-dropdown-toggle hover:text-blue-600 transition-colors" style="cursor:pointer;">Tutorials <i class="fa-solid fa-chevron-down" style="font-size:10px;"></i></span>
+                    <div class="nav-dropdown-menu">
+                        <a href="./pages/spark-101.html"><span class="dd-dot dd-blue"></span> Apache Spark 101</a>
+                        <a href="./pages/sql-101.html"><span class="dd-dot dd-violet"></span> SQL 101</a>
+                        <a href="./pages/dimensional-modeling-101.html"><span class="dd-dot dd-amber"></span> Dimensional Modeling 101</a>
+                        <a href="./pages/informatica-powercenter-101.html"><span class="dd-dot dd-emerald"></span> Informatica PowerCenter 101</a>
+                        <a href="./pages/ssis-101.html"><span class="dd-dot dd-sky"></span> SSIS 101</a>
+                        <a href="./pages/tableau-101.html"><span class="dd-dot dd-teal"></span> Tableau 101</a>
+                        <a href="./pages/spark-iceberg-demo-setup.html"><span class="dd-dot dd-blue"></span> Spark + Iceberg Demo Setup</a>
+                    </div>
+                </div>
+                <a href="https://github.com/javeed-pasha" target="_blank" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+                    <i class="fa-brands fa-github"></i> GitHub
+                </a>
+                <a href="https://www.linkedin.com/in/javeed-pasha/" target="_blank" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+                    <i class="fa-brands fa-linkedin"></i> LinkedIn
+                </a>
+                <button id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
         </div>
-      </a>
-      <a href="#grouped-guides" class="stat-link">
-        <div class="stat">
-          <div class="stat-num">6</div>
-          <div class="stat-label">Core Tutorials</div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="hero-bg text-white py-20">
+        <div class="max-w-screen-2xl mx-auto px-8">
+            <div class="max-w-3xl">
+                <h1 class="text-5xl font-bold tracking-tighter leading-none mb-6">
+                    Enterprise data engineering,<br>from learning to runnable platforms
+                </h1>
+                <p class="text-xl text-slate-300 mb-8">
+                    A collection of interactive guides, architecture references, and hands-on implementation patterns using Spark, Iceberg, SQL, and enterprise ETL tools to build scalable data platforms.
+                </p>
+                <div class="flex items-center gap-4 text-sm">
+                    <span class="bg-white/20 text-white px-4 py-2 rounded-2xl backdrop-blur-md">Built for data engineers &amp; platform teams</span>
+                    <span class="bg-white/20 text-white px-4 py-2 rounded-2xl backdrop-blur-md">Modern lakehouse focus</span>
+                </div>
+            </div>
         </div>
-      </a>
-      <a href="#featured-architecture" class="stat-link">
-        <div class="stat">
-          <div class="stat-num">2</div>
-          <div class="stat-label">Architecture Views</div>
+    </header>
+
+    <!-- About the Curator -->
+    <section class="max-w-screen-2xl mx-auto px-8 py-16 border-b bg-white">
+        <div class="grid md:grid-cols-12 gap-12 items-center">
+            <div class="md:col-span-8">
+                <h2 class="text-3xl font-semibold mb-6">About the Curator</h2>
+                <div class="prose text-lg leading-relaxed text-slate-700">
+                    <p><strong>Hi, I'm Javeed Pasha</strong> — a Senior Data Engineer with extensive experience building scalable, governed enterprise data platforms, including lakehouse architectures, metadata-driven ETL/ELT, control-table orchestration, and production-grade implementations using Spark and Iceberg.</p>
+                    <p>This Learning Hub is a curated collection of battle-tested patterns, reference architectures, and working code drawn directly from real-world enterprise projects. Everything here is designed to be immediately usable in production environments — whether you're onboarding new engineers, aligning with architecture review boards, or delivering data platforms that are built to last.</p>
+                </div>
+            </div>
+            <div class="md:col-span-4 flex flex-col items-center md:items-end gap-4">
+                <a href="https://www.linkedin.com/in/javeed-pasha/" target="_blank" title="Connect on LinkedIn"
+                   class="inline-flex items-center gap-3 bg-white shadow-md rounded-3xl px-8 py-6 hover:shadow-xl transition-all border border-slate-200 w-64">
+                    <i class="fa-brands fa-linkedin text-5xl text-blue-600"></i>
+                    <div>
+                        <div class="font-semibold text-lg">LinkedIn</div>
+                        <div class="text-slate-500 text-sm">Javeed Pasha</div>
+                    </div>
+                </a>
+                <a href="https://public.tableau.com/app/profile/javeedpasha" target="_blank" title="See my visualizations"
+                   class="inline-flex items-center gap-3 bg-white shadow-md rounded-3xl px-8 py-6 hover:shadow-xl transition-all border border-slate-200 w-64">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none">
+                        <line x1="12" y1="2" x2="12" y2="8" stroke="#e8762d" stroke-width="2.5"/>
+                        <line x1="9" y1="4" x2="15" y2="4" stroke="#e8762d" stroke-width="2.5"/>
+                        <line x1="6" y1="6" x2="6" y2="11" stroke="#5b879b" stroke-width="2"/>
+                        <line x1="4" y1="8" x2="8" y2="8" stroke="#5b879b" stroke-width="2"/>
+                        <line x1="18" y1="6" x2="18" y2="11" stroke="#5b879b" stroke-width="2"/>
+                        <line x1="16" y1="8" x2="20" y2="8" stroke="#5b879b" stroke-width="2"/>
+                        <line x1="12" y1="10" x2="12" y2="16" stroke="#e8762d" stroke-width="2.5"/>
+                        <line x1="9" y1="12.5" x2="15" y2="12.5" stroke="#e8762d" stroke-width="2.5"/>
+                        <line x1="6" y1="14" x2="6" y2="19" stroke="#5b879b" stroke-width="2"/>
+                        <line x1="4" y1="16.5" x2="8" y2="16.5" stroke="#5b879b" stroke-width="2"/>
+                        <line x1="18" y1="14" x2="18" y2="19" stroke="#5b879b" stroke-width="2"/>
+                        <line x1="16" y1="16.5" x2="20" y2="16.5" stroke="#5b879b" stroke-width="2"/>
+                        <line x1="12" y1="18" x2="12" y2="22" stroke="#c3c3c3" stroke-width="1.5"/>
+                        <line x1="10.5" y1="20" x2="13.5" y2="20" stroke="#c3c3c3" stroke-width="1.5"/>
+                    </svg>
+                    <div>
+                        <div class="font-semibold text-lg">Tableau Public</div>
+                        <div class="text-slate-500 text-sm">Javeed Pasha</div>
+                    </div>
+                </a>
+            </div>
         </div>
-      </a>
-      <a href="pages/spark-iceberg-demo-setup.html" class="stat-link">
-        <div class="stat">
-          <div class="stat-num">1</div>
-          <div class="stat-label">Docker Setup</div>
+    </section>
+
+    <!-- At A Glance -->
+    <section class="max-w-screen-2xl mx-auto px-8 py-16">
+        <h2 class="text-3xl font-semibold mb-8">At A Glance</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-3xl shadow-sm">
+                <div class="text-blue-600 mb-4"><i class="fa-solid fa-cube text-4xl"></i></div>
+                <h3 class="font-semibold text-xl mb-3">Tech Stack</h3>
+                <p class="text-slate-600">Spark • Iceberg • Docker • SQL • Informatica • SSIS • Tableau</p>
+                <p class="text-sm text-slate-500 mt-6">This hub now combines training guides with selected architecture and implementation references for a stronger enterprise delivery narrative.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-3xl shadow-sm">
+                <div class="text-emerald-600 mb-4"><i class="fa-solid fa-book-open text-4xl"></i></div>
+                <h3 class="font-semibold text-xl mb-3">Hands-on Coverage</h3>
+                <p class="text-slate-600">Core data engineering tools and concepts including Spark, SQL, dimensional modeling, Informatica, SSIS, and Tableau.</p>
+            </div>
+            
+            <div class="bg-white p-8 rounded-3xl shadow-sm">
+                <div class="text-purple-600 mb-4"><i class="fa-solid fa-rocket text-4xl"></i></div>
+                <h3 class="font-semibold text-xl mb-3">Execution Focus</h3>
+                <p class="text-slate-600">Includes a runnable reference implementation with Docker Compose, Spark + Iceberg runtime, DDL, and notebooks for end-to-end pipeline execution.</p>
+            </div>
         </div>
-      </a>
-    </div>
-    <div class="hero-stack">
-      <div class="panel-title">Tech Stack</div>
-      <div class="stack-items">
-        <span class="stack-chip">Spark</span>
-        <span class="stack-chip">Iceberg</span>
-        <span class="stack-chip">Docker</span>
-        <span class="stack-chip">SQL</span>
-        <span class="stack-chip">Informatica</span>
-        <span class="stack-chip">SSIS</span>
-        <span class="stack-chip">Tableau</span>
-      </div>
-    </div>
-    <div class="hero-note">This hub now combines training guides with selected architecture and implementation references for a stronger enterprise delivery narrative.</div>
-  </div>
-</section>
+    </section>
 
-<div class="section-title" id="featured-architecture">
-  <h2>Featured Architecture</h2>
-  <div class="section-intro">A high-level view of the platform and operating model, plus a practical example showing how those concepts are implemented.</div>
-</div>
+    <!-- Featured Architecture -->
+    <section class="max-w-screen-2xl mx-auto px-8 py-16 bg-slate-100">
+        <h2 class="text-3xl font-semibold mb-8">Featured Architecture</h2>
+        <p class="text-slate-600 mb-8 max-w-2xl">A high-level view of the platform and operating model, plus a practical example showing how those concepts are implemented.</p>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <a href="./pages/enterprise-data-platform-blueprint.html" 
+               class="block bg-white p-8 rounded-3xl shadow-sm card-hover group">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="text-4xl">🏗️</div>
+                    <i class="fa-solid fa-arrow-right text-2xl text-slate-400 group-hover:text-blue-600 transition-colors"></i>
+                </div>
+                <h3 class="text-2xl font-semibold mb-3">Enterprise Data Platform Blueprint</h3>
+                <p class="text-slate-600">A management-facing view of platform design, operating standards, delivery controls, and the decision framework behind enterprise data engineering.</p>
+                <span class="inline-block mt-8 text-xs font-medium bg-blue-100 text-blue-700 px-4 py-2 rounded-2xl">VIEW BLUEPRINT →</span>
+            </a>
 
-<div class="featured-architecture">
-  <div class="featured-grid">
-    <a href="pages/enterprise-data-platform-blueprint.html" class="content-card cat-architecture">
-      <div class="card-top">
-        <div class="card-icon">&#127959;</div>
-        <span class="card-tag tag-architecture">Architecture</span>
-      </div>
-      <div class="card-title">Enterprise Data Platform Blueprint</div>
-      <div class="card-desc">A management-facing view of platform design, operating standards, delivery controls, and the decision framework behind enterprise data engineering.</div>
-      <div class="card-meta">
-        <span>Architecture</span>
-        <span>Operating Model</span>
-        <span>Platform Standards</span>
-      </div>
-    </a>
-
-    <a href="pages/working-reference-implementation.html" class="content-card cat-architecture">
-      <div class="card-top">
-        <div class="card-icon">&#9881;</div>
-        <span class="card-tag tag-architecture">Runnable Demo</span>
-      </div>
-      <div class="card-title">Working Reference Implementation</div>
-      <div class="card-desc">A concrete Spark and Iceberg implementation with control tables, bronze to gold processing, replay logic, quality checks, notebooks, and local Docker execution.</div>
-      <div class="card-meta">
-        <span>Spark Runtime</span>
-        <span>Replay + Quality</span>
-        <span>Docker Demo</span>
-      </div>
-    </a>
-  </div>
-</div>
-
-<div class="section-title" id="grouped-guides">
-  <h2>Grouped Tutorials</h2>
-  <div class="section-intro">Tutorials are grouped into clear categories so you can move from core engineering foundations to enterprise ETL and downstream analytics more easily.</div>
-</div>
-
-<div class="grouped-tutorials">
-  <div class="group-grid">
-    <div class="category-panel">
-      <div class="section-kicker">Data Engineering Core</div>
-      <h3>Core concepts and engines</h3>
-      <p>Foundational material for distributed processing, query design, and warehouse modeling.</p>
-      <div class="track-list">
-        <a href="pages/spark-101.html" class="track-link">
-          <div class="track-tag">Spark</div>
-          <h4>Apache Spark 101</h4>
-          <p>PySpark, Spark SQL, streaming, performance tuning, and modern table formats.</p>
-        </a>
-        <a href="pages/sql-101.html" class="track-link">
-          <div class="track-tag">SQL</div>
-          <h4>SQL 101</h4>
-          <p>Joins, CTEs, window functions, indexing, transactions, and schema design basics.</p>
-        </a>
-        <a href="pages/dimensional-modeling-101.html" class="track-link">
-          <div class="track-tag">Dimensional Modeling</div>
-          <h4>Dimensional Modeling 101</h4>
-          <p>Facts, dimensions, SCD patterns, and practical warehouse modeling choices.</p>
-        </a>
-      </div>
-    </div>
-
-    <div class="category-panel">
-      <div class="section-kicker">Enterprise ETL</div>
-      <h3>Traditional integration tooling</h3>
-      <p>Training material for enterprise teams working in established ETL environments and migration-heavy delivery contexts.</p>
-      <div class="track-list">
-        <a href="pages/informatica-powercenter-101.html" class="track-link">
-          <div class="track-tag">Informatica</div>
-          <h4>Informatica PowerCenter 101</h4>
-          <p>Architecture, transformations, ETL patterns, deployment, and performance tuning.</p>
-        </a>
-        <a href="pages/ssis-101.html" class="track-link">
-          <div class="track-tag">SSIS</div>
-          <h4>SSIS 101</h4>
-          <p>Control flow, data flow, variables, error handling, deployment, and optimization.</p>
-        </a>
-      </div>
-    </div>
-
-    <div class="category-panel">
-      <div class="section-kicker">Analytics</div>
-      <h3>Consumption and downstream use</h3>
-      <p>Resources for turning modeled and engineered data into reporting and business-facing analysis.</p>
-      <div class="track-list">
-        <a href="pages/tableau-101.html" class="track-link">
-          <div class="track-tag">Tableau</div>
-          <h4>Tableau 101</h4>
-          <p>Calculated fields, dashboards, chart patterns, and platform fundamentals.</p>
-        </a>
-        <div class="track-link track-placeholder">
-          <div class="track-tag">Analytics</div>
-          <h4>More analytics content coming next</h4>
-          <p>Add future coverage here for semantic layers, KPI design, dashboard delivery patterns, or BI operating practices.</p>
+            <a href="./pages/working-reference-implementation.html" 
+               class="block bg-white p-8 rounded-3xl shadow-sm card-hover group">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="text-4xl">⚙️</div>
+                    <i class="fa-solid fa-arrow-right text-2xl text-slate-400 group-hover:text-blue-600 transition-colors"></i>
+                </div>
+                <h3 class="text-2xl font-semibold mb-3">Working Reference Implementation</h3>
+                <p class="text-slate-600">A concrete Spark and Iceberg implementation with control tables, bronze-to-gold processing, replay logic, quality checks, notebooks, and local Docker execution.</p>
+                <span class="inline-block mt-8 text-xs font-medium bg-emerald-100 text-emerald-700 px-4 py-2 rounded-2xl">VIEW REFERENCE →</span>
+            </a>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+    </section>
 
-<footer class="site-footer">
-  <div class="footer-inner">
-    Learning hub for data engineering, architecture references, and implementation patterns &nbsp;|&nbsp;
-    Hosted on <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a>
-  </div>
-</footer>
+    <!-- Grouped Tutorials -->
+    <section class="max-w-screen-2xl mx-auto px-8 py-16">
+        <h2 class="text-3xl font-semibold mb-8">Grouped Tutorials</h2>
+        <p class="text-slate-600 mb-10">Tutorials are grouped into clear categories so you can move from core engineering foundations to enterprise ETL and downstream analytics more easily.</p>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Data Engineering Core -->
+            <div class="bg-white rounded-3xl p-8 shadow-sm card-hover">
+                <h3 class="font-semibold text-xl mb-6 flex items-center gap-2"><span class="text-blue-600">Data Engineering Core</span></h3>
+                <ul class="space-y-4 text-slate-700">
+                    <li><a href="./pages/spark-101.html" class="hover:text-blue-600">→ Apache Spark 101</a></li>
+                    <li><a href="./pages/sql-101.html" class="hover:text-blue-600">→ SQL 101</a></li>
+                    <li><a href="./pages/dimensional-modeling-101.html" class="hover:text-blue-600">→ Dimensional Modeling 101</a></li>
+                    <li><a href="./pages/spark-iceberg-demo-setup.html" class="hover:text-blue-600">→ Spark + Iceberg Demo Setup</a></li>
+                </ul>
+            </div>
+
+            <!-- Enterprise ETL -->
+            <div class="bg-white rounded-3xl p-8 shadow-sm card-hover">
+                <h3 class="font-semibold text-xl mb-6 flex items-center gap-2"><span class="text-amber-600">Enterprise ETL</span></h3>
+                <ul class="space-y-4 text-slate-700">
+                    <li><a href="./pages/informatica-powercenter-101.html" class="hover:text-blue-600">→ Informatica PowerCenter 101</a></li>
+                    <li><a href="./pages/ssis-101.html" class="hover:text-blue-600">→ SSIS 101</a></li>
+                </ul>
+            </div>
+
+            <!-- Analytics -->
+            <div class="bg-white rounded-3xl p-8 shadow-sm card-hover">
+                <h3 class="font-semibold text-xl mb-6 flex items-center gap-2"><span class="text-purple-600">Analytics</span></h3>
+                <ul class="space-y-4 text-slate-700">
+                    <li><a href="./pages/tableau-101.html" class="hover:text-blue-600">→ Tableau 101</a></li>
+                    <li class="text-slate-400">More analytics content coming next</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12">
+        <div class="max-w-screen-2xl mx-auto px-8 text-center text-sm">
+            <p>Built as a living knowledge base for enterprise data engineering • Last updated: April 2026</p>
+            <p class="mt-3">
+                <a href="https://github.com/javeed-pasha/learning-hub" target="_blank" class="hover:text-white">View source on GitHub</a>
+            </p>
+        </div>
+    </footer>
+
+<script>
+function toggleTheme() {
+  document.documentElement.classList.toggle('dark-mode');
+  const isDark = document.documentElement.classList.contains('dark-mode');
+  localStorage.setItem('lh-theme', isDark ? 'dark' : 'light');
+  document.querySelector('#theme-toggle i').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+}
+(function() {
+  const isDark = document.documentElement.classList.contains('dark-mode');
+  if (isDark) document.querySelector('#theme-toggle i').className = 'fa-solid fa-sun';
+})();
+</script>
 
 </body>
 </html>

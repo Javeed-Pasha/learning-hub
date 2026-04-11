@@ -1,279 +1,143 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSIS 101 â€” Complete Training Guide</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<script>
-  // Apply saved theme immediately to prevent flash
-  if (localStorage.getItem('lh-theme') === 'dark') document.documentElement.classList.add('dark-mode');
-</script>
+<title>SSIS 101 — Complete Training Guide</title>
 <style>
-body { font-family: 'Inter', system-ui, sans-serif; transition: background-color 0.3s, color 0.3s; }
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
 
-/* â”€â”€ Light theme (default) â”€â”€ */
 :root {
-  --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9; --bg4: #e2e8f0;
-  --border: #e2e8f0; --border2: #cbd5e1;
-  --text: #0f172a; --text2: #475569; --text3: #94a3b8;
-  --accent: #2563eb; --accent2: #3b82f6;
-  --green: #10b981; --amber: #f59e0b; --coral: #ef4444;
-  --purple: #8b5cf6; --teal: #14b8a6; --blue: #2563eb;
-  --mono: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
-  --sans: 'Inter', system-ui, sans-serif;
-  --nav-bg: #ffffff; --nav-border: #e2e8f0;
-  --nav-text: #0f172a; --nav-text2: #475569;
+  --bg: #0f1117;
+  --bg2: #161b27;
+  --bg3: #1e2535;
+  --bg4: #252d40;
+  --border: #2d3650;
+  --border2: #3d4f70;
+  --text: #e2e8f5;
+  --text2: #94a3c0;
+  --text3: #5c6f94;
+  --accent: #4facf7;
+  --accent2: #0ea5e9;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --coral: #f87171;
+  --purple: #a78bfa;
+  --teal: #2dd4bf;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
 }
-
-/* â”€â”€ Dark theme â”€â”€ */
-.dark-mode {
-  --bg: #0f172a; --bg2: #1e293b; --bg3: #111827; --bg4: #334155;
-  --border: #334155; --border2: #475569;
-  --text: #f1f5f9; --text2: #cbd5e1; --text3: #64748b;
-  --nav-bg: #1e293b; --nav-border: #334155;
-  --nav-text: #f1f5f9; --nav-text2: #94a3b8;
-}
-.dark-mode body, body.dark-mode { background: var(--bg) !important; color: var(--text) !important; }
-
-/* Dark overrides for site-nav */
-.dark-mode .site-nav { background: var(--nav-bg) !important; border-color: var(--nav-border) !important; }
-.dark-mode .site-nav a { color: var(--nav-text2) !important; }
-.dark-mode .site-nav a:hover { color: #60a5fa !important; }
-.dark-mode .site-nav .nav-brand { color: var(--nav-text) !important; }
-.dark-mode .site-nav .nav-brand:hover { color: #60a5fa !important; }
-.dark-mode .site-nav .db-icon { color: #60a5fa !important; }
-
-/* Dark overrides for callouts */
-.dark-mode .callout.tip { background: rgba(37,99,235,0.12); border-color: rgba(37,99,235,0.3); }
-.dark-mode .callout.tip p { color: #93c5fd; }
-.dark-mode .callout.warn { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); }
-.dark-mode .callout.warn p { color: #fde68a; }
-.dark-mode .callout.rule { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.3); }
-.dark-mode .callout.rule p { color: #6ee7b7; }
-
-/* Dark overrides for quiz */
-.dark-mode .quiz-option.correct { background: rgba(16,185,129,0.15); border-color: #10b981; color: #6ee7b7; }
-.dark-mode .quiz-option.wrong { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #fca5a5; }
-
-/* Dark overrides for inline code */
-.dark-mode code { background: #334155; }
-
-/* Dark override for table header */
-.dark-mode th { background: #334155; color: #f1f5f9; }
-.dark-mode tr:hover td { background: #111827; }
-
-/* Theme toggle button */
-#theme-toggle { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text2); font-size: 16px; transition: all 0.2s; display: flex; align-items: center; }
-#theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
-
-/* Tutorials dropdown */
-.nav-dropdown { position: relative; }
-.nav-dropdown-toggle { cursor: pointer; display: flex; align-items: center; gap: 4px; }
-.nav-dropdown-toggle i.fa-chevron-down { font-size: 10px; transition: transform 0.2s; }
-.nav-dropdown:hover .nav-dropdown-toggle i.fa-chevron-down { transform: rotate(180deg); }
-.nav-dropdown-menu {
-  display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
-  margin-top: 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
-  padding: 8px 0; min-width: 240px; box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-  z-index: 100;
-}
-.nav-dropdown:hover .nav-dropdown-menu { display: block; }
-.nav-dropdown-menu a {
-  display: flex; align-items: center; gap: 10px; padding: 9px 18px;
-  color: var(--text2) !important; text-decoration: none !important; font-size: 13px; transition: all 0.12s;
-}
-.nav-dropdown-menu a:hover { background: var(--bg3); color: var(--accent) !important; }
-.nav-dropdown-menu a .dd-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-.dd-blue { background: #2563eb; } .dd-violet { background: #7c3aed; } .dd-amber { background: #d97706; }
-.dd-emerald { background: #059669; } .dd-sky { background: #2563eb; } .dd-teal { background: #0d9488; }
-.dark-mode .nav-dropdown-menu { box-shadow: 0 12px 32px rgba(0,0,0,0.5); }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Hide old home-bar */
-.home-bar { display: none; }
-
-/* Shell with new navbar offset */
-.shell { display: flex; min-height: calc(100vh - 73px); margin-top: 0; }
-
-/* Sidebar */
-nav:not(.site-nav) {
-  width: 260px; min-width: 260px; background: var(--bg2);
-  border-right: 1px solid var(--border); padding: 0 0 40px;
-  position: sticky; top: 73px; height: calc(100vh - 73px); overflow-y: auto;
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
 }
+
+.shell { display: flex; min-height: 100vh; margin-top: 40px; }
+
+.home-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 40px;
+  background: var(--bg2); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 20px; z-index: 999; font-family: var(--sans);
+}
+.home-bar a { color: var(--accent); text-decoration: none; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; transition: color 0.15s; }
+.home-bar a:hover { color: var(--text); }
+
+nav { width: 240px; min-width: 240px; background: var(--bg2); border-right: 1px solid var(--border); padding: 0 0 40px; position: sticky; top: 40px; height: calc(100vh - 40px); overflow-y: auto; }
 .nav-logo { padding: 24px 20px 20px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
-.badge {
-  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
-  background: var(--accent); color: #fff; padding: 3px 10px; border-radius: 5px; margin-bottom: 8px;
-}
+.nav-logo .badge { display: inline-block; font-family: var(--mono); font-size: 10px; background: var(--accent); color: #0a1628; padding: 2px 8px; border-radius: 3px; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.08em; }
 .nav-logo h1 { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.4; }
-.nav-section {
-  padding: 4px 20px 2px; font-size: 10px; font-weight: 700;
-  color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 14px;
-}
-nav:not(.site-nav) a {
-  display: flex; align-items: center; gap: 8px; padding: 7px 20px;
-  color: var(--text2); text-decoration: none; font-size: 13px;
-  border-left: 2px solid transparent; transition: all 0.15s;
-}
-nav:not(.site-nav) a:hover { color: var(--text); background: var(--bg3); }
-nav:not(.site-nav) a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(37,99,235,0.05); font-weight: 500; }
-nav:not(.site-nav) a .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
-nav:not(.site-nav) a.active .dot { background: var(--accent); }
+.nav-section { padding: 4px 20px 2px; font-size: 10px; font-weight: 600; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 14px; }
+nav a { display: flex; align-items: center; gap: 8px; padding: 7px 20px; color: var(--text2); text-decoration: none; font-size: 13px; border-left: 2px solid transparent; transition: all 0.15s; }
+nav a:hover { color: var(--text); background: var(--bg3); }
+nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,172,247,0.07); }
+nav a .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+nav a.active .dot { background: var(--accent); }
 
-/* Main */
-main { flex: 1; padding: 48px 56px; max-width: 920px; }
+main { flex: 1; padding: 48px 56px; max-width: 900px; }
 .section { display: none; }
 .section.active { display: block; }
 
-/* Typography */
-h2 { font-size: 30px; font-weight: 700; color: var(--text); margin-bottom: 6px; letter-spacing: -0.02em; }
-h2 span { color: var(--accent); }
-.section-meta { font-size: 12px; color: var(--text3); margin-bottom: 32px; display: flex; gap: 20px; flex-wrap: wrap; }
-h3 { font-size: 17px; font-weight: 600; color: var(--text); margin: 36px 0 14px; padding-left: 12px; border-left: 3px solid var(--accent); }
-h4 { font-size: 14px; font-weight: 600; color: var(--accent); margin: 24px 0 10px; letter-spacing: 0.01em; }
+h2 { font-size: 28px; font-weight: 300; color: var(--text); margin-bottom: 6px; letter-spacing: -0.02em; }
+h2 span { color: var(--accent); font-weight: 500; }
+.section-meta { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-bottom: 32px; display: flex; gap: 20px; }
+.section-meta span { display: flex; align-items: center; gap: 4px; }
+h3 { font-size: 17px; font-weight: 500; color: var(--text); margin: 36px 0 14px; padding-left: 12px; border-left: 3px solid var(--accent); }
+h4 { font-size: 14px; font-weight: 600; color: var(--accent); margin: 24px 0 10px; font-family: var(--mono); letter-spacing: 0.03em; }
 p { color: var(--text2); margin-bottom: 14px; }
-strong { color: var(--text); font-weight: 600; }
-main a { color: var(--accent); text-decoration: none; }
-main a:hover { text-decoration: underline; }
+strong { color: var(--text); font-weight: 500; }
 
-/* Cards */
-.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 16px; }
 .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
 .card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
-.card.accent-border, .accent-border { border-left: 3px solid var(--accent); }
-.card.green-border, .green-border { border-left: 3px solid var(--green); }
-.card.amber-border, .amber-border { border-left: 3px solid var(--amber); }
-.card.coral-border, .coral-border { border-left: 3px solid var(--coral); }
-.card.purple-border, .purple-border { border-left: 3px solid var(--purple); }
-.card.blue-border, .blue-border { border-left: 3px solid var(--blue); }
-.card.teal-border { border-left: 3px solid var(--teal); }
+.card.accent-border { border-left: 3px solid var(--accent); }
+.card.green-border  { border-left: 3px solid var(--green); }
+.card.amber-border  { border-left: 3px solid var(--amber); }
+.card.coral-border  { border-left: 3px solid var(--coral); }
+.card.purple-border { border-left: 3px solid var(--purple); }
 .card h4 { margin: 0 0 8px; }
 .card p { margin: 0; font-size: 13px; }
 
-/* Tables */
 table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
-th { background: var(--bg3); color: var(--text); font-weight: 600; padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
+th { background: var(--bg3); color: var(--text); font-weight: 500; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border2); font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; }
 td { padding: 9px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: var(--bg3); }
+tr:hover td { background: var(--bg3); color: var(--text); }
 
-/* Code */
 pre, code { font-family: var(--mono); }
-pre { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; color: #e2e8f0; }
+pre { background: #0a0d14; border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; overflow-x: auto; font-size: 12.5px; line-height: 1.6; margin-bottom: 20px; color: #c8d6ef; }
 pre * { font-family: inherit !important; font-style: normal !important; }
-code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-radius: 4px; font-size: 12.5px; }
-.kw { color: #93c5fd; } .fn { color: #6ee7b7; } .str { color: #fde68a; }
-.cm { color: #64748b; } .num { color: #fca5a5; } .op { color: #c4b5fd; }
+code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-radius: 3px; font-size: 12.5px; }
+.kw  { color: #7dd3fc; }
+.fn  { color: #34d399; }
+.str { color: #fbbf24; }
+.cm  { color: #4b5a7a; }
+.num { color: #f87171; }
+.op  { color: #a78bfa; }
 
-/* Callouts */
-.callout { border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: 13.5px; display: flex; gap: 12px; align-items: flex-start; }
+.callout { border-radius: 6px; padding: 14px 18px; margin-bottom: 18px; font-size: 13.5px; display: flex; gap: 12px; align-items: flex-start; }
 .callout .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
 .callout p { margin: 0; }
-.callout.tip { background: #eff6ff; border: 1px solid #bfdbfe; }
-.callout.tip p { color: #1e40af; }
-.callout.warn { background: #fffbeb; border: 1px solid #fde68a; }
-.callout.warn p { color: #92400e; }
-.callout.rule { background: #f0fdf4; border: 1px solid #bbf7d0; }
-.callout.rule p { color: #166534; }
+.callout.tip    { background: rgba(79,172,247,0.08); border: 1px solid rgba(79,172,247,0.2); }
+.callout.tip p  { color: #7dd3fc; }
+.callout.warn   { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); }
+.callout.warn p { color: #fde68a; }
+.callout.rule   { background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); }
+.callout.rule p { color: #6ee7b7; }
 
-/* Architecture diagrams - keep dark for contrast */
-.arch-diagram { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 26px; margin-bottom: 24px; color: #e2e8f0; font-size: 12px; }
-.tier { border: 1px solid; border-radius: 8px; padding: 16px 20px; margin-bottom: 12px; position: relative; }
-.tier.source, .tier.driver, .tier.platform, .tier.pipeline { border-color: rgba(59,130,246,0.4); background: rgba(59,130,246,0.08); }
-.tier.control, .tier.cluster, .tier.governance { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
-.tier.compute, .tier.storage { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
-.tier.publish, .tier.ops { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
-.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; }
-.tier.source .tier-label, .tier.driver .tier-label, .tier.platform .tier-label, .tier.pipeline .tier-label { background: rgba(59,130,246,0.3); }
-.tier.control .tier-label, .tier.cluster .tier-label, .tier.governance .tier-label { background: rgba(139,92,246,0.3); }
-.tier.compute .tier-label, .tier.storage .tier-label { background: rgba(16,185,129,0.3); }
-.tier.publish .tier-label, .tier.ops .tier-label { background: rgba(245,158,11,0.3); }
-.tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-.tool-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: #e2e8f0; }
-.connector { text-align: center; color: #94a3b8; font-size: 11px; margin: 6px 0; letter-spacing: 0.05em; }
+.arch-diagram { background: #0a0d14; border: 1px solid var(--border); border-radius: 8px; padding: 28px; margin-bottom: 24px; font-family: var(--mono); font-size: 12px; }
+.tier { border: 1px solid; border-radius: 6px; padding: 16px 20px; margin-bottom: 12px; position: relative; }
+.tier.driver  { border-color: rgba(79,172,247,0.4); background: rgba(79,172,247,0.04); }
+.tier.cluster { border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.04); }
+.tier.storage { border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.03); }
+.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 500; letter-spacing: 0.08em; }
+.tier.driver  .tier-label { background: rgba(79,172,247,0.2); color: var(--accent); }
+.tier.cluster .tier-label { background: rgba(167,139,250,0.2); color: var(--purple); }
+.tier.storage .tier-label { background: rgba(52,211,153,0.2);  color: var(--green); }
+.tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.tool-box { background: var(--bg3); border: 1px solid var(--border2); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: var(--text); }
+.connector { text-align: center; color: var(--text3); font-size: 11px; margin: 4px 0; letter-spacing: 0.05em; }
 
-/* Link strips */
-.link-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
-.link-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg3); color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.15s; }
-.link-chip:hover { background: var(--accent); color: white; text-decoration: none; }
-
-/* Lists */
-ul, .bullet-list, ol { margin: 0 0 18px 20px; color: var(--text2); }
-li { margin-bottom: 8px; }
-
-/* Quiz */
 .quiz-q { margin-bottom: 24px; }
 .quiz-q .qtext { font-size: 14px; color: var(--text); margin-bottom: 12px; font-weight: 500; }
-.quiz-option { display: block; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all 0.15s; }
-.quiz-option:hover { border-color: var(--accent); color: var(--text); }
-.quiz-option.correct { border-color: var(--green); background: #f0fdf4; color: #166534; }
-.quiz-option.wrong { border-color: var(--coral); background: #fef2f2; color: #991b1b; }
+.quiz-option { display: block; background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all 0.15s; }
+.quiz-option:hover { border-color: var(--border2); color: var(--text); }
+.quiz-option.correct { border-color: var(--green); background: rgba(52,211,153,0.08); color: #6ee7b7; }
+.quiz-option.wrong   { border-color: var(--coral); background: rgba(248,113,113,0.08); color: #fca5a5; }
 
-/* Footer note */
-.page-footer-note { margin-top: 40px; padding-top: 20px; }
-.page-footer-note hr { border: none; border-top: 1px solid var(--border); margin-bottom: 16px; }
-.page-footer-note p { font-size: 13px; color: var(--text3); }
-
-/* Responsive */
-@media (max-width: 900px) { .shell { display: block; } nav:not(.site-nav) { position: relative; width: auto; min-width: 0; height: auto; top: 0; border-right: none; border-bottom: 1px solid var(--border); } main { padding: 32px 24px 48px; } }
-@media (max-width: 768px) { .card-grid, .card-grid-3 { grid-template-columns: 1fr; } }
-@media print { nav:not(.site-nav) { display: none; } .section { display: block !important; } }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+@media print { nav { display: none; } .section { display: block !important; } }
 </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
-
-<!-- Navbar -->
-<nav class="site-nav bg-white border-b shadow-sm sticky top-0 z-50">
-  <div class="px-8 py-5 flex items-center justify-between">
-    <a href="../index.html" class="flex items-center gap-3" style="text-decoration:none;color:inherit;" title="Home">
-      <i class="fa-solid fa-database text-3xl db-icon" style="color:#2563eb;"></i>
-      <span class="text-2xl font-semibold tracking-tight nav-brand">Learning Hub</span>
-    </a>
-    <div class="flex items-center gap-8 text-sm font-medium">
-      <a href="enterprise-data-platform-blueprint.html" class="hover:text-blue-600 transition-colors" style="text-decoration:none;color:inherit;">Blueprint</a>
-      <a href="working-reference-implementation.html" class="hover:text-blue-600 transition-colors" style="text-decoration:none;color:inherit;">Reference Implementation</a>
-      <div class="nav-dropdown">
-        <span class="nav-dropdown-toggle hover:text-blue-600 transition-colors" style="color:inherit;">Tutorials <i class="fa-solid fa-chevron-down"></i></span>
-        <div class="nav-dropdown-menu">
-          <a href="spark-101.html"><span class="dd-dot dd-blue"></span> Apache Spark 101</a>
-          <a href="sql-101.html"><span class="dd-dot dd-violet"></span> SQL 101</a>
-          <a href="dimensional-modeling-101.html"><span class="dd-dot dd-amber"></span> Dimensional Modeling 101</a>
-          <a href="informatica-powercenter-101.html"><span class="dd-dot dd-emerald"></span> Informatica PowerCenter 101</a>
-          <a href="ssis-101.html"><span class="dd-dot dd-sky"></span> SSIS 101</a>
-          <a href="tableau-101.html"><span class="dd-dot dd-teal"></span> Tableau 101</a>
-          <a href="spark-iceberg-demo-setup.html"><span class="dd-dot dd-blue"></span> Spark + Iceberg Demo Setup</a>
-        </div>
-      </div>
-      <a href="https://github.com/javeed-pasha" target="_blank" class="hover:text-blue-600 transition-colors flex items-center gap-1" style="text-decoration:none;color:inherit;">
-        <i class="fa-brands fa-github"></i> GitHub
-      </a>
-      <a href="https://www.linkedin.com/in/javeed-pasha/" target="_blank" class="hover:text-blue-600 transition-colors flex items-center gap-1" style="text-decoration:none;color:inherit;">
-        <i class="fa-brands fa-linkedin"></i> LinkedIn
-      </a>
-      <button id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
-        <i class="fa-solid fa-moon"></i>
-      </button>
-    </div>
-  </div>
-</nav>
-
-<script>
-function toggleTheme() {
-  document.documentElement.classList.toggle('dark-mode');
-  const isDark = document.documentElement.classList.contains('dark-mode');
-  localStorage.setItem('lh-theme', isDark ? 'dark' : 'light');
-  document.querySelector('#theme-toggle i').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-}
-(function() {
-  const isDark = document.documentElement.classList.contains('dark-mode');
-  if (isDark) document.querySelector('#theme-toggle i').className = 'fa-solid fa-sun';
-})();
-</script>
-
+<body>
 
 <div class="home-bar">
   <a href="../index.html">&#9664; Learning Hub</a>
@@ -283,7 +147,7 @@ function toggleTheme() {
 <nav id="sidebar">
   <div class="nav-logo">
     <div class="badge">TRAINING</div>
-    <h1>SSIS 101 â€” Complete Guide</h1>
+    <h1>SSIS 101 — Complete Guide</h1>
   </div>
 
   <div class="nav-section">Foundations</div>
@@ -313,7 +177,7 @@ function toggleTheme() {
 
 <main>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 1 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
 <div id="s1" class="section active">
   <h2>What is <span>SSIS</span>?</h2>
   <div class="section-meta">
@@ -353,7 +217,7 @@ function toggleTheme() {
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 2 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
 <div id="s2" class="section">
   <h2>SSIS <span>Architecture</span></h2>
   <div class="section-meta">
@@ -384,7 +248,7 @@ function toggleTheme() {
     <div class="connector">&#9660; Execute &#9660;</div>
     <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);">
       <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">SSIS RUNTIME ENGINE</span>
-      <div style="font-size:11px;color:#5c6f94;margin-bottom:8px;">Executes packages â€” manages control flow, data pipeline, and logging</div>
+      <div style="font-size:11px;color:#5c6f94;margin-bottom:8px;">Executes packages — manages control flow, data pipeline, and logging</div>
       <div class="tier-tools">
         <div class="tool-box">Control Flow Engine</div>
         <div class="tool-box">Data Flow Pipeline Engine</div>
@@ -419,7 +283,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 3 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
 <div id="s3" class="section">
   <h2>SSIS Projects & <span>Packages</span></h2>
   <div class="section-meta">
@@ -430,7 +294,7 @@ function toggleTheme() {
   <table>
     <tr><th>Concept</th><th>Description</th></tr>
     <tr><td><strong>Project (.ispac)</strong></td><td>A container that holds one or more packages, connection managers, parameters, and project-level configurations. This is what gets deployed.</td></tr>
-    <tr><td><strong>Package (.dtsx)</strong></td><td>A single unit of work â€” one ETL workflow. Contains control flow, data flow(s), event handlers, and variables.</td></tr>
+    <tr><td><strong>Package (.dtsx)</strong></td><td>A single unit of work — one ETL workflow. Contains control flow, data flow(s), event handlers, and variables.</td></tr>
     <tr><td><strong>Connection Manager</strong></td><td>Defines how to connect to data sources/destinations. Can be project-level (shared) or package-level.</td></tr>
     <tr><td><strong>Parameter</strong></td><td>Values passed into packages at runtime. Replaces old-style configurations. Can be project or package scoped.</td></tr>
   </table>
@@ -451,17 +315,17 @@ function toggleTheme() {
     </div>
     <div class="card purple-border">
       <h4>Variables</h4>
-      <p>Store values at runtime â€” used in expressions, SQL statements, and control flow logic. User or system scoped.</p>
+      <p>Store values at runtime — used in expressions, SQL statements, and control flow logic. User or system scoped.</p>
     </div>
   </div>
 
   <div class="callout tip">
     <span class="icon">&#128161;</span>
-    <p><strong>Deployment Models:</strong> SSIS supports <strong>Project Deployment</strong> (to SSISDB catalog â€” recommended) and legacy <strong>Package Deployment</strong> (to file system or MSDB). Always prefer Project Deployment for new work.</p>
+    <p><strong>Deployment Models:</strong> SSIS supports <strong>Project Deployment</strong> (to SSISDB catalog — recommended) and legacy <strong>Package Deployment</strong> (to file system or MSDB). Always prefer Project Deployment for new work.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 4 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
 <div id="s4" class="section">
   <h2>Control <span>Flow</span></h2>
   <div class="section-meta">
@@ -473,13 +337,13 @@ function toggleTheme() {
   <h3>Common Tasks</h3>
   <table>
     <tr><th>Task</th><th>Purpose</th></tr>
-    <tr><td><strong>Data Flow Task</strong></td><td>Runs a data pipeline (source â†’ transform â†’ destination). The most important task.</td></tr>
-    <tr><td><strong>Execute SQL Task</strong></td><td>Runs SQL statements â€” TRUNCATE, INSERT, stored procedures, DDL.</td></tr>
+    <tr><td><strong>Data Flow Task</strong></td><td>Runs a data pipeline (source → transform → destination). The most important task.</td></tr>
+    <tr><td><strong>Execute SQL Task</strong></td><td>Runs SQL statements — TRUNCATE, INSERT, stored procedures, DDL.</td></tr>
     <tr><td><strong>Script Task</strong></td><td>Runs custom C# or VB.NET code for logic that can't be done visually.</td></tr>
     <tr><td><strong>File System Task</strong></td><td>Copy, move, rename, or delete files and directories.</td></tr>
     <tr><td><strong>Send Mail Task</strong></td><td>Sends email notifications (success/failure alerts).</td></tr>
-    <tr><td><strong>Execute Package Task</strong></td><td>Runs another SSIS package â€” enables modular "parent-child" design.</td></tr>
-    <tr><td><strong>For Loop / Foreach Loop</strong></td><td>Iterates over items â€” files in a folder, rows in a table, etc.</td></tr>
+    <tr><td><strong>Execute Package Task</strong></td><td>Runs another SSIS package — enables modular "parent-child" design.</td></tr>
+    <tr><td><strong>For Loop / Foreach Loop</strong></td><td>Iterates over items — files in a folder, rows in a table, etc.</td></tr>
     <tr><td><strong>Sequence Container</strong></td><td>Groups tasks together for organization, scoping variables, or applying transactions.</td></tr>
   </table>
 
@@ -506,14 +370,14 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 5 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
 <div id="s5" class="section">
   <h2>Data <span>Flow</span></h2>
   <div class="section-meta">
     <span>&#9201; 5 min</span><span>&#128204; Module 05</span><span>&#127891; Core Concepts</span>
   </div>
 
-  <p>The <strong>Data Flow Task</strong> is where the actual ETL happens. Data moves through a pipeline: <strong>Source â†’ Transformation(s) â†’ Destination</strong>.</p>
+  <p>The <strong>Data Flow Task</strong> is where the actual ETL happens. Data moves through a pipeline: <strong>Source → Transformation(s) → Destination</strong>.</p>
 
   <h3>Data Flow Architecture</h3>
   <div class="arch-diagram">
@@ -550,7 +414,7 @@ function toggleTheme() {
   </div>
 
   <h3>Buffer-Based Pipeline</h3>
-  <p>SSIS processes data in <strong>memory buffers</strong>, not row-by-row. The Data Flow Engine allocates buffers and moves data through the pipeline in chunks â€” this is what makes SSIS fast.</p>
+  <p>SSIS processes data in <strong>memory buffers</strong>, not row-by-row. The Data Flow Engine allocates buffers and moves data through the pipeline in chunks — this is what makes SSIS fast.</p>
 
   <div class="card-grid">
     <div class="card accent-border">
@@ -564,7 +428,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 6 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
 <div id="s6" class="section">
   <h2>Data Flow <span>Transformations</span></h2>
   <div class="section-meta">
@@ -585,7 +449,7 @@ function toggleTheme() {
 
   <div class="callout warn">
     <span class="icon">&#9888;</span>
-    <p><strong>Performance Rule:</strong> Prefer synchronous transformations whenever possible. Avoid the Sort transform â€” sort data in the SQL source query instead.</p>
+    <p><strong>Performance Rule:</strong> Prefer synchronous transformations whenever possible. Avoid the Sort transform — sort data in the SQL source query instead.</p>
   </div>
 
   <h3>Key Transformations</h3>
@@ -598,13 +462,13 @@ function toggleTheme() {
     <tr><td><strong>Multicast</strong></td><td>Sync</td><td>Sends identical copies of data to multiple outputs.</td></tr>
     <tr><td><strong>Union All</strong></td><td>Async</td><td>Combines rows from multiple inputs into a single output (like SQL UNION ALL).</td></tr>
     <tr><td><strong>Merge Join</strong></td><td>Async</td><td>Performs INNER/LEFT/FULL joins. Requires sorted input.</td></tr>
-    <tr><td><strong>Aggregate</strong></td><td>Async</td><td>Performs GROUP BY operations â€” SUM, COUNT, AVG, etc.</td></tr>
-    <tr><td><strong>Sort</strong></td><td>Async</td><td>Sorts data. Expensive â€” prefer using ORDER BY in the source SQL.</td></tr>
+    <tr><td><strong>Aggregate</strong></td><td>Async</td><td>Performs GROUP BY operations — SUM, COUNT, AVG, etc.</td></tr>
+    <tr><td><strong>Sort</strong></td><td>Async</td><td>Sorts data. Expensive — prefer using ORDER BY in the source SQL.</td></tr>
     <tr><td><strong>Slowly Changing Dimension</strong></td><td>Sync</td><td>Wizard-based SCD Type 1/2 handling. Works but generates slow row-by-row operations.</td></tr>
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 7 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
 <div id="s7" class="section">
   <h2>Variables & <span>Expressions</span></h2>
   <div class="section-meta">
@@ -650,7 +514,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 8 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
 <div id="s8" class="section">
   <h2>Event Handlers & <span>Logging</span></h2>
   <div class="section-meta">
@@ -691,7 +555,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 9 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
 <div id="s9" class="section">
   <h2>Error <span>Handling</span></h2>
   <div class="section-meta">
@@ -717,13 +581,13 @@ function toggleTheme() {
   <table>
     <tr><th>Option</th><th>Behavior</th></tr>
     <tr><td><strong>Fail Component</strong></td><td>Default. The entire data flow fails on first error.</td></tr>
-    <tr><td><strong>Redirect Row</strong></td><td>Send the bad row to an error output path. Best practice â€” log errors, don't stop the pipeline.</td></tr>
-    <tr><td><strong>Ignore Failure</strong></td><td>Silently skip the error. Use rarely â€” only for known benign issues.</td></tr>
+    <tr><td><strong>Redirect Row</strong></td><td>Send the bad row to an error output path. Best practice — log errors, don't stop the pipeline.</td></tr>
+    <tr><td><strong>Ignore Failure</strong></td><td>Silently skip the error. Use rarely — only for known benign issues.</td></tr>
   </table>
 
   <div class="callout tip">
     <span class="icon">&#128161;</span>
-    <p><strong>Common Pattern:</strong> Redirect error rows â†’ add a Derived Column to capture the error description â†’ write to an error staging table for investigation.</p>
+    <p><strong>Common Pattern:</strong> Redirect error rows → add a Derived Column to capture the error description → write to an error staging table for investigation.</p>
   </div>
 
   <h3>Checkpoints</h3>
@@ -734,7 +598,7 @@ CheckpointUsage    = <span class="kw">IfExists</span>
 SaveCheckpoints    = <span class="kw">True</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 10 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
 <div id="s10" class="section">
   <h2>Deployment & <span>SSIS Catalog</span></h2>
   <div class="section-meta">
@@ -748,11 +612,11 @@ SaveCheckpoints    = <span class="kw">True</span></pre>
   <div class="card-grid">
     <div class="card accent-border">
       <h4>1. Build Project</h4>
-      <p>In Visual Studio: Build â†’ Build Solution. Produces an <code>.ispac</code> file in the <code>bin/Development</code> folder.</p>
+      <p>In Visual Studio: Build → Build Solution. Produces an <code>.ispac</code> file in the <code>bin/Development</code> folder.</p>
     </div>
     <div class="card green-border">
       <h4>2. Deploy to Catalog</h4>
-      <p>Right-click project â†’ Deploy. Choose target SQL Server and folder in the SSIS Catalog. Or use <code>ISDeploymentWizard.exe</code>.</p>
+      <p>Right-click project → Deploy. Choose target SQL Server and folder in the SSIS Catalog. Or use <code>ISDeploymentWizard.exe</code>.</p>
     </div>
     <div class="card amber-border">
       <h4>3. Configure Environments</h4>
@@ -760,17 +624,17 @@ SaveCheckpoints    = <span class="kw">True</span></pre>
     </div>
     <div class="card purple-border">
       <h4>4. Schedule with SQL Agent</h4>
-      <p>Create a SQL Agent Job â†’ New Step â†’ Type: SSIS Package â†’ Select from catalog. Set schedule and notifications.</p>
+      <p>Create a SQL Agent Job → New Step → Type: SSIS Package → Select from catalog. Set schedule and notifications.</p>
     </div>
   </div>
 
   <h3>SSISDB Catalog Structure</h3>
 <pre>SSISDB
-  â””â”€â”€ Folders
-       â””â”€â”€ Projects
-            â””â”€â”€ Packages
-       â””â”€â”€ Environments
-            â””â”€â”€ Environment Variables</pre>
+  └── Folders
+       └── Projects
+            └── Packages
+       └── Environments
+            └── Environment Variables</pre>
 
   <h3>Useful Catalog Queries</h3>
 <pre><span class="cm">-- Recent executions</span>
@@ -786,7 +650,7 @@ SaveCheckpoints    = <span class="kw">True</span></pre>
   <span class="kw">AND</span> event_name = <span class="str">'OnError'</span>;</pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 11 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 11 ═══════════════════ -->
 <div id="s11" class="section">
   <h2>Performance <span>Tuning</span></h2>
   <div class="section-meta">
@@ -796,10 +660,10 @@ SaveCheckpoints    = <span class="kw">True</span></pre>
   <h3>Top Optimization Strategies</h3>
   <table>
     <tr><th>#</th><th>Strategy</th><th>Impact</th></tr>
-    <tr><td><strong>1</strong></td><td>Use SQL query at source (filter, sort, join in SQL â€” not SSIS)</td><td>&#128308; High</td></tr>
-    <tr><td><strong>2</strong></td><td>Prefer OLE DB Destination with "Table or View â€” Fast Load"</td><td>&#128308; High</td></tr>
+    <tr><td><strong>1</strong></td><td>Use SQL query at source (filter, sort, join in SQL — not SSIS)</td><td>&#128308; High</td></tr>
+    <tr><td><strong>2</strong></td><td>Prefer OLE DB Destination with "Table or View — Fast Load"</td><td>&#128308; High</td></tr>
     <tr><td><strong>3</strong></td><td>Use Full Cache mode on Lookup transforms</td><td>&#128308; High</td></tr>
-    <tr><td><strong>4</strong></td><td>Avoid Sort transform â€” ORDER BY in source SQL</td><td>&#128993; Medium</td></tr>
+    <tr><td><strong>4</strong></td><td>Avoid Sort transform — ORDER BY in source SQL</td><td>&#128993; Medium</td></tr>
     <tr><td><strong>5</strong></td><td>Tune buffer sizes (DefaultBufferMaxRows, DefaultBufferSize)</td><td>&#128993; Medium</td></tr>
     <tr><td><strong>6</strong></td><td>Drop indexes before bulk load, rebuild after</td><td>&#128993; Medium</td></tr>
     <tr><td><strong>7</strong></td><td>Use staging tables + MERGE instead of row-by-row</td><td>&#128308; High</td></tr>
@@ -824,12 +688,12 @@ EngineThreads        = <span class="num">10</span>        <span class="cm">-- pa
     </div>
     <div class="card coral-border">
       <h4>No Cache</h4>
-      <p>Queries the database for every row. Very slow â€” avoid unless the reference data changes during execution.</p>
+      <p>Queries the database for every row. Very slow — avoid unless the reference data changes during execution.</p>
     </div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 12 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 12 ═══════════════════ -->
 <div id="s12" class="section">
   <h2>SSIS vs Informatica vs <span>ADF</span></h2>
   <div class="section-meta">
@@ -847,7 +711,7 @@ EngineThreads        = <span class="num">10</span>        <span class="cm">-- pa
     <tr><td><strong>Error Handling</strong></td><td>Error outputs + event handlers</td><td>Row-level error handling</td><td>Activity retry + error paths</td></tr>
     <tr><td><strong>Version Control</strong></td><td>Git / TFS (project files)</td><td>Repository Manager</td><td>Git integration built-in</td></tr>
     <tr><td><strong>Cost</strong></td><td>SQL Server license</td><td>Per-CPU license (expensive)</td><td>Pay-per-use (consumption)</td></tr>
-    <tr><td><strong>Migration Path</strong></td><td>â†’ ADF + SSIS IR</td><td>â†’ IICS (Cloud)</td><td>Cloud-native</td></tr>
+    <tr><td><strong>Migration Path</strong></td><td>→ ADF + SSIS IR</td><td>→ IICS (Cloud)</td><td>Cloud-native</td></tr>
   </table>
 
   <div class="callout tip">
@@ -856,7 +720,7 @@ EngineThreads        = <span class="num">10</span>        <span class="cm">-- pa
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 13 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 13 ═══════════════════ -->
 <div id="s13" class="section">
   <h2>Cheat <span>Sheet</span></h2>
   <div class="section-meta">
@@ -881,7 +745,7 @@ Conditional Split       <span class="cm">-- Route rows by condition</span>
 Lookup                  <span class="cm">-- Join with reference data</span>
 Data Conversion         <span class="cm">-- Cast data types</span>
 Multicast               <span class="cm">-- Copy rows to multiple outputs</span>
-OLE DB Command          <span class="cm">-- Run SQL per row (slow â€” avoid)</span>
+OLE DB Command          <span class="cm">-- Run SQL per row (slow — avoid)</span>
 Audit                   <span class="cm">-- Add execution metadata columns</span>
 Row Count               <span class="cm">-- Count rows into a variable</span></pre>
 
@@ -904,7 +768,7 @@ Pivot / Unpivot         <span class="cm">-- Reshape data</span></pre>
 <span class="str">@[User::Flag]</span> ? <span class="str">"Yes"</span> : <span class="str">"No"</span>      <span class="cm">-- Ternary</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 14 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 14 ═══════════════════ -->
 <div id="s14" class="section">
   <h2>Knowledge <span>Check</span></h2>
   <div class="section-meta">
@@ -914,23 +778,23 @@ Pivot / Unpivot         <span class="cm">-- Reshape data</span></pre>
 
   <div class="quiz-q">
     <div class="qtext">1. What are the two main layers of an SSIS package?</div>
-    <div class="quiz-option" onclick="answer(this,false,'Control Flow and Data Flow are the two main layers â€” not Event Handlers.')">Event Handlers and Data Flow</div>
+    <div class="quiz-option" onclick="answer(this,false,'Control Flow and Data Flow are the two main layers — not Event Handlers.')">Event Handlers and Data Flow</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! Control Flow orchestrates tasks, Data Flow handles the ETL pipeline.')">Control Flow and Data Flow</div>
     <div class="quiz-option" onclick="answer(this,false,'Variables support both layers but are not a main layer themselves.')">Variables and Data Flow</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">2. Which Lookup cache mode is fastest for repeated lookups?</div>
-    <div class="quiz-option" onclick="answer(this,false,'No Cache queries the DB for every row â€” very slow.')">No Cache</div>
-    <div class="quiz-option" onclick="answer(this,false,'Partial Cache is a compromise â€” not the fastest.')">Partial Cache</div>
+    <div class="quiz-option" onclick="answer(this,false,'No Cache queries the DB for every row — very slow.')">No Cache</div>
+    <div class="quiz-option" onclick="answer(this,false,'Partial Cache is a compromise — not the fastest.')">Partial Cache</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! Full Cache loads the entire reference table into memory upfront.')">Full Cache</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">3. What type of transformation is the Derived Column?</div>
-    <div class="quiz-option" onclick="answer(this,true,'Correct! Derived Column is synchronous â€” it reuses the same buffer.')">Synchronous</div>
-    <div class="quiz-option" onclick="answer(this,false,'Async transforms create new buffers â€” Derived Column does not.')">Asynchronous</div>
-    <div class="quiz-option" onclick="answer(this,false,'Blocking is a type of async â€” Derived Column is synchronous.')">Blocking</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Derived Column is synchronous — it reuses the same buffer.')">Synchronous</div>
+    <div class="quiz-option" onclick="answer(this,false,'Async transforms create new buffers — Derived Column does not.')">Asynchronous</div>
+    <div class="quiz-option" onclick="answer(this,false,'Blocking is a type of async — Derived Column is synchronous.')">Blocking</div>
   </div>
 
   <div class="quiz-q">
@@ -944,21 +808,21 @@ Pivot / Unpivot         <span class="cm">-- Reshape data</span></pre>
     <div class="qtext">5. Where should you deploy SSIS projects (recommended approach)?</div>
     <div class="quiz-option" onclick="answer(this,false,'File system deployment is the legacy model.')">File System</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! SSISDB Catalog is the recommended deployment target.')">SSIS Catalog (SSISDB)</div>
-    <div class="quiz-option" onclick="answer(this,false,'MSDB is the legacy package store â€” not recommended for new work.')">MSDB Database</div>
+    <div class="quiz-option" onclick="answer(this,false,'MSDB is the legacy package store — not recommended for new work.')">MSDB Database</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">6. What should you use instead of the SSIS Sort transform?</div>
-    <div class="quiz-option" onclick="answer(this,true,'Correct! Sort in the SQL query â€” it is much faster than the SSIS Sort component.')">ORDER BY in the source SQL query</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Sort in the SQL query — it is much faster than the SSIS Sort component.')">ORDER BY in the source SQL query</div>
     <div class="quiz-option" onclick="answer(this,false,'Merge Join requires sorted input but doesn\'t replace Sort.')">Merge Join</div>
     <div class="quiz-option" onclick="answer(this,false,'Script Task could sort but it would be slower and more complex.')">Script Task</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">7. What is the recommended error output action for data quality issues?</div>
-    <div class="quiz-option" onclick="answer(this,false,'Fail Component stops the entire pipeline â€” too aggressive for data quality.')">Fail Component</div>
+    <div class="quiz-option" onclick="answer(this,false,'Fail Component stops the entire pipeline — too aggressive for data quality.')">Fail Component</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! Redirect rows to an error path for logging and investigation.')">Redirect Row</div>
-    <div class="quiz-option" onclick="answer(this,false,'Ignoring failures silently loses data â€” risky.')">Ignore Failure</div>
+    <div class="quiz-option" onclick="answer(this,false,'Ignoring failures silently loses data — risky.')">Ignore Failure</div>
   </div>
 
   <div class="quiz-q">
@@ -1007,6 +871,5 @@ function answer(el, isCorrect, explanation) {
   document.getElementById('score-display').textContent = correctCount + ' / 8';
 }
 </script>
-
 </body>
 </html>

@@ -13,3 +13,6 @@ Thumbs.db
 
 # Jupyter
 **/.ipynb_checkpoints/
+
+# Oracle (private scripts, not for GitHub)
+oracle/

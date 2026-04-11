@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Docker Setup - Spark + Iceberg Demo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0f1117;
+  --bg2: #161b27;
+  --bg3: #1e2535;
+  --bg4: #252d40;
+  --border: #2d3650;
+  --border2: #3d4f70;
+  --text: #e2e8f5;
+  --text2: #94a3c0;
+  --text3: #5c6f94;
+  --accent: #4facf7;
+  --green: #34d399;
+  --amber: #fbbf24;
+  --purple: #a78bfa;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'IBM Plex Sans', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background:
+    radial-gradient(circle at top left, rgba(79,172,247,0.10), transparent 26%),
+    linear-gradient(180deg, rgba(37,45,64,0.20), transparent 14%),
+    var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.shell { display: flex; min-height: 100vh; margin-top: 40px; }
+
+.home-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 999;
+}
+
+.home-bar a {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.home-bar a:hover { color: var(--text); }
+
+nav {
+  width: 270px;
+  min-width: 270px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 0 0 40px;
+  position: sticky;
+  top: 40px;
+  height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.nav-logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--accent);
+  color: #0a1628;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.nav-logo h1 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.nav-section {
+  padding: 4px 20px 2px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 14px;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 20px;
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 13px;
+  border-left: 2px solid transparent;
+}
+
+nav a:hover { color: var(--text); background: var(--bg3); }
+nav a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(79,172,247,0.07); }
+nav a .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+nav a.active .dot { background: var(--accent); }
+
+main {
+  flex: 1;
+  padding: 48px 56px;
+  max-width: 980px;
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+h2 {
+  font-size: 30px;
+  font-weight: 300;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+h2 span { color: var(--accent); font-weight: 500; }
+
+.section-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 32px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+h3 {
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text);
+  margin: 36px 0 14px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 0 0 8px;
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+}
+
+p { color: var(--text2); margin-bottom: 14px; }
+strong { color: var(--text); font-weight: 500; }
+main a { color: var(--accent); text-decoration: none; }
+main a:hover { text-decoration: underline; }
+
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 16px;
+}
+
+.card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 24px; }
+.card-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+
+.accent-border { border-left: 3px solid var(--accent); }
+.green-border { border-left: 3px solid var(--green); }
+.amber-border { border-left: 3px solid var(--amber); }
+.purple-border { border-left: 3px solid var(--purple); }
+
+.callout {
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  font-size: 13.5px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.callout.tip { background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.2); }
+.callout.rule { background: rgba(79,172,247,0.08); border: 1px solid rgba(79,172,247,0.2); }
+.callout.warn { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); }
+
+pre {
+  background: #0a0d14;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px 20px;
+  overflow-x: auto;
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  color: #c8d6ef;
+  font-family: var(--mono);
+}
+
+code {
+  background: var(--bg3);
+  color: var(--accent);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 12.5px;
+  font-family: var(--mono);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+th {
+  background: var(--bg3);
+  color: var(--text);
+  font-weight: 500;
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border2);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+td {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text2);
+  vertical-align: top;
+}
+
+tr:last-child td { border-bottom: none; }
+
+ol { margin: 0 0 18px 22px; color: var(--text2); }
+li { margin-bottom: 8px; }
+
+@media (max-width: 900px) {
+  .shell { display: block; }
+  nav {
+    position: relative;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    top: 40px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  main { padding: 32px 24px 48px; }
+}
+
+@media (max-width: 768px) {
+  .card-grid,
+  .card-grid-3 { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="home-bar">
+  <a href="../index.html">&#8592; Back to Learning Hub</a>
+</div>
+<div class="shell">
+<nav>
+  <div class="nav-logo">
+    <div class="badge">DOCKER SETUP</div>
+    <h1>Spark + Iceberg Demo Setup</h1>
+  </div>
+  <div class="nav-section">Overview</div>
+  <a href="#" class="active" onclick="show('s1',this)"><span class="dot"></span>What You Get</a>
+  <a href="#" onclick="show('s2',this)"><span class="dot"></span>Prerequisites</a>
+  <div class="nav-section">Run It</div>
+  <a href="#" onclick="show('s3',this)"><span class="dot"></span>Start Compose</a>
+  <a href="#" onclick="show('s4',this)"><span class="dot"></span>Open Notebook</a>
+  <a href="#" onclick="show('s5',this)"><span class="dot"></span>Repo Files</a>
+  <div class="nav-section">Operate</div>
+  <a href="#" onclick="show('s6',this)"><span class="dot"></span>Optional CLI Flow</a>
+  <a href="#" onclick="show('s7',this)"><span class="dot"></span>Troubleshooting</a>
+</nav>
+<main>
+<div id="s1" class="section active">
+  <h2>Docker <span>Setup</span></h2>
+  <div class="section-meta"><span>Docker Compose</span><span>Notebook Walkthrough</span><span>Repo-Local Demo</span></div>
+  <p>This page shows how to run the local Spark plus Iceberg demo that backs the working reference implementation. It uses the repository’s saved Docker Compose file, mounted DDL and Spark runtime folders, and the included notebook walkthrough.</p>
+  <div class="callout.rule"><span>&#128161;</span><p><strong>Important:</strong> this is the local execution setup for the repository demo. It is not a new architecture component. It is the runnable environment for the reference implementation already described in the architecture and implementation pages.</p></div>
+  <div class="card-grid">
+    <div class="card accent-border"><h4>Compose File</h4><p>Use <code>docker-compose.learning-hub.yml</code> from the repository root. That file already contains the needed mounts for warehouse, notebooks, DDL, and Spark runtime code.</p></div>
+    <div class="card green-border"><h4>Fastest Path</h4><p>Start Docker Compose, open Jupyter on <code>http://localhost:8888</code>, and run <code>notebooks/learning_hub_demo.ipynb</code>.</p></div>
+  </div>
+  <div class="card-grid">
+    <div class="card amber-border"><h4>What It Runs</h4><p>The notebook resets old demo tables, creates metadata and staging tables, seeds two batches, runs the pipeline, and builds the gold serving table.</p></div>
+    <div class="card purple-border"><h4>What It Uses</h4><p>The demo uses <code>ddl/</code>, <code>spark/</code>, <code>notebooks/</code>, <code>warehouse/</code>, and <code>data/</code> directly from the repository.</p></div>
+  </div>
+</div>
+
+<div id="s2" class="section">
+  <h2>Setup <span>Prerequisites</span></h2>
+  <div class="section-meta"><span>Before You Start</span></div>
+  <p>You only need a few things in place before starting the demo stack.</p>
+  <table>
+    <tr><th>Requirement</th><th>Why It Matters</th></tr>
+    <tr><td><strong>Docker Desktop or Docker Engine</strong></td><td>Required to run the Spark, Iceberg REST, MinIO, and helper containers defined in the compose file.</td></tr>
+    <tr><td><strong>Repository checked out locally</strong></td><td>The compose file mounts repo folders directly, so the demo expects the project files to exist on your machine.</td></tr>
+    <tr><td><strong>Ports available</strong></td><td>The stack uses the ports already defined in <code>docker-compose.learning-hub.yml</code>, including Jupyter on <code>8888</code>.</td></tr>
+  </table>
+  <div class="callout.tip"><span>&#9989;</span><p><strong>No extra mount setup is needed:</strong> the repo already includes <code>warehouse/</code> and <code>data/</code> plus the saved compose file with the correct mounts.</p></div>
+</div>
+
+<div id="s3" class="section">
+  <h2>Start <span>Docker Compose</span></h2>
+  <div class="section-meta"><span>Repo Root Command</span></div>
+  <p>From the repository root, start the local demo stack with the saved compose file:</p>
+<pre>docker compose -f docker-compose.learning-hub.yml up -d</pre>
+  <p>This brings up the services already wired into the repo setup:</p>
+  <table>
+    <tr><th>Service</th><th>Purpose</th></tr>
+    <tr><td><strong>spark-iceberg</strong></td><td>Spark runtime plus Jupyter environment for the notebook walkthrough.</td></tr>
+    <tr><td><strong>iceberg-rest</strong></td><td>REST catalog service for the local Iceberg demo environment.</td></tr>
+    <tr><td><strong>minio</strong></td><td>Object-store layer used by the local stack.</td></tr>
+    <tr><td><strong>mc</strong></td><td>Helper service used in the compose stack.</td></tr>
+  </table>
+  <div class="callout.warn"><span>&#9888;</span><p><strong>If you changed the control-table schema previously:</strong> run the reset step from the notebook or apply <code>ddl/demo_reset.sql</code> before recreating metadata objects.</p></div>
+</div>
+
+<div id="s4" class="section">
+  <h2>Open The <span>Notebook</span></h2>
+  <div class="section-meta"><span>Preferred Run Path</span></div>
+  <p>Once the stack is up, open Jupyter at <code>http://localhost:8888</code> and run:</p>
+<pre>notebooks/learning_hub_demo.ipynb</pre>
+  <p>The notebook is the easiest way to run the demo end to end because it already sequences the setup steps correctly.</p>
+  <ol>
+    <li>Reset old demo tables if needed.</li>
+    <li>Create <code>demo.ctl</code>, <code>demo.staging</code>, <code>demo.bronze</code>, <code>demo.silver</code>, and <code>demo.gold</code>.</li>
+    <li>Seed batch 1 source data.</li>
+    <li>Run the pipeline for <code>customer</code>, <code>orders</code>, <code>product</code>, <code>invoice</code>, and <code>shipment</code>.</li>
+    <li>Seed batch 2 changed source data.</li>
+    <li>Run the second batch.</li>
+    <li>Build the final joined gold serving table.</li>
+    <li>Inspect bronze, silver, and gold outputs.</li>
+  </ol>
+</div>
+
+<div id="s5" class="section">
+  <h2>Repo <span>Files</span></h2>
+  <div class="section-meta"><span>What The Demo Uses</span></div>
+  <table>
+    <tr><th>Path</th><th>Purpose</th></tr>
+    <tr><td><code>docker-compose.learning-hub.yml</code></td><td>Saved local Spark-Iceberg stack for the repository.</td></tr>
+    <tr><td><code>notebooks/learning_hub_demo.ipynb</code></td><td>Runnable notebook walkthrough for the full demo flow.</td></tr>
+    <tr><td><code>ddl/demo_metadata_framework.sql</code></td><td>Creates the control metadata model and target namespaces.</td></tr>
+    <tr><td><code>ddl/demo_staging_sources.sql</code></td><td>Creates the demo staging tables.</td></tr>
+    <tr><td><code>ddl/demo_seed_batch_1001.sql</code> and <code>ddl/demo_seed_batch_1002.sql</code></td><td>Seed initial and changed source-state batches.</td></tr>
+    <tr><td><code>ddl/demo_sales_serving.sql</code></td><td>Builds the final joined serving table.</td></tr>
+    <tr><td><code>spark/runtime_framework.py</code></td><td>Shared runtime logic for the metadata-driven pipeline.</td></tr>
+    <tr><td><code>spark/run_pipeline.py</code></td><td>CLI runner for normal pipeline execution.</td></tr>
+    <tr><td><code>spark/replay_runner.py</code></td><td>CLI runner for replay requests.</td></tr>
+  </table>
+</div>
+
+<div id="s6" class="section">
+  <h2>Optional <span>CLI Flow</span></h2>
+  <div class="section-meta"><span>When You Want To Run It Manually</span></div>
+  <p>If you prefer running the demo outside the notebook sequence, the manual flow is:</p>
+  <ol>
+    <li>Apply <code>ddl/demo_metadata_framework.sql</code>.</li>
+    <li>Apply <code>ddl/demo_staging_sources.sql</code>.</li>
+    <li>Apply <code>ddl/demo_seed_batch_1001.sql</code>.</li>
+    <li>Run <code>spark/run_pipeline.py</code>.</li>
+    <li>Apply <code>ddl/demo_seed_batch_1002.sql</code>.</li>
+    <li>Run <code>spark/run_pipeline.py</code> again.</li>
+    <li>Apply <code>ddl/demo_sales_serving.sql</code>.</li>
+  </ol>
+  <div class="callout.rule"><span>&#128736;</span><p><strong>Recommendation:</strong> use the notebook for first-run setup, then use the CLI flow later if you want to demonstrate individual runtime steps separately.</p></div>
+</div>
+
+<div id="s7" class="section">
+  <h2>Setup <span>Troubleshooting</span></h2>
+  <div class="section-meta"><span>Common Local Issues</span></div>
+  <table>
+    <tr><th>Issue</th><th>What To Check</th></tr>
+    <tr><td><strong>Container paths missing</strong></td><td>Use the saved compose file directly instead of manually copying partial files or mounts.</td></tr>
+    <tr><td><strong>Old schema conflicts</strong></td><td>Run <code>ddl/demo_reset.sql</code> before recreating metadata if you changed the control-table structure.</td></tr>
+    <tr><td><strong>Notebook can’t find repo files</strong></td><td>Confirm the stack was started from the repo root so the compose mounts resolve correctly.</td></tr>
+    <tr><td><strong>Jupyter is up but demo notebook is missing</strong></td><td>Check that <code>notebooks/</code> is mounted and that <code>notebooks/learning_hub_demo.ipynb</code> exists in the repo.</td></tr>
+  </table>
+</div>
+</main>
+</div>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.section').forEach((section) => section.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav a').forEach((link) => link.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

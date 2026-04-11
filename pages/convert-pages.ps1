@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+$lightThemeHead = @'
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Docker Setup - Spark + Iceberg Demo</title>
+<title>%%TITLE%%</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>
@@ -13,12 +14,12 @@
 <style>
 body { font-family: 'Inter', system-ui, sans-serif; transition: background-color 0.3s, color 0.3s; }
 
-/* â”€â”€ Light theme (default) â”€â”€ */
+/* ── Light theme (default) ── */
 :root {
   --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9; --bg4: #e2e8f0;
   --border: #e2e8f0; --border2: #cbd5e1;
   --text: #0f172a; --text2: #475569; --text3: #94a3b8;
-  --accent: #2563eb; --accent2: #3b82f6;
+  --accent: %%ACCENT%%; --accent2: %%ACCENT2%%;
   --green: #10b981; --amber: #f59e0b; --coral: #ef4444;
   --purple: #8b5cf6; --teal: #14b8a6; --blue: #2563eb;
   --mono: ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
@@ -27,7 +28,7 @@ body { font-family: 'Inter', system-ui, sans-serif; transition: background-color
   --nav-text: #0f172a; --nav-text2: #475569;
 }
 
-/* â”€â”€ Dark theme â”€â”€ */
+/* ── Dark theme ── */
 .dark-mode {
   --bg: #0f172a; --bg2: #1e293b; --bg3: #111827; --bg4: #334155;
   --border: #334155; --border2: #475569;
@@ -274,144 +275,59 @@ function toggleTheme() {
 })();
 </script>
 
-<div class="home-bar">
-  <a href="../index.html">&#8592; Back to Learning Hub</a>
-</div>
-<div class="shell">
-<nav>
-  <div class="nav-logo">
-    <div class="badge">DOCKER SETUP</div>
-    <h1>Spark + Iceberg Demo Setup</h1>
-  </div>
-  <div class="nav-section">Overview</div>
-  <a href="#" class="active" onclick="show('s1',this)"><span class="dot"></span>What You Get</a>
-  <a href="#" onclick="show('s2',this)"><span class="dot"></span>Prerequisites</a>
-  <div class="nav-section">Run It</div>
-  <a href="#" onclick="show('s3',this)"><span class="dot"></span>Start Compose</a>
-  <a href="#" onclick="show('s4',this)"><span class="dot"></span>Open Notebook</a>
-  <a href="#" onclick="show('s5',this)"><span class="dot"></span>Repo Files</a>
-  <div class="nav-section">Operate</div>
-  <a href="#" onclick="show('s6',this)"><span class="dot"></span>Optional CLI Flow</a>
-  <a href="#" onclick="show('s7',this)"><span class="dot"></span>Troubleshooting</a>
-</nav>
-<main>
-<div id="s1" class="section active">
-  <h2>Docker <span>Setup</span></h2>
-  <div class="section-meta"><span>Docker Compose</span><span>Notebook Walkthrough</span><span>Repo-Local Demo</span></div>
-  <p>This page shows how to run the local Spark plus Iceberg demo that backs the working reference implementation. It uses the repositoryâ€™s saved Docker Compose file, mounted DDL and Spark runtime folders, and the included notebook walkthrough.</p>
-  <div class="callout.rule"><span>&#128161;</span><p><strong>Important:</strong> this is the local execution setup for the repository demo. It is not a new architecture component. It is the runnable environment for the reference implementation already described in the architecture and implementation pages.</p></div>
-  <div class="card-grid">
-    <div class="card accent-border"><h4>Compose File</h4><p>Use <code>docker-compose.learning-hub.yml</code> from the repository root. That file already contains the needed mounts for warehouse, notebooks, DDL, and Spark runtime code.</p></div>
-    <div class="card green-border"><h4>Fastest Path</h4><p>Start Docker Compose, open Jupyter on <code>http://localhost:8888</code>, and run <code>notebooks/learning_hub_demo.ipynb</code>.</p></div>
-  </div>
-  <div class="card-grid">
-    <div class="card amber-border"><h4>What It Runs</h4><p>The notebook resets old demo tables, creates metadata and staging tables, seeds two batches, runs the pipeline, and builds the gold serving table.</p></div>
-    <div class="card purple-border"><h4>What It Uses</h4><p>The demo uses <code>ddl/</code>, <code>spark/</code>, <code>notebooks/</code>, <code>warehouse/</code>, and <code>data/</code> directly from the repository.</p></div>
-  </div>
-</div>
+'@
 
-<div id="s2" class="section">
-  <h2>Setup <span>Prerequisites</span></h2>
-  <div class="section-meta"><span>Before You Start</span></div>
-  <p>You only need a few things in place before starting the demo stack.</p>
-  <table>
-    <tr><th>Requirement</th><th>Why It Matters</th></tr>
-    <tr><td><strong>Docker Desktop or Docker Engine</strong></td><td>Required to run the Spark, Iceberg REST, MinIO, and helper containers defined in the compose file.</td></tr>
-    <tr><td><strong>Repository checked out locally</strong></td><td>The compose file mounts repo folders directly, so the demo expects the project files to exist on your machine.</td></tr>
-    <tr><td><strong>Ports available</strong></td><td>The stack uses the ports already defined in <code>docker-compose.learning-hub.yml</code>, including Jupyter on <code>8888</code>.</td></tr>
-  </table>
-  <div class="callout.tip"><span>&#9989;</span><p><strong>No extra mount setup is needed:</strong> the repo already includes <code>warehouse/</code> and <code>data/</code> plus the saved compose file with the correct mounts.</p></div>
-</div>
-
-<div id="s3" class="section">
-  <h2>Start <span>Docker Compose</span></h2>
-  <div class="section-meta"><span>Repo Root Command</span></div>
-  <p>From the repository root, start the local demo stack with the saved compose file:</p>
-<pre>docker compose -f docker-compose.learning-hub.yml up -d</pre>
-  <p>This brings up the services already wired into the repo setup:</p>
-  <table>
-    <tr><th>Service</th><th>Purpose</th></tr>
-    <tr><td><strong>spark-iceberg</strong></td><td>Spark runtime plus Jupyter environment for the notebook walkthrough.</td></tr>
-    <tr><td><strong>iceberg-rest</strong></td><td>REST catalog service for the local Iceberg demo environment.</td></tr>
-    <tr><td><strong>minio</strong></td><td>Object-store layer used by the local stack.</td></tr>
-    <tr><td><strong>mc</strong></td><td>Helper service used in the compose stack.</td></tr>
-  </table>
-  <div class="callout.warn"><span>&#9888;</span><p><strong>If you changed the control-table schema previously:</strong> run the reset step from the notebook or apply <code>ddl/demo_reset.sql</code> before recreating metadata objects.</p></div>
-</div>
-
-<div id="s4" class="section">
-  <h2>Open The <span>Notebook</span></h2>
-  <div class="section-meta"><span>Preferred Run Path</span></div>
-  <p>Once the stack is up, open Jupyter at <code>http://localhost:8888</code> and run:</p>
-<pre>notebooks/learning_hub_demo.ipynb</pre>
-  <p>The notebook is the easiest way to run the demo end to end because it already sequences the setup steps correctly.</p>
-  <ol>
-    <li>Reset old demo tables if needed.</li>
-    <li>Create <code>demo.ctl</code>, <code>demo.staging</code>, <code>demo.bronze</code>, <code>demo.silver</code>, and <code>demo.gold</code>.</li>
-    <li>Seed batch 1 source data.</li>
-    <li>Run the pipeline for <code>customer</code>, <code>orders</code>, <code>product</code>, <code>invoice</code>, and <code>shipment</code>.</li>
-    <li>Seed batch 2 changed source data.</li>
-    <li>Run the second batch.</li>
-    <li>Build the final joined gold serving table.</li>
-    <li>Inspect bronze, silver, and gold outputs.</li>
-  </ol>
-</div>
-
-<div id="s5" class="section">
-  <h2>Repo <span>Files</span></h2>
-  <div class="section-meta"><span>What The Demo Uses</span></div>
-  <table>
-    <tr><th>Path</th><th>Purpose</th></tr>
-    <tr><td><code>docker-compose.learning-hub.yml</code></td><td>Saved local Spark-Iceberg stack for the repository.</td></tr>
-    <tr><td><code>notebooks/learning_hub_demo.ipynb</code></td><td>Runnable notebook walkthrough for the full demo flow.</td></tr>
-    <tr><td><code>ddl/demo_metadata_framework.sql</code></td><td>Creates the control metadata model and target namespaces.</td></tr>
-    <tr><td><code>ddl/demo_staging_sources.sql</code></td><td>Creates the demo staging tables.</td></tr>
-    <tr><td><code>ddl/demo_seed_batch_1001.sql</code> and <code>ddl/demo_seed_batch_1002.sql</code></td><td>Seed initial and changed source-state batches.</td></tr>
-    <tr><td><code>ddl/demo_sales_serving.sql</code></td><td>Builds the final joined serving table.</td></tr>
-    <tr><td><code>spark/runtime_framework.py</code></td><td>Shared runtime logic for the metadata-driven pipeline.</td></tr>
-    <tr><td><code>spark/run_pipeline.py</code></td><td>CLI runner for normal pipeline execution.</td></tr>
-    <tr><td><code>spark/replay_runner.py</code></td><td>CLI runner for replay requests.</td></tr>
-  </table>
-</div>
-
-<div id="s6" class="section">
-  <h2>Optional <span>CLI Flow</span></h2>
-  <div class="section-meta"><span>When You Want To Run It Manually</span></div>
-  <p>If you prefer running the demo outside the notebook sequence, the manual flow is:</p>
-  <ol>
-    <li>Apply <code>ddl/demo_metadata_framework.sql</code>.</li>
-    <li>Apply <code>ddl/demo_staging_sources.sql</code>.</li>
-    <li>Apply <code>ddl/demo_seed_batch_1001.sql</code>.</li>
-    <li>Run <code>spark/run_pipeline.py</code>.</li>
-    <li>Apply <code>ddl/demo_seed_batch_1002.sql</code>.</li>
-    <li>Run <code>spark/run_pipeline.py</code> again.</li>
-    <li>Apply <code>ddl/demo_sales_serving.sql</code>.</li>
-  </ol>
-  <div class="callout.rule"><span>&#128736;</span><p><strong>Recommendation:</strong> use the notebook for first-run setup, then use the CLI flow later if you want to demonstrate individual runtime steps separately.</p></div>
-</div>
-
-<div id="s7" class="section">
-  <h2>Setup <span>Troubleshooting</span></h2>
-  <div class="section-meta"><span>Common Local Issues</span></div>
-  <table>
-    <tr><th>Issue</th><th>What To Check</th></tr>
-    <tr><td><strong>Container paths missing</strong></td><td>Use the saved compose file directly instead of manually copying partial files or mounts.</td></tr>
-    <tr><td><strong>Old schema conflicts</strong></td><td>Run <code>ddl/demo_reset.sql</code> before recreating metadata if you changed the control-table structure.</td></tr>
-    <tr><td><strong>Notebook canâ€™t find repo files</strong></td><td>Confirm the stack was started from the repo root so the compose mounts resolve correctly.</td></tr>
-    <tr><td><strong>Jupyter is up but demo notebook is missing</strong></td><td>Check that <code>notebooks/</code> is mounted and that <code>notebooks/learning_hub_demo.ipynb</code> exists in the repo.</td></tr>
-  </table>
-</div>
-</main>
-</div>
-
-<script>
-function show(id, el) {
-  document.querySelectorAll('.section').forEach((section) => section.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav a').forEach((link) => link.classList.remove('active'));
-  el.classList.add('active');
+# Page accent color mapping (light theme variants)
+$pageAccents = @{
+    'enterprise-data-platform-blueprint' = @('#2563eb', '#3b82f6')
+    'working-reference-implementation'   = @('#059669', '#10b981')
+    'spark-101'                          = @('#dc2626', '#ef4444')
+    'sql-101'                            = @('#7c3aed', '#8b5cf6')
+    'dimensional-modeling-101'           = @('#d97706', '#f59e0b')
+    'informatica-powercenter-101'        = @('#059669', '#10b981')
+    'ssis-101'                           = @('#2563eb', '#3b82f6')
+    'tableau-101'                        = @('#0d9488', '#14b8a6')
+    'spark-iceberg-demo-setup'           = @('#2563eb', '#3b82f6')
 }
-</script>
 
-</body>
-</html>
+$srcDir  = "c:\dataengineering_workspace\learning-hub\pages"
+$destDir = "c:\dataengineering_workspace\learning-hub\pages-v2\pages"
+
+foreach ($page in $pageAccents.Keys) {
+    $srcFile  = Join-Path $srcDir "$page.html"
+    $destFile = Join-Path $destDir "$page.html"
+
+    if (-not (Test-Path $srcFile)) {
+        Write-Warning "Source not found: $srcFile"
+        continue
+    }
+
+    $content = Get-Content $srcFile -Raw
+
+    # Extract title
+    if ($content -match '<title>(.*?)</title>') {
+        $title = $Matches[1]
+    } else {
+        $title = $page
+    }
+
+    # Extract body content (between <body> and </body>)
+    if ($content -match '(?s)<body[^>]*>(.*)</body>') {
+        $bodyContent = $Matches[1]
+    } else {
+        Write-Warning "Could not extract body from $page"
+        continue
+    }
+
+    $accent  = $pageAccents[$page][0]
+    $accent2 = $pageAccents[$page][1]
+
+    $newHead = $lightThemeHead -replace '%%TITLE%%', $title -replace '%%ACCENT%%', $accent -replace '%%ACCENT2%%', $accent2
+
+    $fullPage = $newHead + $bodyContent + "`n</body>`n</html>"
+
+    Set-Content -Path $destFile -Value $fullPage -Encoding UTF8
+    Write-Output "Created: $page.html"
+}
+
+Write-Output "`nAll pages converted!"
