@@ -80,6 +80,9 @@ body { font-family: 'Inter', system-ui, sans-serif; transition: background-color
   padding: 8px 0; min-width: 240px; box-shadow: 0 12px 32px rgba(0,0,0,0.12);
   z-index: 100;
 }
+.nav-dropdown-menu::before {
+  content: ''; position: absolute; top: -14px; left: 0; width: 100%; height: 14px;
+}
 .nav-dropdown:hover .nav-dropdown-menu { display: block; }
 .nav-dropdown-menu a {
   display: flex; align-items: center; gap: 10px; padding: 9px 18px;
@@ -290,8 +293,8 @@ $pageAccents = @{
     'spark-iceberg-demo-setup'           = @('#2563eb', '#3b82f6')
 }
 
-$srcDir  = "c:\dataengineering_workspace\learning-hub\pages"
-$destDir = "c:\dataengineering_workspace\learning-hub\pages-v2\pages"
+$srcDir  = "c:\dataengineering_workspace\learning-hub\oldpages"
+$destDir = "c:\dataengineering_workspace\learning-hub\pages"
 
 foreach ($page in $pageAccents.Keys) {
     $srcFile  = Join-Path $srcDir "$page.html"

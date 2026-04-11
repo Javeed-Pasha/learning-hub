@@ -29,6 +29,9 @@
           margin-top: 12px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
           padding: 8px 0; min-width: 240px; box-shadow: 0 12px 32px rgba(0,0,0,0.12); z-index: 100;
         }
+        .nav-dropdown-menu::before {
+          content: ''; position: absolute; top: -14px; left: 0; width: 100%; height: 14px;
+        }
         .nav-dropdown:hover .nav-dropdown-menu { display: block; }
         .nav-dropdown-menu a {
           display: flex; align-items: center; gap: 10px; padding: 9px 18px;
