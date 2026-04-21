@@ -191,11 +191,19 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .tier.control, .tier.cluster, .tier.governance { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
 .tier.compute, .tier.storage { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
 .tier.publish, .tier.ops { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
-.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; }
+.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; z-index: 1; }
 .tier.source .tier-label, .tier.driver .tier-label, .tier.platform .tier-label, .tier.pipeline .tier-label { background: rgba(59,130,246,0.3); }
 .tier.control .tier-label, .tier.cluster .tier-label, .tier.governance .tier-label { background: rgba(139,92,246,0.3); }
 .tier.compute .tier-label, .tier.storage .tier-label { background: rgba(16,185,129,0.3); }
 .tier.publish .tier-label, .tier.ops .tier-label { background: rgba(245,158,11,0.3); }
+.tier.client  { border-color: rgba(79,172,247,0.4); background: rgba(79,172,247,0.06); }
+.tier.service { border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06); }
+.tier.data    { border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.05); }
+.tier.client  .tier-label { background: rgba(79,172,247,0.3); }
+.tier.service .tier-label { background: rgba(167,139,250,0.3); }
+.tier.data    .tier-label { background: rgba(52,211,153,0.3); }
+.tier.service .tool-box { border-color: rgba(167,139,250,0.3); }
+.tier.data    .tool-box { border-color: rgba(52,211,153,0.25); }
 .tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 .tool-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: #e2e8f0; }
 .connector { text-align: center; color: #94a3b8; font-size: 11px; margin: 6px 0; letter-spacing: 0.05em; }
@@ -204,6 +212,45 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .link-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
 .link-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg3); color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.15s; }
 .link-chip:hover { background: var(--accent); color: white; text-decoration: none; }
+
+/* Flow steps (numbered timeline) */
+.flow-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 24px; }
+.flow-step { display: flex; gap: 16px; align-items: flex-start; }
+.flow-step .step-line { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.step-num { width: 28px; height: 28px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--accent); flex-shrink: 0; }
+.step-connector { width: 1px; background: var(--border); flex: 1; min-height: 20px; }
+.flow-step .step-content { padding: 4px 0 20px; }
+.flow-step .step-title { font-weight: 500; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+.flow-step .step-desc { font-size: 13px; color: var(--text2); }
+
+/* Pattern flow diagrams */
+.pattern-flow { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px 24px; font-family: var(--mono); font-size: 12px; color: #e2e8f0; margin-bottom: 20px; white-space: pre; line-height: 1.7; overflow-x: auto; }
+
+/* Tab bar */
+.tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.tab-btn { padding: 10px 18px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--sans); }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Transform cards */
+.transform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+.transform-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+.transform-card:hover { border-color: var(--border2); background: var(--bg3); }
+.transform-card .tc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.transform-card .tc-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); }
+.transform-card .tc-abbr { font-family: var(--mono); font-size: 11px; color: var(--accent); background: rgba(79,172,247,0.1); padding: 2px 6px; border-radius: 3px; }
+.transform-card .tc-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+.transform-card .tc-foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+
+/* Glossary */
+.glossary-item { border-bottom: 1px solid var(--border); padding: 14px 0; }
+
+/* Progress bar */
+.progress-bar { display: flex; gap: 4px; margin-bottom: 32px; }
+.progress-seg { height: 3px; flex: 1; background: var(--border); border-radius: 2px; transition: background 0.3s; }
+.progress-seg.done { background: var(--accent); }
 
 /* Lists */
 ul, .bullet-list, ol { margin: 0 0 18px 20px; color: var(--text2); }
@@ -305,7 +352,7 @@ foreach ($page in $pageAccents.Keys) {
         continue
     }
 
-    $content = Get-Content $srcFile -Raw
+    $content = Get-Content $srcFile -Raw -Encoding UTF8
 
     # Extract title
     if ($content -match '<title>(.*?)</title>') {

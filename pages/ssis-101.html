@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SSIS 101 â€” Complete Training Guide</title>
+<title>SSIS 101 — Complete Training Guide</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>
@@ -190,11 +190,19 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .tier.control, .tier.cluster, .tier.governance { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
 .tier.compute, .tier.storage { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
 .tier.publish, .tier.ops { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
-.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; }
+.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; z-index: 1; }
 .tier.source .tier-label, .tier.driver .tier-label, .tier.platform .tier-label, .tier.pipeline .tier-label { background: rgba(59,130,246,0.3); }
 .tier.control .tier-label, .tier.cluster .tier-label, .tier.governance .tier-label { background: rgba(139,92,246,0.3); }
 .tier.compute .tier-label, .tier.storage .tier-label { background: rgba(16,185,129,0.3); }
 .tier.publish .tier-label, .tier.ops .tier-label { background: rgba(245,158,11,0.3); }
+.tier.client  { border-color: rgba(79,172,247,0.4); background: rgba(79,172,247,0.06); }
+.tier.service { border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06); }
+.tier.data    { border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.05); }
+.tier.client  .tier-label { background: rgba(79,172,247,0.3); }
+.tier.service .tier-label { background: rgba(167,139,250,0.3); }
+.tier.data    .tier-label { background: rgba(52,211,153,0.3); }
+.tier.service .tool-box { border-color: rgba(167,139,250,0.3); }
+.tier.data    .tool-box { border-color: rgba(52,211,153,0.25); }
 .tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 .tool-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: #e2e8f0; }
 .connector { text-align: center; color: #94a3b8; font-size: 11px; margin: 6px 0; letter-spacing: 0.05em; }
@@ -203,6 +211,45 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .link-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
 .link-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg3); color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.15s; }
 .link-chip:hover { background: var(--accent); color: white; text-decoration: none; }
+
+/* Flow steps (numbered timeline) */
+.flow-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 24px; }
+.flow-step { display: flex; gap: 16px; align-items: flex-start; }
+.flow-step .step-line { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.step-num { width: 28px; height: 28px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--accent); flex-shrink: 0; }
+.step-connector { width: 1px; background: var(--border); flex: 1; min-height: 20px; }
+.flow-step .step-content { padding: 4px 0 20px; }
+.flow-step .step-title { font-weight: 500; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+.flow-step .step-desc { font-size: 13px; color: var(--text2); }
+
+/* Pattern flow diagrams */
+.pattern-flow { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px 24px; font-family: var(--mono); font-size: 12px; color: #e2e8f0; margin-bottom: 20px; white-space: pre; line-height: 1.7; overflow-x: auto; }
+
+/* Tab bar */
+.tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.tab-btn { padding: 10px 18px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--sans); }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Transform cards */
+.transform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+.transform-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+.transform-card:hover { border-color: var(--border2); background: var(--bg3); }
+.transform-card .tc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.transform-card .tc-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); }
+.transform-card .tc-abbr { font-family: var(--mono); font-size: 11px; color: var(--accent); background: rgba(79,172,247,0.1); padding: 2px 6px; border-radius: 3px; }
+.transform-card .tc-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+.transform-card .tc-foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+
+/* Glossary */
+.glossary-item { border-bottom: 1px solid var(--border); padding: 14px 0; }
+
+/* Progress bar */
+.progress-bar { display: flex; gap: 4px; margin-bottom: 32px; }
+.progress-seg { height: 3px; flex: 1; background: var(--border); border-radius: 2px; transition: background 0.3s; }
+.progress-seg.done { background: var(--accent); }
 
 /* Lists */
 ul, .bullet-list, ol { margin: 0 0 18px 20px; color: var(--text2); }
@@ -286,7 +333,7 @@ function toggleTheme() {
 <nav id="sidebar">
   <div class="nav-logo">
     <div class="badge">TRAINING</div>
-    <h1>SSIS 101 â€” Complete Guide</h1>
+    <h1>SSIS 101 — Complete Guide</h1>
   </div>
 
   <div class="nav-section">Foundations</div>
@@ -316,7 +363,7 @@ function toggleTheme() {
 
 <main>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 1 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
 <div id="s1" class="section active">
   <h2>What is <span>SSIS</span>?</h2>
   <div class="section-meta">
@@ -356,7 +403,7 @@ function toggleTheme() {
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 2 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
 <div id="s2" class="section">
   <h2>SSIS <span>Architecture</span></h2>
   <div class="section-meta">
@@ -387,7 +434,7 @@ function toggleTheme() {
     <div class="connector">&#9660; Execute &#9660;</div>
     <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);">
       <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">SSIS RUNTIME ENGINE</span>
-      <div style="font-size:11px;color:#5c6f94;margin-bottom:8px;">Executes packages â€” manages control flow, data pipeline, and logging</div>
+      <div style="font-size:11px;color:#5c6f94;margin-bottom:8px;">Executes packages — manages control flow, data pipeline, and logging</div>
       <div class="tier-tools">
         <div class="tool-box">Control Flow Engine</div>
         <div class="tool-box">Data Flow Pipeline Engine</div>
@@ -422,7 +469,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 3 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
 <div id="s3" class="section">
   <h2>SSIS Projects & <span>Packages</span></h2>
   <div class="section-meta">
@@ -433,7 +480,7 @@ function toggleTheme() {
   <table>
     <tr><th>Concept</th><th>Description</th></tr>
     <tr><td><strong>Project (.ispac)</strong></td><td>A container that holds one or more packages, connection managers, parameters, and project-level configurations. This is what gets deployed.</td></tr>
-    <tr><td><strong>Package (.dtsx)</strong></td><td>A single unit of work â€” one ETL workflow. Contains control flow, data flow(s), event handlers, and variables.</td></tr>
+    <tr><td><strong>Package (.dtsx)</strong></td><td>A single unit of work — one ETL workflow. Contains control flow, data flow(s), event handlers, and variables.</td></tr>
     <tr><td><strong>Connection Manager</strong></td><td>Defines how to connect to data sources/destinations. Can be project-level (shared) or package-level.</td></tr>
     <tr><td><strong>Parameter</strong></td><td>Values passed into packages at runtime. Replaces old-style configurations. Can be project or package scoped.</td></tr>
   </table>
@@ -454,17 +501,17 @@ function toggleTheme() {
     </div>
     <div class="card purple-border">
       <h4>Variables</h4>
-      <p>Store values at runtime â€” used in expressions, SQL statements, and control flow logic. User or system scoped.</p>
+      <p>Store values at runtime — used in expressions, SQL statements, and control flow logic. User or system scoped.</p>
     </div>
   </div>
 
   <div class="callout tip">
     <span class="icon">&#128161;</span>
-    <p><strong>Deployment Models:</strong> SSIS supports <strong>Project Deployment</strong> (to SSISDB catalog â€” recommended) and legacy <strong>Package Deployment</strong> (to file system or MSDB). Always prefer Project Deployment for new work.</p>
+    <p><strong>Deployment Models:</strong> SSIS supports <strong>Project Deployment</strong> (to SSISDB catalog — recommended) and legacy <strong>Package Deployment</strong> (to file system or MSDB). Always prefer Project Deployment for new work.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 4 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
 <div id="s4" class="section">
   <h2>Control <span>Flow</span></h2>
   <div class="section-meta">
@@ -476,13 +523,13 @@ function toggleTheme() {
   <h3>Common Tasks</h3>
   <table>
     <tr><th>Task</th><th>Purpose</th></tr>
-    <tr><td><strong>Data Flow Task</strong></td><td>Runs a data pipeline (source â†’ transform â†’ destination). The most important task.</td></tr>
-    <tr><td><strong>Execute SQL Task</strong></td><td>Runs SQL statements â€” TRUNCATE, INSERT, stored procedures, DDL.</td></tr>
+    <tr><td><strong>Data Flow Task</strong></td><td>Runs a data pipeline (source → transform → destination). The most important task.</td></tr>
+    <tr><td><strong>Execute SQL Task</strong></td><td>Runs SQL statements — TRUNCATE, INSERT, stored procedures, DDL.</td></tr>
     <tr><td><strong>Script Task</strong></td><td>Runs custom C# or VB.NET code for logic that can't be done visually.</td></tr>
     <tr><td><strong>File System Task</strong></td><td>Copy, move, rename, or delete files and directories.</td></tr>
     <tr><td><strong>Send Mail Task</strong></td><td>Sends email notifications (success/failure alerts).</td></tr>
-    <tr><td><strong>Execute Package Task</strong></td><td>Runs another SSIS package â€” enables modular "parent-child" design.</td></tr>
-    <tr><td><strong>For Loop / Foreach Loop</strong></td><td>Iterates over items â€” files in a folder, rows in a table, etc.</td></tr>
+    <tr><td><strong>Execute Package Task</strong></td><td>Runs another SSIS package — enables modular "parent-child" design.</td></tr>
+    <tr><td><strong>For Loop / Foreach Loop</strong></td><td>Iterates over items — files in a folder, rows in a table, etc.</td></tr>
     <tr><td><strong>Sequence Container</strong></td><td>Groups tasks together for organization, scoping variables, or applying transactions.</td></tr>
   </table>
 
@@ -509,14 +556,14 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 5 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
 <div id="s5" class="section">
   <h2>Data <span>Flow</span></h2>
   <div class="section-meta">
     <span>&#9201; 5 min</span><span>&#128204; Module 05</span><span>&#127891; Core Concepts</span>
   </div>
 
-  <p>The <strong>Data Flow Task</strong> is where the actual ETL happens. Data moves through a pipeline: <strong>Source â†’ Transformation(s) â†’ Destination</strong>.</p>
+  <p>The <strong>Data Flow Task</strong> is where the actual ETL happens. Data moves through a pipeline: <strong>Source → Transformation(s) → Destination</strong>.</p>
 
   <h3>Data Flow Architecture</h3>
   <div class="arch-diagram">
@@ -553,7 +600,7 @@ function toggleTheme() {
   </div>
 
   <h3>Buffer-Based Pipeline</h3>
-  <p>SSIS processes data in <strong>memory buffers</strong>, not row-by-row. The Data Flow Engine allocates buffers and moves data through the pipeline in chunks â€” this is what makes SSIS fast.</p>
+  <p>SSIS processes data in <strong>memory buffers</strong>, not row-by-row. The Data Flow Engine allocates buffers and moves data through the pipeline in chunks — this is what makes SSIS fast.</p>
 
   <div class="card-grid">
     <div class="card accent-border">
@@ -567,7 +614,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 6 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
 <div id="s6" class="section">
   <h2>Data Flow <span>Transformations</span></h2>
   <div class="section-meta">
@@ -588,7 +635,7 @@ function toggleTheme() {
 
   <div class="callout warn">
     <span class="icon">&#9888;</span>
-    <p><strong>Performance Rule:</strong> Prefer synchronous transformations whenever possible. Avoid the Sort transform â€” sort data in the SQL source query instead.</p>
+    <p><strong>Performance Rule:</strong> Prefer synchronous transformations whenever possible. Avoid the Sort transform — sort data in the SQL source query instead.</p>
   </div>
 
   <h3>Key Transformations</h3>
@@ -601,13 +648,13 @@ function toggleTheme() {
     <tr><td><strong>Multicast</strong></td><td>Sync</td><td>Sends identical copies of data to multiple outputs.</td></tr>
     <tr><td><strong>Union All</strong></td><td>Async</td><td>Combines rows from multiple inputs into a single output (like SQL UNION ALL).</td></tr>
     <tr><td><strong>Merge Join</strong></td><td>Async</td><td>Performs INNER/LEFT/FULL joins. Requires sorted input.</td></tr>
-    <tr><td><strong>Aggregate</strong></td><td>Async</td><td>Performs GROUP BY operations â€” SUM, COUNT, AVG, etc.</td></tr>
-    <tr><td><strong>Sort</strong></td><td>Async</td><td>Sorts data. Expensive â€” prefer using ORDER BY in the source SQL.</td></tr>
+    <tr><td><strong>Aggregate</strong></td><td>Async</td><td>Performs GROUP BY operations — SUM, COUNT, AVG, etc.</td></tr>
+    <tr><td><strong>Sort</strong></td><td>Async</td><td>Sorts data. Expensive — prefer using ORDER BY in the source SQL.</td></tr>
     <tr><td><strong>Slowly Changing Dimension</strong></td><td>Sync</td><td>Wizard-based SCD Type 1/2 handling. Works but generates slow row-by-row operations.</td></tr>
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 7 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
 <div id="s7" class="section">
   <h2>Variables & <span>Expressions</span></h2>
   <div class="section-meta">
@@ -653,7 +700,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 8 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
 <div id="s8" class="section">
   <h2>Event Handlers & <span>Logging</span></h2>
   <div class="section-meta">
@@ -694,7 +741,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 9 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
 <div id="s9" class="section">
   <h2>Error <span>Handling</span></h2>
   <div class="section-meta">
@@ -720,13 +767,13 @@ function toggleTheme() {
   <table>
     <tr><th>Option</th><th>Behavior</th></tr>
     <tr><td><strong>Fail Component</strong></td><td>Default. The entire data flow fails on first error.</td></tr>
-    <tr><td><strong>Redirect Row</strong></td><td>Send the bad row to an error output path. Best practice â€” log errors, don't stop the pipeline.</td></tr>
-    <tr><td><strong>Ignore Failure</strong></td><td>Silently skip the error. Use rarely â€” only for known benign issues.</td></tr>
+    <tr><td><strong>Redirect Row</strong></td><td>Send the bad row to an error output path. Best practice — log errors, don't stop the pipeline.</td></tr>
+    <tr><td><strong>Ignore Failure</strong></td><td>Silently skip the error. Use rarely — only for known benign issues.</td></tr>
   </table>
 
   <div class="callout tip">
     <span class="icon">&#128161;</span>
-    <p><strong>Common Pattern:</strong> Redirect error rows â†’ add a Derived Column to capture the error description â†’ write to an error staging table for investigation.</p>
+    <p><strong>Common Pattern:</strong> Redirect error rows → add a Derived Column to capture the error description → write to an error staging table for investigation.</p>
   </div>
 
   <h3>Checkpoints</h3>
@@ -737,7 +784,7 @@ CheckpointUsage    = <span class="kw">IfExists</span>
 SaveCheckpoints    = <span class="kw">True</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 10 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
 <div id="s10" class="section">
   <h2>Deployment & <span>SSIS Catalog</span></h2>
   <div class="section-meta">
@@ -751,11 +798,11 @@ SaveCheckpoints    = <span class="kw">True</span></pre>
   <div class="card-grid">
     <div class="card accent-border">
       <h4>1. Build Project</h4>
-      <p>In Visual Studio: Build â†’ Build Solution. Produces an <code>.ispac</code> file in the <code>bin/Development</code> folder.</p>
+      <p>In Visual Studio: Build → Build Solution. Produces an <code>.ispac</code> file in the <code>bin/Development</code> folder.</p>
     </div>
     <div class="card green-border">
       <h4>2. Deploy to Catalog</h4>
-      <p>Right-click project â†’ Deploy. Choose target SQL Server and folder in the SSIS Catalog. Or use <code>ISDeploymentWizard.exe</code>.</p>
+      <p>Right-click project → Deploy. Choose target SQL Server and folder in the SSIS Catalog. Or use <code>ISDeploymentWizard.exe</code>.</p>
     </div>
     <div class="card amber-border">
       <h4>3. Configure Environments</h4>
@@ -763,17 +810,17 @@ SaveCheckpoints    = <span class="kw">True</span></pre>
     </div>
     <div class="card purple-border">
       <h4>4. Schedule with SQL Agent</h4>
-      <p>Create a SQL Agent Job â†’ New Step â†’ Type: SSIS Package â†’ Select from catalog. Set schedule and notifications.</p>
+      <p>Create a SQL Agent Job → New Step → Type: SSIS Package → Select from catalog. Set schedule and notifications.</p>
     </div>
   </div>
 
   <h3>SSISDB Catalog Structure</h3>
 <pre>SSISDB
-  â””â”€â”€ Folders
-       â””â”€â”€ Projects
-            â””â”€â”€ Packages
-       â””â”€â”€ Environments
-            â””â”€â”€ Environment Variables</pre>
+  └── Folders
+       └── Projects
+            └── Packages
+       └── Environments
+            └── Environment Variables</pre>
 
   <h3>Useful Catalog Queries</h3>
 <pre><span class="cm">-- Recent executions</span>
@@ -789,7 +836,7 @@ SaveCheckpoints    = <span class="kw">True</span></pre>
   <span class="kw">AND</span> event_name = <span class="str">'OnError'</span>;</pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 11 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 11 ═══════════════════ -->
 <div id="s11" class="section">
   <h2>Performance <span>Tuning</span></h2>
   <div class="section-meta">
@@ -799,10 +846,10 @@ SaveCheckpoints    = <span class="kw">True</span></pre>
   <h3>Top Optimization Strategies</h3>
   <table>
     <tr><th>#</th><th>Strategy</th><th>Impact</th></tr>
-    <tr><td><strong>1</strong></td><td>Use SQL query at source (filter, sort, join in SQL â€” not SSIS)</td><td>&#128308; High</td></tr>
-    <tr><td><strong>2</strong></td><td>Prefer OLE DB Destination with "Table or View â€” Fast Load"</td><td>&#128308; High</td></tr>
+    <tr><td><strong>1</strong></td><td>Use SQL query at source (filter, sort, join in SQL — not SSIS)</td><td>&#128308; High</td></tr>
+    <tr><td><strong>2</strong></td><td>Prefer OLE DB Destination with "Table or View — Fast Load"</td><td>&#128308; High</td></tr>
     <tr><td><strong>3</strong></td><td>Use Full Cache mode on Lookup transforms</td><td>&#128308; High</td></tr>
-    <tr><td><strong>4</strong></td><td>Avoid Sort transform â€” ORDER BY in source SQL</td><td>&#128993; Medium</td></tr>
+    <tr><td><strong>4</strong></td><td>Avoid Sort transform — ORDER BY in source SQL</td><td>&#128993; Medium</td></tr>
     <tr><td><strong>5</strong></td><td>Tune buffer sizes (DefaultBufferMaxRows, DefaultBufferSize)</td><td>&#128993; Medium</td></tr>
     <tr><td><strong>6</strong></td><td>Drop indexes before bulk load, rebuild after</td><td>&#128993; Medium</td></tr>
     <tr><td><strong>7</strong></td><td>Use staging tables + MERGE instead of row-by-row</td><td>&#128308; High</td></tr>
@@ -827,12 +874,12 @@ EngineThreads        = <span class="num">10</span>        <span class="cm">-- pa
     </div>
     <div class="card coral-border">
       <h4>No Cache</h4>
-      <p>Queries the database for every row. Very slow â€” avoid unless the reference data changes during execution.</p>
+      <p>Queries the database for every row. Very slow — avoid unless the reference data changes during execution.</p>
     </div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 12 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 12 ═══════════════════ -->
 <div id="s12" class="section">
   <h2>SSIS vs Informatica vs <span>ADF</span></h2>
   <div class="section-meta">
@@ -850,7 +897,7 @@ EngineThreads        = <span class="num">10</span>        <span class="cm">-- pa
     <tr><td><strong>Error Handling</strong></td><td>Error outputs + event handlers</td><td>Row-level error handling</td><td>Activity retry + error paths</td></tr>
     <tr><td><strong>Version Control</strong></td><td>Git / TFS (project files)</td><td>Repository Manager</td><td>Git integration built-in</td></tr>
     <tr><td><strong>Cost</strong></td><td>SQL Server license</td><td>Per-CPU license (expensive)</td><td>Pay-per-use (consumption)</td></tr>
-    <tr><td><strong>Migration Path</strong></td><td>â†’ ADF + SSIS IR</td><td>â†’ IICS (Cloud)</td><td>Cloud-native</td></tr>
+    <tr><td><strong>Migration Path</strong></td><td>→ ADF + SSIS IR</td><td>→ IICS (Cloud)</td><td>Cloud-native</td></tr>
   </table>
 
   <div class="callout tip">
@@ -859,7 +906,7 @@ EngineThreads        = <span class="num">10</span>        <span class="cm">-- pa
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 13 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 13 ═══════════════════ -->
 <div id="s13" class="section">
   <h2>Cheat <span>Sheet</span></h2>
   <div class="section-meta">
@@ -884,7 +931,7 @@ Conditional Split       <span class="cm">-- Route rows by condition</span>
 Lookup                  <span class="cm">-- Join with reference data</span>
 Data Conversion         <span class="cm">-- Cast data types</span>
 Multicast               <span class="cm">-- Copy rows to multiple outputs</span>
-OLE DB Command          <span class="cm">-- Run SQL per row (slow â€” avoid)</span>
+OLE DB Command          <span class="cm">-- Run SQL per row (slow — avoid)</span>
 Audit                   <span class="cm">-- Add execution metadata columns</span>
 Row Count               <span class="cm">-- Count rows into a variable</span></pre>
 
@@ -907,7 +954,7 @@ Pivot / Unpivot         <span class="cm">-- Reshape data</span></pre>
 <span class="str">@[User::Flag]</span> ? <span class="str">"Yes"</span> : <span class="str">"No"</span>      <span class="cm">-- Ternary</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 14 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 14 ═══════════════════ -->
 <div id="s14" class="section">
   <h2>Knowledge <span>Check</span></h2>
   <div class="section-meta">
@@ -917,23 +964,23 @@ Pivot / Unpivot         <span class="cm">-- Reshape data</span></pre>
 
   <div class="quiz-q">
     <div class="qtext">1. What are the two main layers of an SSIS package?</div>
-    <div class="quiz-option" onclick="answer(this,false,'Control Flow and Data Flow are the two main layers â€” not Event Handlers.')">Event Handlers and Data Flow</div>
+    <div class="quiz-option" onclick="answer(this,false,'Control Flow and Data Flow are the two main layers — not Event Handlers.')">Event Handlers and Data Flow</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! Control Flow orchestrates tasks, Data Flow handles the ETL pipeline.')">Control Flow and Data Flow</div>
     <div class="quiz-option" onclick="answer(this,false,'Variables support both layers but are not a main layer themselves.')">Variables and Data Flow</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">2. Which Lookup cache mode is fastest for repeated lookups?</div>
-    <div class="quiz-option" onclick="answer(this,false,'No Cache queries the DB for every row â€” very slow.')">No Cache</div>
-    <div class="quiz-option" onclick="answer(this,false,'Partial Cache is a compromise â€” not the fastest.')">Partial Cache</div>
+    <div class="quiz-option" onclick="answer(this,false,'No Cache queries the DB for every row — very slow.')">No Cache</div>
+    <div class="quiz-option" onclick="answer(this,false,'Partial Cache is a compromise — not the fastest.')">Partial Cache</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! Full Cache loads the entire reference table into memory upfront.')">Full Cache</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">3. What type of transformation is the Derived Column?</div>
-    <div class="quiz-option" onclick="answer(this,true,'Correct! Derived Column is synchronous â€” it reuses the same buffer.')">Synchronous</div>
-    <div class="quiz-option" onclick="answer(this,false,'Async transforms create new buffers â€” Derived Column does not.')">Asynchronous</div>
-    <div class="quiz-option" onclick="answer(this,false,'Blocking is a type of async â€” Derived Column is synchronous.')">Blocking</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Derived Column is synchronous — it reuses the same buffer.')">Synchronous</div>
+    <div class="quiz-option" onclick="answer(this,false,'Async transforms create new buffers — Derived Column does not.')">Asynchronous</div>
+    <div class="quiz-option" onclick="answer(this,false,'Blocking is a type of async — Derived Column is synchronous.')">Blocking</div>
   </div>
 
   <div class="quiz-q">
@@ -947,21 +994,21 @@ Pivot / Unpivot         <span class="cm">-- Reshape data</span></pre>
     <div class="qtext">5. Where should you deploy SSIS projects (recommended approach)?</div>
     <div class="quiz-option" onclick="answer(this,false,'File system deployment is the legacy model.')">File System</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! SSISDB Catalog is the recommended deployment target.')">SSIS Catalog (SSISDB)</div>
-    <div class="quiz-option" onclick="answer(this,false,'MSDB is the legacy package store â€” not recommended for new work.')">MSDB Database</div>
+    <div class="quiz-option" onclick="answer(this,false,'MSDB is the legacy package store — not recommended for new work.')">MSDB Database</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">6. What should you use instead of the SSIS Sort transform?</div>
-    <div class="quiz-option" onclick="answer(this,true,'Correct! Sort in the SQL query â€” it is much faster than the SSIS Sort component.')">ORDER BY in the source SQL query</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Sort in the SQL query — it is much faster than the SSIS Sort component.')">ORDER BY in the source SQL query</div>
     <div class="quiz-option" onclick="answer(this,false,'Merge Join requires sorted input but doesn\'t replace Sort.')">Merge Join</div>
     <div class="quiz-option" onclick="answer(this,false,'Script Task could sort but it would be slower and more complex.')">Script Task</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">7. What is the recommended error output action for data quality issues?</div>
-    <div class="quiz-option" onclick="answer(this,false,'Fail Component stops the entire pipeline â€” too aggressive for data quality.')">Fail Component</div>
+    <div class="quiz-option" onclick="answer(this,false,'Fail Component stops the entire pipeline — too aggressive for data quality.')">Fail Component</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! Redirect rows to an error path for logging and investigation.')">Redirect Row</div>
-    <div class="quiz-option" onclick="answer(this,false,'Ignoring failures silently loses data â€” risky.')">Ignore Failure</div>
+    <div class="quiz-option" onclick="answer(this,false,'Ignoring failures silently loses data — risky.')">Ignore Failure</div>
   </div>
 
   <div class="quiz-q">

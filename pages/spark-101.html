@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apache Spark 101 â€” Complete Training Guide</title>
+<title>Apache Spark 101 — Complete Training Guide</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>
@@ -190,11 +190,19 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .tier.control, .tier.cluster, .tier.governance { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
 .tier.compute, .tier.storage { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
 .tier.publish, .tier.ops { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
-.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; }
+.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; z-index: 1; }
 .tier.source .tier-label, .tier.driver .tier-label, .tier.platform .tier-label, .tier.pipeline .tier-label { background: rgba(59,130,246,0.3); }
 .tier.control .tier-label, .tier.cluster .tier-label, .tier.governance .tier-label { background: rgba(139,92,246,0.3); }
 .tier.compute .tier-label, .tier.storage .tier-label { background: rgba(16,185,129,0.3); }
 .tier.publish .tier-label, .tier.ops .tier-label { background: rgba(245,158,11,0.3); }
+.tier.client  { border-color: rgba(79,172,247,0.4); background: rgba(79,172,247,0.06); }
+.tier.service { border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06); }
+.tier.data    { border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.05); }
+.tier.client  .tier-label { background: rgba(79,172,247,0.3); }
+.tier.service .tier-label { background: rgba(167,139,250,0.3); }
+.tier.data    .tier-label { background: rgba(52,211,153,0.3); }
+.tier.service .tool-box { border-color: rgba(167,139,250,0.3); }
+.tier.data    .tool-box { border-color: rgba(52,211,153,0.25); }
 .tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 .tool-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: #e2e8f0; }
 .connector { text-align: center; color: #94a3b8; font-size: 11px; margin: 6px 0; letter-spacing: 0.05em; }
@@ -203,6 +211,45 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .link-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
 .link-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg3); color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.15s; }
 .link-chip:hover { background: var(--accent); color: white; text-decoration: none; }
+
+/* Flow steps (numbered timeline) */
+.flow-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 24px; }
+.flow-step { display: flex; gap: 16px; align-items: flex-start; }
+.flow-step .step-line { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.step-num { width: 28px; height: 28px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--accent); flex-shrink: 0; }
+.step-connector { width: 1px; background: var(--border); flex: 1; min-height: 20px; }
+.flow-step .step-content { padding: 4px 0 20px; }
+.flow-step .step-title { font-weight: 500; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+.flow-step .step-desc { font-size: 13px; color: var(--text2); }
+
+/* Pattern flow diagrams */
+.pattern-flow { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px 24px; font-family: var(--mono); font-size: 12px; color: #e2e8f0; margin-bottom: 20px; white-space: pre; line-height: 1.7; overflow-x: auto; }
+
+/* Tab bar */
+.tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.tab-btn { padding: 10px 18px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--sans); }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Transform cards */
+.transform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+.transform-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+.transform-card:hover { border-color: var(--border2); background: var(--bg3); }
+.transform-card .tc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.transform-card .tc-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); }
+.transform-card .tc-abbr { font-family: var(--mono); font-size: 11px; color: var(--accent); background: rgba(79,172,247,0.1); padding: 2px 6px; border-radius: 3px; }
+.transform-card .tc-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+.transform-card .tc-foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+
+/* Glossary */
+.glossary-item { border-bottom: 1px solid var(--border); padding: 14px 0; }
+
+/* Progress bar */
+.progress-bar { display: flex; gap: 4px; margin-bottom: 32px; }
+.progress-seg { height: 3px; flex: 1; background: var(--border); border-radius: 2px; transition: background 0.3s; }
+.progress-seg.done { background: var(--accent); }
 
 /* Lists */
 ul, .bullet-list, ol { margin: 0 0 18px 20px; color: var(--text2); }
@@ -293,7 +340,7 @@ function toggleTheme() {
   <a href="#" class="active" onclick="show('s1',this)"><span class="dot"></span>What is Spark?</a>
   <a href="#" onclick="show('s2',this)"><span class="dot"></span>Architecture</a>
   <a href="#" onclick="show('s3',this)"><span class="dot"></span>RDDs, DataFrames, Datasets</a>
-  <a href="#" onclick="show('s4',this)"><span class="dot"></span>Local Lab Setup â€” Docker</a>
+  <a href="#" onclick="show('s4',this)"><span class="dot"></span>Local Lab Setup — Docker</a>
 
   <div class="nav-section">Core APIs</div>
   <a href="#" onclick="show('s5',this)"><span class="dot"></span>SparkSession & Config</a>
@@ -317,11 +364,11 @@ function toggleTheme() {
 
 <main>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 1 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
 <div id="s1" class="section active">
   <h2>What is <span>Apache Spark</span>?</h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 01</span><span>ðŸŽ“ Theory</span>
+    <span>⏱ 5 min</span><span>📌 Module 01</span><span>🎓 Theory</span>
   </div>
 
   <p><strong>Apache Spark</strong> is a unified analytics engine for large-scale data processing. It provides high-level APIs in Python (PySpark), Scala, Java, and R, and supports batch processing, streaming, machine learning, and graph processing.</p>
@@ -334,7 +381,7 @@ function toggleTheme() {
     </div>
     <div class="card green-border">
       <h4>Unified Engine</h4>
-      <p>Batch, streaming, ML, and SQL â€” all in one framework. No need for separate tools.</p>
+      <p>Batch, streaming, ML, and SQL — all in one framework. No need for separate tools.</p>
     </div>
     <div class="card amber-border">
       <h4>Lazy Evaluation</h4>
@@ -353,7 +400,7 @@ function toggleTheme() {
     <tr><td><strong>Ease of Use</strong></td><td>Verbose Java code</td><td>High-level APIs (PySpark, Scala)</td></tr>
     <tr><td><strong>Streaming</strong></td><td>Not native</td><td>Structured Streaming built-in</td></tr>
     <tr><td><strong>ML</strong></td><td>Separate (Mahout)</td><td>MLlib built-in</td></tr>
-    <tr><td><strong>DAG</strong></td><td>2-stage only (Map â†’ Reduce)</td><td>Multi-stage DAG optimizer</td></tr>
+    <tr><td><strong>DAG</strong></td><td>2-stage only (Map → Reduce)</td><td>Multi-stage DAG optimizer</td></tr>
     <tr><td><strong>Fault Tolerance</strong></td><td>Data replication</td><td>RDD lineage (recompute lost partitions)</td></tr>
   </table>
 
@@ -368,12 +415,12 @@ function toggleTheme() {
         <div class="tool-box" style="border-color:rgba(52,211,153,0.4);color:#34d399;">GraphX</div>
       </div>
     </div>
-    <div class="connector">â–¼</div>
+    <div class="connector">▼</div>
     <div class="tier cluster">
       <span class="tier-label">SPARK CORE</span>
       <div style="font-size:12px;color:#c4b5fd;margin-top:10px;text-align:center;">RDD API &middot; Task Scheduling &middot; Memory Management &middot; Fault Recovery</div>
     </div>
-    <div class="connector">â–¼</div>
+    <div class="connector">▼</div>
     <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);">
       <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">CLUSTER MANAGERS</span>
       <div class="tier-tools" style="margin-top:14px;">
@@ -383,7 +430,7 @@ function toggleTheme() {
         <div class="tool-box">Standalone</div>
       </div>
     </div>
-    <div class="connector">â–¼</div>
+    <div class="connector">▼</div>
     <div class="tier storage">
       <span class="tier-label">STORAGE</span>
       <div class="tier-tools" style="margin-top:14px;">
@@ -397,37 +444,37 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 2 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
 <div id="s2" class="section">
   <h2>Spark <span>Architecture</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 02</span><span>ðŸŽ“ Theory</span>
+    <span>⏱ 5 min</span><span>📌 Module 02</span><span>🎓 Theory</span>
   </div>
 
   <div class="arch-diagram">
     <div class="tier driver">
       <span class="tier-label">DRIVER PROGRAM</span>
-      <div style="font-size:11px;color:#5c6f94;margin-bottom:8px;">Your application's main() method Â· Creates SparkSession</div>
+      <div style="font-size:11px;color:#5c6f94;margin-bottom:8px;">Your application's main() method · Creates SparkSession</div>
       <div class="tier-tools">
         <div class="tool-box" style="border-color:rgba(248,113,113,0.4);color:#fca5a5;">SparkContext</div>
         <div class="tool-box" style="border-color:rgba(248,113,113,0.4);color:#fca5a5;">DAG Scheduler</div>
         <div class="tool-box" style="border-color:rgba(248,113,113,0.4);color:#fca5a5;">Task Scheduler</div>
       </div>
     </div>
-    <div class="connector">â–¼ Cluster Manager (YARN / K8s / Standalone) â–¼</div>
+    <div class="connector">▼ Cluster Manager (YARN / K8s / Standalone) ▼</div>
     <div class="tier cluster">
       <span class="tier-label">EXECUTORS (Worker Nodes)</span>
-      <div style="font-size:11px;color:#5c6f94;margin-bottom:8px;">JVM processes on worker machines Â· Run tasks & cache data</div>
+      <div style="font-size:11px;color:#5c6f94;margin-bottom:8px;">JVM processes on worker machines · Run tasks & cache data</div>
       <div class="tier-tools">
         <div class="tool-box" style="border-color:rgba(167,139,250,0.3);">Executor 1: [Core][Core][Cache]</div>
         <div class="tool-box" style="border-color:rgba(167,139,250,0.3);">Executor 2: [Core][Core][Cache]</div>
         <div class="tool-box" style="border-color:rgba(167,139,250,0.3);">Executor N: [Core][Core][Cache]</div>
       </div>
     </div>
-    <div class="connector">â–¼ Read/Write â–¼</div>
+    <div class="connector">▼ Read/Write ▼</div>
     <div class="tier storage">
       <span class="tier-label">STORAGE</span>
-      <div style="font-size:11px;color:#86efac;margin-top:8px;line-height:1.8;">HDFS Â· S3 Â· ADLS Â· GCS Â· Delta Lake Â· Parquet Â· CSV Â· JSON Â· JDBC</div>
+      <div style="font-size:11px;color:#86efac;margin-top:8px;line-height:1.8;">HDFS · S3 · ADLS · GCS · Delta Lake · Parquet · CSV · JSON · JDBC</div>
     </div>
   </div>
 
@@ -442,7 +489,7 @@ function toggleTheme() {
       <p>JVM process on a worker node. Runs tasks assigned by the driver. Stores cached data in memory.</p>
     </div>
     <div class="card green-border">
-      <h4>Job â†’ Stage â†’ Task</h4>
+      <h4>Job → Stage → Task</h4>
       <p><strong>Job:</strong> triggered by an action. <strong>Stage:</strong> set of tasks separated by shuffles. <strong>Task:</strong> unit of work on one partition.</p>
     </div>
     <div class="card amber-border">
@@ -457,46 +504,46 @@ function toggleTheme() {
       <span class="tier-label">STEP 1</span>
       <div style="color:#fca5a5;font-weight:500;font-size:13px;margin-top:6px;">Your Code</div>
     </div>
-    <div class="connector">â–¼</div>
+    <div class="connector">▼</div>
     <div class="tier cluster" style="text-align:center;padding:12px 20px;">
       <span class="tier-label">STEP 2</span>
-      <div style="color:#c4b5fd;font-weight:500;font-size:13px;margin-top:6px;">Logical Plan â†’ Catalyst Optimizer â†’ Physical Plan</div>
+      <div style="color:#c4b5fd;font-weight:500;font-size:13px;margin-top:6px;">Logical Plan → Catalyst Optimizer → Physical Plan</div>
     </div>
-    <div class="connector">â–¼</div>
+    <div class="connector">▼</div>
     <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);text-align:center;padding:12px 20px;">
       <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">STEP 3</span>
-      <div style="color:#fde68a;font-weight:500;font-size:13px;margin-top:6px;">DAG Scheduler â†’ splits into Stages (at shuffle boundaries)</div>
+      <div style="color:#fde68a;font-weight:500;font-size:13px;margin-top:6px;">DAG Scheduler → splits into Stages (at shuffle boundaries)</div>
     </div>
-    <div class="connector">â–¼</div>
+    <div class="connector">▼</div>
     <div class="tier driver" style="text-align:center;padding:12px 20px;">
       <span class="tier-label">STEP 4</span>
-      <div style="color:#fca5a5;font-weight:500;font-size:13px;margin-top:6px;">Task Scheduler â†’ assigns Tasks to Executors</div>
+      <div style="color:#fca5a5;font-weight:500;font-size:13px;margin-top:6px;">Task Scheduler → assigns Tasks to Executors</div>
     </div>
-    <div class="connector">â–¼</div>
+    <div class="connector">▼</div>
     <div class="tier storage" style="text-align:center;padding:12px 20px;">
       <span class="tier-label">STEP 5</span>
-      <div style="color:#86efac;font-weight:500;font-size:13px;margin-top:6px;">Executors â†’ run tasks on partitions â†’ return results</div>
+      <div style="color:#86efac;font-weight:500;font-size:13px;margin-top:6px;">Executors → run tasks on partitions → return results</div>
     </div>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 3 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
 <div id="s3" class="section">
   <h2>RDDs, DataFrames & <span>Datasets</span></h2>
   <div class="section-meta">
-    <span>â± 4 min</span><span>ðŸ“Œ Module 03</span><span>ðŸŽ“ Core Concepts</span>
+    <span>⏱ 4 min</span><span>📌 Module 03</span><span>🎓 Core Concepts</span>
   </div>
 
   <h3>Evolution of Spark APIs</h3>
   <table>
     <tr><th>API</th><th>Type Safety</th><th>Optimization</th><th>Use Case</th></tr>
-    <tr><td><strong>RDD</strong> (Spark 1.0)</td><td>Compile-time</td><td>None â€” manual optimization</td><td>Low-level control, unstructured data</td></tr>
+    <tr><td><strong>RDD</strong> (Spark 1.0)</td><td>Compile-time</td><td>None — manual optimization</td><td>Low-level control, unstructured data</td></tr>
     <tr><td><strong>DataFrame</strong> (Spark 1.3)</td><td>Runtime only</td><td>Catalyst + Tungsten</td><td>Structured data, SQL-like operations</td></tr>
     <tr><td><strong>Dataset</strong> (Spark 1.6)</td><td>Compile-time</td><td>Catalyst + Tungsten</td><td>Type-safe structured data (Scala/Java only)</td></tr>
   </table>
 
   <div class="callout tip">
-    <span class="icon">ðŸ”¥</span>
+    <span class="icon">🔥</span>
     <p><strong>In PySpark, DataFrame is the primary API.</strong> Datasets are not available in Python. RDDs are used only for very low-level operations. 95% of your work will use DataFrames.</p>
   </div>
 
@@ -515,19 +562,19 @@ function toggleTheme() {
   <h3>Narrow vs Wide Transformations</h3>
   <table>
     <tr><th>Type</th><th>Shuffle?</th><th>Examples</th><th>Impact</th></tr>
-    <tr><td><strong>Narrow</strong></td><td>No</td><td><code>map</code>, <code>filter</code>, <code>select</code>, <code>withColumn</code></td><td>Fast â€” data stays on same partition</td></tr>
-    <tr><td><strong>Wide</strong></td><td>Yes</td><td><code>groupBy</code>, <code>join</code>, <code>orderBy</code>, <code>distinct</code>, <code>repartition</code></td><td>Expensive â€” data moves across network</td></tr>
+    <tr><td><strong>Narrow</strong></td><td>No</td><td><code>map</code>, <code>filter</code>, <code>select</code>, <code>withColumn</code></td><td>Fast — data stays on same partition</td></tr>
+    <tr><td><strong>Wide</strong></td><td>Yes</td><td><code>groupBy</code>, <code>join</code>, <code>orderBy</code>, <code>distinct</code>, <code>repartition</code></td><td>Expensive — data moves across network</td></tr>
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 4 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
 <div id="s4" class="section">
-  <h2>Local Lab Setup â€” <span>Docker</span></h2>
+  <h2>Local Lab Setup — <span>Docker</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 04</span><span>ðŸŽ“ Hands-On</span>
+    <span>⏱ 5 min</span><span>📌 Module 04</span><span>🎓 Hands-On</span>
   </div>
 
-  <p>This section sets up a <strong>complete local Spark + Iceberg + MinIO environment</strong> using Docker. You'll get a Jupyter notebook with PySpark, an Iceberg REST catalog, and S3-compatible object storage â€” all in one command.</p>
+  <p>This section sets up a <strong>complete local Spark + Iceberg + MinIO environment</strong> using Docker. You'll get a Jupyter notebook with PySpark, an Iceberg REST catalog, and S3-compatible object storage — all in one command.</p>
 
   <h3>Prerequisites</h3>
   <div class="card-grid">
@@ -563,7 +610,7 @@ function toggleTheme() {
           </div>
         </div>
       </div>
-      <div class="connector">â–¼ Both connect to â–¼</div>
+      <div class="connector">▼ Both connect to ▼</div>
       <div class="tier storage">
         <span class="tier-label">MINIO (S3-COMPATIBLE STORAGE)</span>
         <div style="font-size:11px;color:#5c6f94;margin-top:10px;">S3-compatible object storage</div>
@@ -573,7 +620,7 @@ function toggleTheme() {
           <div class="tool-box" style="border-color:rgba(52,211,153,0.3);font-size:10px;">s3://warehouse/</div>
         </div>
       </div>
-      <div class="connector">â–² Initialised by â–²</div>
+      <div class="connector">▲ Initialised by ▲</div>
       <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);">
         <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">MC (INIT CONTAINER)</span>
         <div style="font-size:11px;color:#5c6f94;margin-top:10px;">Creates warehouse bucket &middot; Sets public access policy</div>
@@ -642,7 +689,7 @@ function toggleTheme() {
       - <span class="num">9000</span>:9000  <span class="cm"># S3 API</span>
     <span class="kw">command</span>: [<span class="str">"server"</span>, <span class="str">"/data"</span>, <span class="str">"--console-address"</span>, <span class="str">":9001"</span>]
 
-  <span class="fn">mc</span>:  <span class="cm"># MinIO Client â€” init bucket</span>
+  <span class="fn">mc</span>:  <span class="cm"># MinIO Client — init bucket</span>
     <span class="kw">depends_on</span>:
       - minio
     <span class="kw">image</span>: minio/mc
@@ -670,9 +717,9 @@ function toggleTheme() {
   <table>
     <tr><th>Service</th><th>Image</th><th>Purpose</th><th>Ports</th></tr>
     <tr><td><strong>spark-iceberg</strong></td><td><code>tabulario/spark-iceberg</code></td><td>Spark runtime + Jupyter + Iceberg jars pre-installed</td><td>8888, 8080, 4040</td></tr>
-    <tr><td><strong>rest</strong></td><td><code>tabulario/iceberg-rest</code></td><td>Iceberg REST Catalog â€” tracks table metadata, schemas, snapshots</td><td>8181</td></tr>
-    <tr><td><strong>minio</strong></td><td><code>minio/minio</code></td><td>S3-compatible object storage â€” stores Parquet data files</td><td>9000, 9001</td></tr>
-    <tr><td><strong>mc</strong></td><td><code>minio/mc</code></td><td>One-time init â€” creates the <code>warehouse</code> bucket with public policy</td><td>â€”</td></tr>
+    <tr><td><strong>rest</strong></td><td><code>tabulario/iceberg-rest</code></td><td>Iceberg REST Catalog — tracks table metadata, schemas, snapshots</td><td>8181</td></tr>
+    <tr><td><strong>minio</strong></td><td><code>minio/minio</code></td><td>S3-compatible object storage — stores Parquet data files</td><td>9000, 9001</td></tr>
+    <tr><td><strong>mc</strong></td><td><code>minio/mc</code></td><td>One-time init — creates the <code>warehouse</code> bucket with public policy</td><td>—</td></tr>
   </table>
 
   <h3>Start & Stop</h3>
@@ -692,7 +739,7 @@ function toggleTheme() {
   <div class="card-grid">
     <div class="card accent-border">
       <h4>Jupyter Notebook</h4>
-      <p>Open <strong>localhost:8888</strong> â€” you should see the Jupyter interface. Notebooks are in the <code>notebooks/</code> folder.</p>
+      <p>Open <strong>localhost:8888</strong> — you should see the Jupyter interface. Notebooks are in the <code>notebooks/</code> folder.</p>
     </div>
     <div class="card green-border">
       <h4>Spark UI</h4>
@@ -700,11 +747,11 @@ function toggleTheme() {
     </div>
     <div class="card blue-border">
       <h4>MinIO Console</h4>
-      <p>Open <strong>localhost:9001</strong> â€” login with <code>admin</code> / <code>password</code>. You should see the <code>warehouse</code> bucket.</p>
+      <p>Open <strong>localhost:9001</strong> — login with <code>admin</code> / <code>password</code>. You should see the <code>warehouse</code> bucket.</p>
     </div>
     <div class="card coral-border">
       <h4>Iceberg REST</h4>
-      <p>Test with <code>curl localhost:8181/v1/namespaces</code> â€” should return a JSON response. This is the catalog the Spark session connects to.</p>
+      <p>Test with <code>curl localhost:8181/v1/namespaces</code> — should return a JSON response. This is the catalog the Spark session connects to.</p>
     </div>
   </div>
 
@@ -717,16 +764,16 @@ function toggleTheme() {
   </table>
 
   <div class="callout tip">
-    <span class="icon">ðŸ’¡</span>
+    <span class="icon">💡</span>
     <p><strong>Tip:</strong> This is the same environment you'll use for the <strong>Delta Lake</strong> and <strong>Apache Iceberg</strong> sections later. Any PySpark code in this guide can be run directly in the Jupyter notebook at localhost:8888.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 5 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
 <div id="s5" class="section">
   <h2>SparkSession & <span>Configuration</span></h2>
   <div class="section-meta">
-    <span>â± 3 min</span><span>ðŸ“Œ Module 05</span><span>ðŸŽ“ Hands-On</span>
+    <span>⏱ 3 min</span><span>📌 Module 05</span><span>🎓 Hands-On</span>
   </div>
 
   <h3>Creating a SparkSession</h3>
@@ -746,7 +793,7 @@ spark <span class="op">=</span> SparkSession.builder \
     <tr><td><code>spark.executor.memory</code></td><td>1g</td><td>Memory per executor. Increase for large data.</td></tr>
     <tr><td><code>spark.executor.cores</code></td><td>1</td><td>CPU cores per executor.</td></tr>
     <tr><td><code>spark.sql.shuffle.partitions</code></td><td>200</td><td>Number of partitions after a shuffle. Tune this!</td></tr>
-    <tr><td><code>spark.sql.adaptive.enabled</code></td><td>true (3.x)</td><td>Adaptive Query Execution â€” auto-tunes at runtime.</td></tr>
+    <tr><td><code>spark.sql.adaptive.enabled</code></td><td>true (3.x)</td><td>Adaptive Query Execution — auto-tunes at runtime.</td></tr>
     <tr><td><code>spark.serializer</code></td><td>Java</td><td>Use <code>org.apache.spark.serializer.KryoSerializer</code> for speed.</td></tr>
     <tr><td><code>spark.default.parallelism</code></td><td>Total cores</td><td>Default partitions for RDD operations.</td></tr>
   </table>
@@ -758,7 +805,7 @@ df <span class="op">=</span> spark.read \
     .option(<span class="str">"inferSchema"</span>, <span class="str">"true"</span>) \
     .csv(<span class="str">"data/sales.csv"</span>)
 
-<span class="cm"># Parquet (columnar â€” preferred format)</span>
+<span class="cm"># Parquet (columnar — preferred format)</span>
 df <span class="op">=</span> spark.read.parquet(<span class="str">"data/sales.parquet"</span>)
 
 <span class="cm"># JSON</span>
@@ -774,11 +821,11 @@ df <span class="op">=</span> spark.read \
     .load()</pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 6 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
 <div id="s6" class="section">
   <h2>DataFrame <span>Operations</span></h2>
   <div class="section-meta">
-    <span>â± 6 min</span><span>ðŸ“Œ Module 06</span><span>ðŸŽ“ Hands-On</span>
+    <span>⏱ 6 min</span><span>📌 Module 06</span><span>🎓 Hands-On</span>
   </div>
 
   <h3>Basic Operations</h3>
@@ -845,15 +892,15 @@ df.write \
 <span class="cm"># CSV</span>
 df.write.mode(<span class="str">"overwrite"</span>).option(<span class="str">"header"</span>, <span class="str">"true"</span>).csv(<span class="str">"output/report"</span>)
 
-<span class="cm"># Single file output (use sparingly â€” not distributed)</span>
+<span class="cm"># Single file output (use sparingly — not distributed)</span>
 df.coalesce(<span class="num">1</span>).write.mode(<span class="str">"overwrite"</span>).csv(<span class="str">"output/single"</span>)</pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 7 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
 <div id="s7" class="section">
   <h2>Spark <span>SQL</span></h2>
   <div class="section-meta">
-    <span>â± 4 min</span><span>ðŸ“Œ Module 07</span><span>ðŸŽ“ Hands-On</span>
+    <span>⏱ 4 min</span><span>📌 Module 07</span><span>🎓 Hands-On</span>
   </div>
 
   <p>Spark SQL lets you use standard SQL queries on DataFrames. Register a DataFrame as a temp view, then query it.</p>
@@ -877,7 +924,7 @@ result <span class="op">=</span> spark.sql(<span class="str">"""
 
 result.show()</pre>
 
-  <h3>SQL vs DataFrame API â€” Same Result</h3>
+  <h3>SQL vs DataFrame API — Same Result</h3>
   <pre><span class="cm"># DataFrame API</span>
 df.filter(F.col(<span class="str">"status"</span>) <span class="op">==</span> <span class="str">"active"</span>) \
   .groupBy(<span class="str">"department"</span>) \
@@ -892,16 +939,16 @@ df.filter(F.col(<span class="str">"status"</span>) <span class="op">==</span> <s
 <span class="cm"># Catalyst optimizer treats them identically.</span></pre>
 
   <div class="callout rule">
-    <span class="icon">âœ…</span>
+    <span class="icon">✅</span>
     <p><strong>SQL vs DataFrame API:</strong> Both go through the same Catalyst optimizer and produce identical physical plans. Choose based on team preference. SQL is great for analysts, DataFrame API for engineers.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 8 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
 <div id="s8" class="section">
   <h2>Joins & <span>Shuffles</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 08</span><span>ðŸŽ“ Advanced</span>
+    <span>⏱ 5 min</span><span>📌 Module 08</span><span>🎓 Advanced</span>
   </div>
 
   <h3>Join Types in Spark</h3>
@@ -942,20 +989,20 @@ result.explain(<span class="kw">True</span>)
 <span class="cm"># Look for "BroadcastHashJoin" in the physical plan</span></pre>
 
   <div class="callout warn">
-    <span class="icon">âš ï¸</span>
+    <span class="icon">⚠️</span>
     <p><strong>Shuffle = expensive.</strong> Each shuffle writes data to disk and transfers it across the network. Minimize shuffles by: broadcasting small tables, pre-partitioning data, and using bucketing.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 9 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
 <div id="s9" class="section">
   <h2>Partitioning & <span>Bucketing</span></h2>
   <div class="section-meta">
-    <span>â± 4 min</span><span>ðŸ“Œ Module 09</span><span>ðŸŽ“ Advanced</span>
+    <span>⏱ 4 min</span><span>📌 Module 09</span><span>🎓 Advanced</span>
   </div>
 
   <h3>Partitioning (File-Level)</h3>
-  <pre><span class="cm"># Write with partitioning â€” creates folder structure</span>
+  <pre><span class="cm"># Write with partitioning — creates folder structure</span>
 df.write \
     .mode(<span class="str">"overwrite"</span>) \
     .partitionBy(<span class="str">"country"</span>, <span class="str">"year"</span>) \
@@ -974,15 +1021,15 @@ spark.read.parquet(<span class="str">"output/events"</span>) \
   <pre><span class="cm"># Check current partitions</span>
 df.rdd.getNumPartitions()
 
-<span class="cm"># Repartition (causes shuffle â€” use to increase partitions)</span>
+<span class="cm"># Repartition (causes shuffle — use to increase partitions)</span>
 df.repartition(<span class="num">200</span>)
 df.repartition(<span class="str">"customer_id"</span>)  <span class="cm"># partition by column</span>
 
-<span class="cm"># Coalesce (no shuffle â€” use to DECREASE partitions)</span>
+<span class="cm"># Coalesce (no shuffle — use to DECREASE partitions)</span>
 df.coalesce(<span class="num">10</span>)</pre>
 
   <h3>Bucketing</h3>
-  <pre><span class="cm"># Write bucketed table â€” data is pre-sorted by bucket key</span>
+  <pre><span class="cm"># Write bucketed table — data is pre-sorted by bucket key</span>
 df.write \
     .mode(<span class="str">"overwrite"</span>) \
     .bucketBy(<span class="num">16</span>, <span class="str">"customer_id"</span>) \
@@ -1002,11 +1049,11 @@ df.write \
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 10 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
 <div id="s10" class="section">
   <h2>Performance <span>Tuning</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 10</span><span>ðŸŽ“ Advanced</span>
+    <span>⏱ 5 min</span><span>📌 Module 10</span><span>🎓 Advanced</span>
   </div>
 
   <h3>Top Performance Tips</h3>
@@ -1046,33 +1093,33 @@ df.unpersist()</pre>
   <h3>Explain Plan</h3>
   <pre><span class="cm"># See what Spark will actually do</span>
 df.explain()          <span class="cm"># physical plan</span>
-df.explain(<span class="kw">True</span>)      <span class="cm"># parsed â†’ analyzed â†’ optimized â†’ physical</span>
+df.explain(<span class="kw">True</span>)      <span class="cm"># parsed → analyzed → optimized → physical</span>
 df.explain(<span class="str">"formatted"</span>)  <span class="cm"># pretty-printed (Spark 3.x)</span>
 
 <span class="cm"># What to look for:</span>
-<span class="cm"># âœ… BroadcastHashJoin (good for small-large joins)</span>
-<span class="cm"># âš   SortMergeJoin    (shuffle â€” check if broadcast is possible)</span>
-<span class="cm"># âŒ  CartesianProduct  (bug! missing join condition)</span>
-<span class="cm"># âœ…  FileScan with PartitionFilters (partition pruning working)</span></pre>
+<span class="cm"># ✅ BroadcastHashJoin (good for small-large joins)</span>
+<span class="cm"># ⚠  SortMergeJoin    (shuffle — check if broadcast is possible)</span>
+<span class="cm"># ❌  CartesianProduct  (bug! missing join condition)</span>
+<span class="cm"># ✅  FileScan with PartitionFilters (partition pruning working)</span></pre>
 
-  <h3>AQE â€” Adaptive Query Execution (Spark 3.x)</h3>
-  <pre><span class="cm"># Auto-tunes at runtime â€” enabled by default in Spark 3.x</span>
+  <h3>AQE — Adaptive Query Execution (Spark 3.x)</h3>
+  <pre><span class="cm"># Auto-tunes at runtime — enabled by default in Spark 3.x</span>
 spark.conf.set(<span class="str">"spark.sql.adaptive.enabled"</span>, <span class="str">"true"</span>)
 
 <span class="cm"># What AQE does:</span>
-<span class="cm"># âœ… Coalesces small post-shuffle partitions</span>
-<span class="cm"># âœ… Converts Sort Merge Join â†’ Broadcast Join at runtime</span>
-<span class="cm"># âœ… Optimizes skewed joins (splits hot partitions)</span></pre>
+<span class="cm"># ✅ Coalesces small post-shuffle partitions</span>
+<span class="cm"># ✅ Converts Sort Merge Join → Broadcast Join at runtime</span>
+<span class="cm"># ✅ Optimizes skewed joins (splits hot partitions)</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 11 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 11 ═══════════════════ -->
 <div id="s11" class="section">
   <h2>Structured <span>Streaming</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 11</span><span>ðŸŽ“ Ecosystem</span>
+    <span>⏱ 5 min</span><span>📌 Module 11</span><span>🎓 Ecosystem</span>
   </div>
 
-  <p>Structured Streaming treats a live data stream as an unbounded table. You write the same DataFrame/SQL code â€” Spark handles the incremental processing.</p>
+  <p>Structured Streaming treats a live data stream as an unbounded table. You write the same DataFrame/SQL code — Spark handles the incremental processing.</p>
 
   <h3>Basic Streaming Pipeline</h3>
   <pre><span class="cm"># Read stream from Kafka</span>
@@ -1112,11 +1159,11 @@ windowed <span class="op">=</span> parsed \
     .count()</pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 12 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 12 ═══════════════════ -->
 <div id="s12" class="section">
   <h2>Delta Lake <span>Basics</span></h2>
   <div class="section-meta">
-    <span>â± 4 min</span><span>ðŸ“Œ Module 12</span><span>ðŸŽ“ Ecosystem</span>
+    <span>⏱ 4 min</span><span>📌 Module 12</span><span>🎓 Ecosystem</span>
   </div>
 
   <p><strong>Delta Lake</strong> is an open-source storage layer that brings ACID transactions, schema enforcement, and time travel to data lakes. Built on Parquet.</p>
@@ -1148,12 +1195,12 @@ df.write.format(<span class="str">"delta"</span>).mode(<span class="str">"overwr
 <span class="cm"># Read Delta</span>
 df <span class="op">=</span> spark.read.format(<span class="str">"delta"</span>).load(<span class="str">"/data/events"</span>)
 
-<span class="cm"># Time Travel â€” read a previous version</span>
+<span class="cm"># Time Travel — read a previous version</span>
 df_v2 <span class="op">=</span> spark.read.format(<span class="str">"delta"</span>) \
     .option(<span class="str">"versionAsOf"</span>, <span class="num">2</span>) \
     .load(<span class="str">"/data/events"</span>)
 
-<span class="cm"># MERGE â€” upsert pattern</span>
+<span class="cm"># MERGE — upsert pattern</span>
 <span class="kw">from</span> delta.tables <span class="kw">import</span> DeltaTable
 
 target <span class="op">=</span> DeltaTable.forPath(spark, <span class="str">"/data/customers"</span>)
@@ -1169,25 +1216,25 @@ delta_table <span class="op">=</span> DeltaTable.forPath(spark, <span class="str
 delta_table.history().show()</pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 13: ICEBERG â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 13: ICEBERG ═══════════════════ -->
 <div id="s13" class="section">
   <h2>Apache <span>Iceberg</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 13</span><span>ðŸŽ“ Ecosystem</span>
+    <span>⏱ 5 min</span><span>📌 Module 13</span><span>🎓 Ecosystem</span>
   </div>
 
-  <p><strong>Apache Iceberg</strong> is an open table format for huge analytic datasets. Like Delta Lake, it brings ACID transactions and time travel to data lakes â€” but with a different architecture designed for <strong>engine-agnostic</strong> interoperability (Spark, Trino, Flink, Hive, Dremio, Snowflake, etc.).</p>
+  <p><strong>Apache Iceberg</strong> is an open table format for huge analytic datasets. Like Delta Lake, it brings ACID transactions and time travel to data lakes — but with a different architecture designed for <strong>engine-agnostic</strong> interoperability (Spark, Trino, Flink, Hive, Dremio, Snowflake, etc.).</p>
 
   <h3>Iceberg vs Delta Lake</h3>
   <table>
     <tr><th>Feature</th><th>Delta Lake</th><th>Apache Iceberg</th></tr>
-    <tr><td><strong>Creator</strong></td><td>Databricks</td><td>Netflix â†’ Apache Foundation</td></tr>
+    <tr><td><strong>Creator</strong></td><td>Databricks</td><td>Netflix → Apache Foundation</td></tr>
     <tr><td><strong>Engine Support</strong></td><td>Best with Spark/Databricks</td><td>Engine-agnostic (Spark, Trino, Flink, Snowflake, etc.)</td></tr>
     <tr><td><strong>ACID Transactions</strong></td><td>Yes</td><td>Yes</td></tr>
     <tr><td><strong>Time Travel</strong></td><td>Yes</td><td>Yes (snapshot-based)</td></tr>
-    <tr><td><strong>Schema Evolution</strong></td><td>Yes</td><td>Yes (full â€” add, drop, rename, reorder)</td></tr>
-    <tr><td><strong>Partition Evolution</strong></td><td>No (must rewrite)</td><td>Yes â€” change partition scheme without rewriting data</td></tr>
-    <tr><td><strong>Hidden Partitioning</strong></td><td>No</td><td>Yes â€” users don't need to know partition layout</td></tr>
+    <tr><td><strong>Schema Evolution</strong></td><td>Yes</td><td>Yes (full — add, drop, rename, reorder)</td></tr>
+    <tr><td><strong>Partition Evolution</strong></td><td>No (must rewrite)</td><td>Yes — change partition scheme without rewriting data</td></tr>
+    <tr><td><strong>Hidden Partitioning</strong></td><td>No</td><td>Yes — users don't need to know partition layout</td></tr>
     <tr><td><strong>Catalog</strong></td><td>Unity Catalog / Hive</td><td>Hive, AWS Glue, Nessie, REST, JDBC</td></tr>
     <tr><td><strong>File Format</strong></td><td>Parquet</td><td>Parquet, ORC, Avro</td></tr>
   </table>
@@ -1196,11 +1243,11 @@ delta_table.history().show()</pre>
   <div class="card-grid">
     <div class="card accent-border">
       <h4>Snapshot Isolation</h4>
-      <p>Each write creates a new <strong>snapshot</strong>. Readers always see a consistent snapshot â€” no dirty reads, even during writes.</p>
+      <p>Each write creates a new <strong>snapshot</strong>. Readers always see a consistent snapshot — no dirty reads, even during writes.</p>
     </div>
     <div class="card green-border">
       <h4>Hidden Partitioning</h4>
-      <p>Partition transforms (year, month, bucket, truncate) are applied automatically. Users query with regular filters â€” no need to know partition layout.</p>
+      <p>Partition transforms (year, month, bucket, truncate) are applied automatically. Users query with regular filters — no need to know partition layout.</p>
     </div>
     <div class="card amber-border">
       <h4>Partition Evolution</h4>
@@ -1208,40 +1255,40 @@ delta_table.history().show()</pre>
     </div>
     <div class="card blue-border">
       <h4>Metadata Tree</h4>
-      <p><strong>Catalog â†’ Metadata File â†’ Manifest List â†’ Manifest Files â†’ Data Files.</strong> Enables efficient file pruning without listing directories.</p>
+      <p><strong>Catalog → Metadata File → Manifest List → Manifest Files → Data Files.</strong> Enables efficient file pruning without listing directories.</p>
     </div>
   </div>
 
   <h3>Iceberg Architecture</h3>
   <pre>
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚                <span class="kw">CATALOG</span>                          â”‚
-  â”‚   (Hive Metastore / Glue / Nessie / REST)       â”‚
-  â”‚   Points to â†’ current metadata file              â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                          â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚           <span class="fn">METADATA FILE</span> (JSON)                  â”‚
-  â”‚   Table schema, partition spec, properties       â”‚
-  â”‚   Points to â†’ current snapshot                   â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                          â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚          <span class="fn">MANIFEST LIST</span> (Avro)                   â”‚
-  â”‚   List of manifest files for this snapshot       â”‚
-  â”‚   Partition-level stats for pruning              â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                          â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚          <span class="fn">MANIFEST FILES</span> (Avro)                  â”‚
-  â”‚   Track individual data files                    â”‚
-  â”‚   Column-level min/max stats for pruning         â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                          â–¼
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚           <span class="str">DATA FILES</span> (Parquet/ORC)               â”‚
-  â”‚   The actual data on S3 / HDFS / ADLS            â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜</pre>
+  ┌─────────────────────────────────────────────────┐
+  │                <span class="kw">CATALOG</span>                          │
+  │   (Hive Metastore / Glue / Nessie / REST)       │
+  │   Points to → current metadata file              │
+  └───────────────────────┬─────────────────────────┘
+                          ▼
+  ┌─────────────────────────────────────────────────┐
+  │           <span class="fn">METADATA FILE</span> (JSON)                  │
+  │   Table schema, partition spec, properties       │
+  │   Points to → current snapshot                   │
+  └───────────────────────┬─────────────────────────┘
+                          ▼
+  ┌─────────────────────────────────────────────────┐
+  │          <span class="fn">MANIFEST LIST</span> (Avro)                   │
+  │   List of manifest files for this snapshot       │
+  │   Partition-level stats for pruning              │
+  └───────────────────────┬─────────────────────────┘
+                          ▼
+  ┌─────────────────────────────────────────────────┐
+  │          <span class="fn">MANIFEST FILES</span> (Avro)                  │
+  │   Track individual data files                    │
+  │   Column-level min/max stats for pruning         │
+  └───────────────────────┬─────────────────────────┘
+                          ▼
+  ┌─────────────────────────────────────────────────┐
+  │           <span class="str">DATA FILES</span> (Parquet/ORC)               │
+  │   The actual data on S3 / HDFS / ADLS            │
+  └─────────────────────────────────────────────────┘</pre>
 
   <h3>Using Iceberg with PySpark</h3>
   <pre><span class="cm"># Start Spark with Iceberg</span>
@@ -1254,7 +1301,7 @@ spark <span class="op">=</span> SparkSession.builder \
     .config(<span class="str">"spark.sql.catalog.my_catalog.warehouse"</span>, <span class="str">"s3://bucket/warehouse"</span>) \
     .getOrCreate()</pre>
 
-  <h3>DDL â€” Creating Tables</h3>
+  <h3>DDL — Creating Tables</h3>
   <pre><span class="cm"># SQL approach</span>
 spark.sql(<span class="str">"""</span>
 <span class="str">    CREATE TABLE my_catalog.db.events (</span>
@@ -1269,12 +1316,12 @@ spark.sql(<span class="str">"""</span>
 <span class="str">"""</span>)
 
 <span class="cm"># Hidden partitioning transforms:</span>
-<span class="cm"># years(ts)       â†’ partition by year</span>
-<span class="cm"># months(ts)      â†’ partition by month</span>
-<span class="cm"># days(ts)        â†’ partition by day</span>
-<span class="cm"># hours(ts)       â†’ partition by hour</span>
-<span class="cm"># bucket(N, col)  â†’ hash into N buckets</span>
-<span class="cm"># truncate(L, col)â†’ truncate string/int to length L</span></pre>
+<span class="cm"># years(ts)       → partition by year</span>
+<span class="cm"># months(ts)      → partition by month</span>
+<span class="cm"># days(ts)        → partition by day</span>
+<span class="cm"># hours(ts)       → partition by hour</span>
+<span class="cm"># bucket(N, col)  → hash into N buckets</span>
+<span class="cm"># truncate(L, col)→ truncate string/int to length L</span></pre>
 
   <h3>Reading & Writing</h3>
   <pre><span class="cm"># Read an Iceberg table</span>
@@ -1286,12 +1333,12 @@ df <span class="op">=</span> spark.table(<span class="str">"my_catalog.db.events
 df.writeTo(<span class="str">"my_catalog.db.events"</span>).append()
 df.writeTo(<span class="str">"my_catalog.db.events"</span>).overwritePartitions()
 
-<span class="cm"># Time Travel â€” read a specific snapshot</span>
+<span class="cm"># Time Travel — read a specific snapshot</span>
 spark.read.format(<span class="str">"iceberg"</span>) \
     .option(<span class="str">"snapshot-id"</span>, <span class="num">123456789</span>) \
     .load(<span class="str">"my_catalog.db.events"</span>)
 
-<span class="cm"># Time Travel â€” read at a timestamp</span>
+<span class="cm"># Time Travel — read at a timestamp</span>
 spark.read.format(<span class="str">"iceberg"</span>) \
     .option(<span class="str">"as-of-timestamp"</span>, <span class="str">"1680000000000"</span>) \
     .load(<span class="str">"my_catalog.db.events"</span>)</pre>
@@ -1309,7 +1356,7 @@ spark.read.format(<span class="str">"iceberg"</span>) \
   <pre><span class="cm"># Add a column (no rewrite needed)</span>
 spark.sql(<span class="str">"ALTER TABLE my_catalog.db.events ADD COLUMN region STRING"</span>)
 
-<span class="cm"># Evolve partition scheme â€” future writes use new scheme,</span>
+<span class="cm"># Evolve partition scheme — future writes use new scheme,</span>
 <span class="cm"># old data keeps old scheme. Both work together!</span>
 spark.sql(<span class="str">"ALTER TABLE my_catalog.db.events ADD PARTITION FIELD bucket(16, user_id)"</span>)
 
@@ -1318,16 +1365,16 @@ spark.sql(<span class="str">"CALL my_catalog.system.rewrite_data_files('db.event
 spark.sql(<span class="str">"CALL my_catalog.system.expire_snapshots('db.events', TIMESTAMP '2026-01-01')"</span>)</pre>
 
   <div class="callout tip">
-    <span class="icon">ðŸ”¥</span>
-    <p><strong>When to choose Iceberg over Delta:</strong> If you need engine-agnostic access (Trino + Spark + Flink), partition evolution, hidden partitioning, or you're in an AWS-native stack with Glue Catalog â€” Iceberg is the better fit.</p>
+    <span class="icon">🔥</span>
+    <p><strong>When to choose Iceberg over Delta:</strong> If you need engine-agnostic access (Trino + Spark + Flink), partition evolution, hidden partitioning, or you're in an AWS-native stack with Glue Catalog — Iceberg is the better fit.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 14 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 14 ═══════════════════ -->
 <div id="s14" class="section">
   <h2>Quick <span>Cheat Sheet</span></h2>
   <div class="section-meta">
-    <span>â± Reference</span><span>ðŸ“Œ Bookmark This</span>
+    <span>⏱ Reference</span><span>📌 Bookmark This</span>
   </div>
 
   <h3>PySpark DataFrame Operations</h3>
@@ -1373,31 +1420,31 @@ df.explain(<span class="kw">True</span>)                    <span class="cm"># r
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 15 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 15 ═══════════════════ -->
 <div id="s15" class="section">
   <h2>Knowledge <span>Check</span></h2>
   <div class="section-meta">
-    <span>ðŸ“ Quiz</span><span>Score: <strong id="score-display">0 / 8</strong></span>
+    <span>📝 Quiz</span><span>Score: <strong id="score-display">0 / 8</strong></span>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">1. Why is Spark faster than Hadoop MapReduce?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Spark doesn\'t use a different file system â€” it reads from HDFS/S3 too.')">It uses a faster file system</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Spark doesn\'t use a different file system — it reads from HDFS/S3 too.')">It uses a faster file system</div>
     <div class="quiz-option" onclick="answer(this, true, 'Correct! Spark processes data in memory, avoiding the disk I/O between stages that MapReduce requires.')">In-memory processing avoids disk I/O between stages</div>
     <div class="quiz-option" onclick="answer(this, false, 'Both support the same languages. Speed comes from in-memory processing.')">It uses Python instead of Java</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">2. What is lazy evaluation in Spark?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Spark doesn\'t skip operations â€” it defers them until needed.')">Spark skips operations it deems unnecessary</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Spark doesn\'t skip operations — it defers them until needed.')">Spark skips operations it deems unnecessary</div>
     <div class="quiz-option" onclick="answer(this, true, 'Correct! Transformations are recorded but not executed until an action (like show(), count(), or write) triggers the computation.')">Transformations are not executed until an action is called</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Lazy evaluation isn\'t about scheduling â€” it\'s about deferring execution.')">Operations run during off-peak hours</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Lazy evaluation isn\'t about scheduling — it\'s about deferring execution.')">Operations run during off-peak hours</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">3. Which is a wide transformation (causes a shuffle)?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'filter is a narrow transformation â€” no data moves across partitions.')">filter()</div>
-    <div class="quiz-option" onclick="answer(this, false, 'select is a narrow transformation â€” no shuffle needed.')">select()</div>
+    <div class="quiz-option" onclick="answer(this, false, 'filter is a narrow transformation — no data moves across partitions.')">filter()</div>
+    <div class="quiz-option" onclick="answer(this, false, 'select is a narrow transformation — no shuffle needed.')">select()</div>
     <div class="quiz-option" onclick="answer(this, true, 'Correct! groupBy requires a shuffle because data with the same key must be moved to the same partition.')">groupBy()</div>
   </div>
 
@@ -1410,7 +1457,7 @@ df.explain(<span class="kw">True</span>)                    <span class="cm"># r
 
   <div class="quiz-q">
     <div class="qtext">5. What's the difference between repartition() and coalesce()?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'They are quite different â€” repartition shuffles, coalesce doesn\'t.')">They are identical</div>
+    <div class="quiz-option" onclick="answer(this, false, 'They are quite different — repartition shuffles, coalesce doesn\'t.')">They are identical</div>
     <div class="quiz-option" onclick="answer(this, true, 'Correct! repartition() does a full shuffle (can increase or decrease partitions). coalesce() avoids shuffle (can only decrease).')">repartition() causes a shuffle; coalesce() does not</div>
     <div class="quiz-option" onclick="answer(this, false, 'Both work on DataFrames and RDDs.')">repartition is for RDDs, coalesce is for DataFrames</div>
   </div>
@@ -1418,13 +1465,13 @@ df.explain(<span class="kw">True</span>)                    <span class="cm"># r
   <div class="quiz-q">
     <div class="qtext">6. What does Delta Lake's MERGE operation do?</div>
     <div class="quiz-option" onclick="answer(this, false, 'That\'s what a regular JOIN does, not MERGE.')">Combines two tables into a view</div>
-    <div class="quiz-option" onclick="answer(this, true, 'Correct! MERGE performs insert, update, and delete in one atomic operation â€” essential for CDC (Change Data Capture) patterns.')">Performs upserts â€” insert, update, or delete in one atomic operation</div>
+    <div class="quiz-option" onclick="answer(this, true, 'Correct! MERGE performs insert, update, and delete in one atomic operation — essential for CDC (Change Data Capture) patterns.')">Performs upserts — insert, update, or delete in one atomic operation</div>
     <div class="quiz-option" onclick="answer(this, false, 'Merging schemas is a separate feature (schema evolution).')">Merges two different schemas</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">7. What does partition pruning mean?</div>
-    <div class="quiz-option" onclick="answer(this, true, 'Correct! When you write data with partitionBy(\"date\") and filter on date, Spark only reads the relevant partition folders â€” skipping the rest entirely.')">Spark skips reading partition folders that don't match the filter</div>
+    <div class="quiz-option" onclick="answer(this, true, 'Correct! When you write data with partitionBy(\"date\") and filter on date, Spark only reads the relevant partition folders — skipping the rest entirely.')">Spark skips reading partition folders that don't match the filter</div>
     <div class="quiz-option" onclick="answer(this, false, 'Removing partitions would be data deletion, not pruning.')">Deleting unused partitions from disk</div>
     <div class="quiz-option" onclick="answer(this, false, 'That\'s coalesce or repartition, not partition pruning.')">Reducing the number of partitions</div>
   </div>
@@ -1432,7 +1479,7 @@ df.explain(<span class="kw">True</span>)                    <span class="cm"># r
   <div class="quiz-q">
     <div class="qtext">8. What does AQE (Adaptive Query Execution) do?</div>
     <div class="quiz-option" onclick="answer(this, false, 'Caching is a separate feature (df.cache()).')">Automatically caches all DataFrames</div>
-    <div class="quiz-option" onclick="answer(this, true, 'Correct! AQE optimizes at runtime: coalescing small partitions, converting join strategies, and handling data skew â€” after it sees actual data sizes.')">Optimizes query plans at runtime based on actual data statistics</div>
+    <div class="quiz-option" onclick="answer(this, true, 'Correct! AQE optimizes at runtime: coalescing small partitions, converting join strategies, and handling data skew — after it sees actual data sizes.')">Optimizes query plans at runtime based on actual data statistics</div>
     <div class="quiz-option" onclick="answer(this, false, 'AQE is about query optimization, not scheduling.')">Schedules jobs during quiet periods</div>
   </div>
 </div>

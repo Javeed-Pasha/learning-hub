@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tableau 101 â€” Complete Training Guide</title>
+<title>Tableau 101 — Complete Training Guide</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>
@@ -190,11 +190,19 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .tier.control, .tier.cluster, .tier.governance { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
 .tier.compute, .tier.storage { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
 .tier.publish, .tier.ops { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
-.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; }
+.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; z-index: 1; }
 .tier.source .tier-label, .tier.driver .tier-label, .tier.platform .tier-label, .tier.pipeline .tier-label { background: rgba(59,130,246,0.3); }
 .tier.control .tier-label, .tier.cluster .tier-label, .tier.governance .tier-label { background: rgba(139,92,246,0.3); }
 .tier.compute .tier-label, .tier.storage .tier-label { background: rgba(16,185,129,0.3); }
 .tier.publish .tier-label, .tier.ops .tier-label { background: rgba(245,158,11,0.3); }
+.tier.client  { border-color: rgba(79,172,247,0.4); background: rgba(79,172,247,0.06); }
+.tier.service { border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06); }
+.tier.data    { border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.05); }
+.tier.client  .tier-label { background: rgba(79,172,247,0.3); }
+.tier.service .tier-label { background: rgba(167,139,250,0.3); }
+.tier.data    .tier-label { background: rgba(52,211,153,0.3); }
+.tier.service .tool-box { border-color: rgba(167,139,250,0.3); }
+.tier.data    .tool-box { border-color: rgba(52,211,153,0.25); }
 .tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 .tool-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: #e2e8f0; }
 .connector { text-align: center; color: #94a3b8; font-size: 11px; margin: 6px 0; letter-spacing: 0.05em; }
@@ -203,6 +211,45 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .link-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
 .link-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg3); color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.15s; }
 .link-chip:hover { background: var(--accent); color: white; text-decoration: none; }
+
+/* Flow steps (numbered timeline) */
+.flow-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 24px; }
+.flow-step { display: flex; gap: 16px; align-items: flex-start; }
+.flow-step .step-line { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.step-num { width: 28px; height: 28px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--accent); flex-shrink: 0; }
+.step-connector { width: 1px; background: var(--border); flex: 1; min-height: 20px; }
+.flow-step .step-content { padding: 4px 0 20px; }
+.flow-step .step-title { font-weight: 500; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+.flow-step .step-desc { font-size: 13px; color: var(--text2); }
+
+/* Pattern flow diagrams */
+.pattern-flow { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px 24px; font-family: var(--mono); font-size: 12px; color: #e2e8f0; margin-bottom: 20px; white-space: pre; line-height: 1.7; overflow-x: auto; }
+
+/* Tab bar */
+.tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.tab-btn { padding: 10px 18px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--sans); }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Transform cards */
+.transform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+.transform-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+.transform-card:hover { border-color: var(--border2); background: var(--bg3); }
+.transform-card .tc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.transform-card .tc-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); }
+.transform-card .tc-abbr { font-family: var(--mono); font-size: 11px; color: var(--accent); background: rgba(79,172,247,0.1); padding: 2px 6px; border-radius: 3px; }
+.transform-card .tc-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+.transform-card .tc-foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+
+/* Glossary */
+.glossary-item { border-bottom: 1px solid var(--border); padding: 14px 0; }
+
+/* Progress bar */
+.progress-bar { display: flex; gap: 4px; margin-bottom: 32px; }
+.progress-seg { height: 3px; flex: 1; background: var(--border); border-radius: 2px; transition: background 0.3s; }
+.progress-seg.done { background: var(--accent); }
 
 /* Lists */
 ul, .bullet-list, ol { margin: 0 0 18px 20px; color: var(--text2); }
@@ -286,7 +333,7 @@ function toggleTheme() {
 <nav id="sidebar">
   <div class="nav-logo">
     <div class="badge">TRAINING</div>
-    <h1>Tableau 101 â€” Complete Guide</h1>
+    <h1>Tableau 101 — Complete Guide</h1>
   </div>
 
   <div class="nav-section">Foundations</div>
@@ -316,20 +363,20 @@ function toggleTheme() {
 
 <main>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 1 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
 <div id="s1" class="section active">
   <h2>What is <span>Tableau</span>?</h2>
   <div class="section-meta">
     <span>&#9201; 4 min</span><span>&#128204; Module 01</span><span>&#127891; Introduction</span>
   </div>
 
-  <p><strong>Tableau</strong> is the industry-leading data visualization and business intelligence platform. It lets you connect to data, create interactive visualizations, and share insights â€” all without writing code.</p>
+  <p><strong>Tableau</strong> is the industry-leading data visualization and business intelligence platform. It lets you connect to data, create interactive visualizations, and share insights — all without writing code.</p>
 
   <h3>Why Tableau?</h3>
   <div class="card-grid">
     <div class="card accent-border">
       <h4>Visual Analytics</h4>
-      <p>Drag-and-drop interface. Create charts, maps, and dashboards in minutes â€” not hours.</p>
+      <p>Drag-and-drop interface. Create charts, maps, and dashboards in minutes — not hours.</p>
     </div>
     <div class="card green-border">
       <h4>Connect Anywhere</h4>
@@ -356,7 +403,7 @@ function toggleTheme() {
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 2 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
 <div id="s2" class="section">
   <h2>Tableau <span>Product Suite</span></h2>
   <div class="section-meta">
@@ -403,7 +450,7 @@ function toggleTheme() {
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 3 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
 <div id="s3" class="section">
   <h2>Connecting to <span>Data</span></h2>
   <div class="section-meta">
@@ -434,7 +481,7 @@ function toggleTheme() {
   <h3>Data Source Best Practices</h3>
   <div class="callout tip">
     <span class="icon">&#128161;</span>
-    <p><strong>Use Extracts for dashboards</strong> â€” they're orders of magnitude faster than live connections. Use live only when you need real-time data (e.g., operational dashboards).</p>
+    <p><strong>Use Extracts for dashboards</strong> — they're orders of magnitude faster than live connections. Use live only when you need real-time data (e.g., operational dashboards).</p>
   </div>
 
   <div class="callout rule">
@@ -443,7 +490,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 4 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
 <div id="s4" class="section">
   <h2>Dimensions vs <span>Measures</span></h2>
   <div class="section-meta">
@@ -489,7 +536,7 @@ function toggleTheme() {
   </table>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 5 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
 <div id="s5" class="section">
   <h2>Chart <span>Types</span></h2>
   <div class="section-meta">
@@ -542,7 +589,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 6 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
 <div id="s6" class="section">
   <h2>Filters & <span>Parameters</span></h2>
   <div class="section-meta">
@@ -556,36 +603,36 @@ function toggleTheme() {
     <div class="tier driver" style="text-align:center;padding:12px 20px;">
       <span class="tier-label">1</span>
       <div style="color:#5eead4;font-weight:500;font-size:13px;margin-top:6px;">Extract Filters</div>
-      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied when creating an extract â€” limits rows imported</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied when creating an extract — limits rows imported</div>
     </div>
     <div class="connector">&#9660;</div>
     <div class="tier cluster" style="text-align:center;padding:12px 20px;">
       <span class="tier-label">2</span>
       <div style="color:#c4b5fd;font-weight:500;font-size:13px;margin-top:6px;">Data Source Filters</div>
-      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied before any calculations â€” reduces data sent to Tableau</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied before any calculations — reduces data sent to Tableau</div>
     </div>
     <div class="connector">&#9660;</div>
     <div class="tier" style="border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.03);text-align:center;padding:12px 20px;">
       <span class="tier-label" style="background:rgba(251,191,36,0.2);color:#fbbf24;">3</span>
       <div style="color:#fde68a;font-weight:500;font-size:13px;margin-top:6px;">Context Filters</div>
-      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Creates a temporary table â€” subsequent filters operate on this subset</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Creates a temporary table — subsequent filters operate on this subset</div>
     </div>
     <div class="connector">&#9660;</div>
     <div class="tier driver" style="text-align:center;padding:12px 20px;">
       <span class="tier-label">4</span>
-      <div style="color:#5eead4;font-weight:500;font-size:13px;margin-top:6px;">Dimension Filters â†’ Measure Filters</div>
+      <div style="color:#5eead4;font-weight:500;font-size:13px;margin-top:6px;">Dimension Filters → Measure Filters</div>
       <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Standard filters on the Filters shelf</div>
     </div>
     <div class="connector">&#9660;</div>
     <div class="tier storage" style="text-align:center;padding:12px 20px;">
       <span class="tier-label">5</span>
       <div style="color:#86efac;font-weight:500;font-size:13px;margin-top:6px;">Table Calculation Filters</div>
-      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied last â€” hides marks but doesn't change the underlying calculation</div>
+      <div style="font-size:11px;color:#5c6f94;margin-top:4px;">Applied last — hides marks but doesn't change the underlying calculation</div>
     </div>
   </div>
 
   <h3>Parameters</h3>
-  <p>Parameters are user-input variables. Unlike filters, they don't directly filter data â€” they're used in calculations, reference lines, and dynamic controls.</p>
+  <p>Parameters are user-input variables. Unlike filters, they don't directly filter data — they're used in calculations, reference lines, and dynamic controls.</p>
 
   <div class="card-grid">
     <div class="card accent-border">
@@ -607,7 +654,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 7 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
 <div id="s7" class="section">
   <h2>Calculated <span>Fields</span></h2>
   <div class="section-meta">
@@ -665,14 +712,14 @@ function toggleTheme() {
 <span class="fn">TRIM</span>(<span class="fn">UPPER</span>([Category]))              <span class="cm">// Clean &amp; uppercase</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 8 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
 <div id="s8" class="section">
   <h2>Table <span>Calculations</span></h2>
   <div class="section-meta">
     <span>&#9201; 5 min</span><span>&#128204; Module 08</span><span>&#127891; Intermediate</span>
   </div>
 
-  <p>Table calculations are computed <strong>after</strong> the query returns results. They operate on the aggregated values already in the view â€” not on raw data.</p>
+  <p>Table calculations are computed <strong>after</strong> the query returns results. They operate on the aggregated values already in the view — not on raw data.</p>
 
   <h3>Key Table Calculations</h3>
   <table>
@@ -708,7 +755,7 @@ function toggleTheme() {
 <span class="cm">// Address across products, partition by region</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 9 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
 <div id="s9" class="section">
   <h2>LOD <span>Expressions</span></h2>
   <div class="section-meta">
@@ -756,7 +803,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 10 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
 <div id="s10" class="section">
   <h2>Dashboards & <span>Stories</span></h2>
   <div class="section-meta">
@@ -798,7 +845,7 @@ function toggleTheme() {
   <p>A <strong>Story</strong> is a sequence of dashboards/sheets (story points) arranged to present a guided narrative. Think of it like a slide deck where each slide is an interactive Tableau view.</p>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 11 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 11 ═══════════════════ -->
 <div id="s11" class="section">
   <h2>Performance & <span>Best Practices</span></h2>
   <div class="section-meta">
@@ -814,8 +861,8 @@ function toggleTheme() {
     <tr><td><strong>4</strong></td><td>Use FIXED LODs over INCLUDE/EXCLUDE when possible</td><td>&#128993; Medium</td></tr>
     <tr><td><strong>5</strong></td><td>Limit the number of marks rendered (< 10K ideal)</td><td>&#128308; High</td></tr>
     <tr><td><strong>6</strong></td><td>Use context filters for dependent filters</td><td>&#128993; Medium</td></tr>
-    <tr><td><strong>7</strong></td><td>Avoid blending â€” use joins or relationships instead</td><td>&#128993; Medium</td></tr>
-    <tr><td><strong>8</strong></td><td>Use Performance Recorder (Help â†’ Settings â†’ Start Performance Recording)</td><td>&#128993; Diagnostics</td></tr>
+    <tr><td><strong>7</strong></td><td>Avoid blending — use joins or relationships instead</td><td>&#128993; Medium</td></tr>
+    <tr><td><strong>8</strong></td><td>Use Performance Recorder (Help → Settings → Start Performance Recording)</td><td>&#128993; Diagnostics</td></tr>
   </table>
 
   <h3>Design Best Practices</h3>
@@ -839,7 +886,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 12 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 12 ═══════════════════ -->
 <div id="s12" class="section">
   <h2>Tableau Server / <span>Cloud</span></h2>
   <div class="section-meta">
@@ -865,7 +912,7 @@ function toggleTheme() {
     <tr><td><strong>Scheduling</strong></td><td>Schedule extract refreshes (full or incremental) and subscription emails</td></tr>
     <tr><td><strong>Row-Level Security</strong></td><td>Filter data based on the logged-in user. Use <code>USERNAME()</code> or <code>ISMEMBEROF()</code></td></tr>
     <tr><td><strong>Data Governance</strong></td><td>Certified data sources, data quality warnings, lineage tracking</td></tr>
-    <tr><td><strong>Permissions</strong></td><td>Project â†’ Workbook â†’ View level permissions. Lock or inherit from parent.</td></tr>
+    <tr><td><strong>Permissions</strong></td><td>Project → Workbook → View level permissions. Lock or inherit from parent.</td></tr>
     <tr><td><strong>Prep Conductor</strong></td><td>Schedule Tableau Prep flows on Server (requires Data Management add-on)</td></tr>
   </table>
 
@@ -882,7 +929,7 @@ function toggleTheme() {
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 13 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 13 ═══════════════════ -->
 <div id="s13" class="section">
   <h2>Cheat <span>Sheet</span></h2>
   <div class="section-meta">
@@ -939,7 +986,7 @@ function toggleTheme() {
 <span class="fn">IFNULL</span>([Value], <span class="str">"N/A"</span>)                  <span class="cm">// Replace null</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 14 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 14 ═══════════════════ -->
 <div id="s14" class="section">
   <h2>Knowledge <span>Check</span></h2>
   <div class="section-meta">
@@ -951,20 +998,20 @@ function toggleTheme() {
     <div class="qtext">1. What is the difference between a Dimension and a Measure in Tableau?</div>
     <div class="quiz-option" onclick="answer(this,false,'Dimensions are categorical (qualitative), Measures are numeric (quantitative).')">Dimensions are numeric, Measures are categorical</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! Dimensions are qualitative (categories), Measures are quantitative (numbers that get aggregated).')">Dimensions are categorical, Measures are numeric</div>
-    <div class="quiz-option" onclick="answer(this,false,'Both can be used on any shelf, but they behave differently.')">There is no difference â€” they can be used interchangeably</div>
+    <div class="quiz-option" onclick="answer(this,false,'Both can be used on any shelf, but they behave differently.')">There is no difference — they can be used interchangeably</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">2. Which LOD expression computes at a specific grain regardless of the view?</div>
     <div class="quiz-option" onclick="answer(this,true,'Correct! FIXED computes at the specified dimension level, ignoring the view.')">FIXED</div>
-    <div class="quiz-option" onclick="answer(this,false,'INCLUDE adds dimensions to the view level â€” it does not ignore the view.')">INCLUDE</div>
-    <div class="quiz-option" onclick="answer(this,false,'EXCLUDE removes dimensions â€” it still depends on the view\'s LOD.')">EXCLUDE</div>
+    <div class="quiz-option" onclick="answer(this,false,'INCLUDE adds dimensions to the view level — it does not ignore the view.')">INCLUDE</div>
+    <div class="quiz-option" onclick="answer(this,false,'EXCLUDE removes dimensions — it still depends on the view\'s LOD.')">EXCLUDE</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">3. In the filter order of operations, which filter type runs first?</div>
     <div class="quiz-option" onclick="answer(this,false,'Dimension filters run in the middle of the order.')">Dimension Filters</div>
-    <div class="quiz-option" onclick="answer(this,true,'Correct! Extract filters run first â€” they limit data at the extraction stage.')">Extract Filters</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Extract filters run first — they limit data at the extraction stage.')">Extract Filters</div>
     <div class="quiz-option" onclick="answer(this,false,'Context filters run after extract and data source filters.')">Context Filters</div>
   </div>
 
@@ -977,8 +1024,8 @@ function toggleTheme() {
 
   <div class="quiz-q">
     <div class="qtext">5. Which is faster for dashboards: Live Connection or Extract?</div>
-    <div class="quiz-option" onclick="answer(this,false,'Live connections query the database each time â€” slower for most dashboards.')">Live Connection</div>
-    <div class="quiz-option" onclick="answer(this,true,'Correct! Extracts use the Hyper engine (columnar, in-memory) â€” much faster for analytics.')">Extract (.hyper)</div>
+    <div class="quiz-option" onclick="answer(this,false,'Live connections query the database each time — slower for most dashboards.')">Live Connection</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Extracts use the Hyper engine (columnar, in-memory) — much faster for analytics.')">Extract (.hyper)</div>
     <div class="quiz-option" onclick="answer(this,false,'It depends on the scenario, but Extracts are faster for the vast majority of dashboards.')">They perform the same</div>
   </div>
 
@@ -992,8 +1039,8 @@ function toggleTheme() {
   <div class="quiz-q">
     <div class="qtext">7. When are Table Calculations computed?</div>
     <div class="quiz-option" onclick="answer(this,false,'LOD expressions are computed at the data source level, not table calculations.')">Before the query runs</div>
-    <div class="quiz-option" onclick="answer(this,true,'Correct! Table calculations are computed after the aggregate query returns â€” they operate on the values already in the view.')">After aggregation, on the results in the view</div>
-    <div class="quiz-option" onclick="answer(this,false,'They are not computed per row â€” they work on aggregated values in the view.')">Row by row during data processing</div>
+    <div class="quiz-option" onclick="answer(this,true,'Correct! Table calculations are computed after the aggregate query returns — they operate on the values already in the view.')">After aggregation, on the results in the view</div>
+    <div class="quiz-option" onclick="answer(this,false,'They are not computed per row — they work on aggregated values in the view.')">Row by row during data processing</div>
   </div>
 
   <div class="quiz-q">

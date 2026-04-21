@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dimensional Modeling 101 â€” Complete Training Guide</title>
+<title>Dimensional Modeling 101 — Complete Training Guide</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>
@@ -190,11 +190,19 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .tier.control, .tier.cluster, .tier.governance { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
 .tier.compute, .tier.storage { border-color: rgba(16,185,129,0.35); background: rgba(16,185,129,0.08); }
 .tier.publish, .tier.ops { border-color: rgba(245,158,11,0.35); background: rgba(245,158,11,0.08); }
-.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; }
+.tier-label { position: absolute; top: -10px; left: 16px; font-size: 10px; padding: 1px 8px; border-radius: 3px; font-weight: 600; letter-spacing: 0.08em; color: #e2e8f0; z-index: 1; }
 .tier.source .tier-label, .tier.driver .tier-label, .tier.platform .tier-label, .tier.pipeline .tier-label { background: rgba(59,130,246,0.3); }
 .tier.control .tier-label, .tier.cluster .tier-label, .tier.governance .tier-label { background: rgba(139,92,246,0.3); }
 .tier.compute .tier-label, .tier.storage .tier-label { background: rgba(16,185,129,0.3); }
 .tier.publish .tier-label, .tier.ops .tier-label { background: rgba(245,158,11,0.3); }
+.tier.client  { border-color: rgba(79,172,247,0.4); background: rgba(79,172,247,0.06); }
+.tier.service { border-color: rgba(167,139,250,0.4); background: rgba(167,139,250,0.06); }
+.tier.data    { border-color: rgba(52,211,153,0.3);  background: rgba(52,211,153,0.05); }
+.tier.client  .tier-label { background: rgba(79,172,247,0.3); }
+.tier.service .tier-label { background: rgba(167,139,250,0.3); }
+.tier.data    .tier-label { background: rgba(52,211,153,0.3); }
+.tier.service .tool-box { border-color: rgba(167,139,250,0.3); }
+.tier.data    .tool-box { border-color: rgba(52,211,153,0.25); }
 .tier-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
 .tool-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 5px; padding: 6px 12px; font-size: 11px; color: #e2e8f0; }
 .connector { text-align: center; color: #94a3b8; font-size: 11px; margin: 6px 0; letter-spacing: 0.05em; }
@@ -203,6 +211,45 @@ code { background: var(--bg3); color: var(--accent); padding: 1px 6px; border-ra
 .link-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
 .link-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg3); color: var(--accent); text-decoration: none; font-size: 12px; font-weight: 500; transition: all 0.15s; }
 .link-chip:hover { background: var(--accent); color: white; text-decoration: none; }
+
+/* Flow steps (numbered timeline) */
+.flow-steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 24px; }
+.flow-step { display: flex; gap: 16px; align-items: flex-start; }
+.flow-step .step-line { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.step-num { width: 28px; height: 28px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 11px; color: var(--accent); flex-shrink: 0; }
+.step-connector { width: 1px; background: var(--border); flex: 1; min-height: 20px; }
+.flow-step .step-content { padding: 4px 0 20px; }
+.flow-step .step-title { font-weight: 500; color: var(--text); font-size: 14px; margin-bottom: 4px; }
+.flow-step .step-desc { font-size: 13px; color: var(--text2); }
+
+/* Pattern flow diagrams */
+.pattern-flow { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 20px 24px; font-family: var(--mono); font-size: 12px; color: #e2e8f0; margin-bottom: 20px; white-space: pre; line-height: 1.7; overflow-x: auto; }
+
+/* Tab bar */
+.tab-bar { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+.tab-btn { padding: 10px 18px; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; font-family: var(--sans); }
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* Transform cards */
+.transform-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+.transform-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; padding: 16px; cursor: pointer; transition: all 0.2s; }
+.transform-card:hover { border-color: var(--border2); background: var(--bg3); }
+.transform-card .tc-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.transform-card .tc-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); }
+.transform-card .tc-abbr { font-family: var(--mono); font-size: 11px; color: var(--accent); background: rgba(79,172,247,0.1); padding: 2px 6px; border-radius: 3px; }
+.transform-card .tc-desc { font-size: 12.5px; color: var(--text2); line-height: 1.5; }
+.transform-card .tc-foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+
+/* Glossary */
+.glossary-item { border-bottom: 1px solid var(--border); padding: 14px 0; }
+
+/* Progress bar */
+.progress-bar { display: flex; gap: 4px; margin-bottom: 32px; }
+.progress-seg { height: 3px; flex: 1; background: var(--border); border-radius: 2px; transition: background 0.3s; }
+.progress-seg.done { background: var(--accent); }
 
 /* Lists */
 ul, .bullet-list, ol { margin: 0 0 18px 20px; color: var(--text2); }
@@ -300,7 +347,7 @@ function toggleTheme() {
   <a href="#" onclick="show('s6',this)"><span class="dot"></span>Surrogate Keys</a>
 
   <div class="nav-section">Advanced</div>
-  <a href="#" onclick="show('s7',this)"><span class="dot"></span>SCD â€” Slowly Changing Dims</a>
+  <a href="#" onclick="show('s7',this)"><span class="dot"></span>SCD — Slowly Changing Dims</a>
   <a href="#" onclick="show('s8',this)"><span class="dot"></span>Junk, Degenerate & Role-Playing</a>
   <a href="#" onclick="show('s9',this)"><span class="dot"></span>Conformed Dimensions</a>
   <a href="#" onclick="show('s10',this)"><span class="dot"></span>Kimball vs Inmon</a>
@@ -315,11 +362,11 @@ function toggleTheme() {
 
 <main>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 1 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 1 ═══════════════════ -->
 <div id="s1" class="section active">
   <h2>What is <span>Dimensional Modeling</span>?</h2>
   <div class="section-meta">
-    <span>â± 4 min</span><span>ðŸ“Œ Module 01</span><span>ðŸŽ“ Theory</span>
+    <span>⏱ 4 min</span><span>📌 Module 01</span><span>🎓 Theory</span>
   </div>
 
   <p><strong>Dimensional modeling</strong> is a data warehouse design technique created by <strong>Ralph Kimball</strong>. It organizes data into <strong>facts</strong> (measurable events) and <strong>dimensions</strong> (context/descriptors), optimized for query performance and business understanding.</p>
@@ -340,7 +387,7 @@ function toggleTheme() {
     </div>
     <div class="card purple-border">
       <h4>Industry Standard</h4>
-      <p>Used in virtually every data warehouse â€” from on-prem (Teradata, Oracle) to cloud (Snowflake, BigQuery, Redshift).</p>
+      <p>Used in virtually every data warehouse — from on-prem (Teradata, Oracle) to cloud (Snowflake, BigQuery, Redshift).</p>
     </div>
   </div>
 
@@ -351,25 +398,25 @@ function toggleTheme() {
     <tr><td><strong>Design</strong></td><td>Normalized (3NF)</td><td>Denormalized (Star/Snowflake)</td></tr>
     <tr><td><strong>Queries</strong></td><td>INSERT/UPDATE on single rows</td><td>SELECT with aggregations on millions of rows</td></tr>
     <tr><td><strong>Users</strong></td><td>Applications, developers</td><td>Analysts, BI tools, data scientists</td></tr>
-    <tr><td><strong>Data Volume</strong></td><td>Current state (GB)</td><td>Historical (TBâ€“PB)</td></tr>
+    <tr><td><strong>Data Volume</strong></td><td>Current state (GB)</td><td>Historical (TB–PB)</td></tr>
     <tr><td><strong>Normalization</strong></td><td>Highly normalized</td><td>Denormalized for read performance</td></tr>
   </table>
 
   <div class="callout tip">
-    <span class="icon">ðŸ’¡</span>
+    <span class="icon">💡</span>
     <p><strong>The Kimball mantra:</strong> "Design for understandability and query performance first, storage cost second." In a data warehouse, denormalization is a feature, not a flaw.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 2 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 2 ═══════════════════ -->
 <div id="s2" class="section">
   <h2>Facts & <span>Dimensions</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 02</span><span>ðŸŽ“ Core Concept</span>
+    <span>⏱ 5 min</span><span>📌 Module 02</span><span>🎓 Core Concept</span>
   </div>
 
   <h3>Fact Tables</h3>
-  <p>A fact table records <strong>business events or measurements</strong> â€” things that happened. Each row is a grain (the most atomic level of detail).</p>
+  <p>A fact table records <strong>business events or measurements</strong> — things that happened. Each row is a grain (the most atomic level of detail).</p>
 
   <div class="card-grid">
     <div class="card accent-border">
@@ -383,7 +430,7 @@ function toggleTheme() {
   </div>
 
   <h3>Dimension Tables</h3>
-  <p>A dimension table provides the <strong>context/descriptors</strong> for a fact â€” the who, what, where, when, how.</p>
+  <p>A dimension table provides the <strong>context/descriptors</strong> for a fact — the who, what, where, when, how.</p>
 
   <div class="card-grid">
     <div class="card blue-border">
@@ -408,68 +455,68 @@ function toggleTheme() {
   </table>
 
   <div class="callout warn">
-    <span class="icon">âš ï¸</span>
+    <span class="icon">⚠️</span>
     <p><strong>Always declare the grain first.</strong> If you can't state in one sentence what a fact row represents, stop and clarify before designing anything else. Mixed grain = broken aggregations.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 3 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 3 ═══════════════════ -->
 <div id="s3" class="section">
   <h2>Star vs <span>Snowflake Schema</span></h2>
   <div class="section-meta">
-    <span>â± 4 min</span><span>ðŸ“Œ Module 03</span><span>ðŸŽ“ Core Concept</span>
+    <span>⏱ 4 min</span><span>📌 Module 03</span><span>🎓 Core Concept</span>
   </div>
 
   <h3>Star Schema</h3>
   <pre>
-                        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                        â”‚  <span class="fn">dim_date</span>    â”‚
-                        â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-                        â”‚ date_key  PK â”‚
-                        â”‚ full_date    â”‚
-                        â”‚ day_of_week  â”‚
-                        â”‚ month_name   â”‚
-                        â”‚ quarter      â”‚
-                        â”‚ year         â”‚
-                        â””â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”˜
-                               â”‚
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ <span class="fn">dim_product</span>  â”‚    â”‚  <span class="kw">fact_sales</span>     â”‚    â”‚ <span class="fn">dim_store</span>    â”‚
-  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-  â”‚ product_key PKâ”‚â—€â”€â”€â”€â”‚ product_key  FK â”‚    â”‚ store_key PK â”‚
-  â”‚ product_name â”‚    â”‚ store_key    FK â”‚â”€â”€â”€â–¶â”‚ store_name   â”‚
-  â”‚ category     â”‚    â”‚ date_key     FK â”‚    â”‚ city         â”‚
-  â”‚ brand        â”‚    â”‚ customer_key FK â”‚    â”‚ state        â”‚
-  â”‚ unit_cost    â”‚    â”‚â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚    â”‚ region       â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚ quantity        â”‚    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                      â”‚ unit_price      â”‚
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”‚ discount_amt    â”‚
-  â”‚ <span class="fn">dim_customer</span> â”‚    â”‚ total_amount    â”‚
-  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-  â”‚ customer_key PKâ”‚â—€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-  â”‚ full_name    â”‚
-  â”‚ email        â”‚
-  â”‚ city         â”‚
-  â”‚ segment      â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜</pre>
+                        ┌──────────────┐
+                        │  <span class="fn">dim_date</span>    │
+                        ├──────────────┤
+                        │ date_key  PK │
+                        │ full_date    │
+                        │ day_of_week  │
+                        │ month_name   │
+                        │ quarter      │
+                        │ year         │
+                        └──────┬───────┘
+                               │
+  ┌──────────────┐    ┌────────┴────────┐    ┌──────────────┐
+  │ <span class="fn">dim_product</span>  │    │  <span class="kw">fact_sales</span>     │    │ <span class="fn">dim_store</span>    │
+  ├──────────────┤    ├─────────────────┤    ├──────────────┤
+  │ product_key PK│◀───│ product_key  FK │    │ store_key PK │
+  │ product_name │    │ store_key    FK │───▶│ store_name   │
+  │ category     │    │ date_key     FK │    │ city         │
+  │ brand        │    │ customer_key FK │    │ state        │
+  │ unit_cost    │    │───────────────  │    │ region       │
+  └──────────────┘    │ quantity        │    └──────────────┘
+                      │ unit_price      │
+  ┌──────────────┐    │ discount_amt    │
+  │ <span class="fn">dim_customer</span> │    │ total_amount    │
+  ├──────────────┤    └─────────────────┘
+  │ customer_key PK│◀─────────┘
+  │ full_name    │
+  │ email        │
+  │ city         │
+  │ segment      │
+  └──────────────┘</pre>
 
   <h3>Snowflake Schema</h3>
   <p>A snowflake schema <strong>normalizes dimension tables</strong> into sub-dimensions. For example, <code>dim_product</code> links to <code>dim_category</code> which links to <code>dim_department</code>.</p>
 
   <pre>
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ <span class="op">dim_dept</span>    â”‚â—€â”€â”€â”€â”‚ <span class="op">dim_category</span>â”‚â—€â”€â”€â”€â”‚ <span class="fn">dim_product</span>  â”‚
-  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤    â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
-  â”‚ dept_key  PKâ”‚    â”‚ cat_key   PKâ”‚    â”‚ product_key PKâ”‚â”€â”€â”€ â–¶ fact_sales
-  â”‚ dept_name   â”‚    â”‚ cat_name    â”‚    â”‚ product_name â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚ dept_key  FKâ”‚    â”‚ brand        â”‚
-                     â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â”‚ cat_key    FKâ”‚
-                                        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜</pre>
+  ┌─────────────┐    ┌─────────────┐    ┌──────────────┐
+  │ <span class="op">dim_dept</span>    │◀───│ <span class="op">dim_category</span>│◀───│ <span class="fn">dim_product</span>  │
+  ├─────────────┤    ├─────────────┤    ├──────────────┤
+  │ dept_key  PK│    │ cat_key   PK│    │ product_key PK│─── ▶ fact_sales
+  │ dept_name   │    │ cat_name    │    │ product_name │
+  └─────────────┘    │ dept_key  FK│    │ brand        │
+                     └─────────────┘    │ cat_key    FK│
+                                        └──────────────┘</pre>
 
   <h3>Comparison</h3>
   <table>
     <tr><th>Aspect</th><th>Star Schema</th><th>Snowflake Schema</th></tr>
-    <tr><td><strong>Joins</strong></td><td>Fewer (fact â†’ dim)</td><td>More (fact â†’ dim â†’ sub-dim)</td></tr>
+    <tr><td><strong>Joins</strong></td><td>Fewer (fact → dim)</td><td>More (fact → dim → sub-dim)</td></tr>
     <tr><td><strong>Query Speed</strong></td><td>Faster (fewer joins)</td><td>Slower (more joins)</td></tr>
     <tr><td><strong>Storage</strong></td><td>More (denormalized dims)</td><td>Less (normalized)</td></tr>
     <tr><td><strong>Complexity</strong></td><td>Simpler to understand</td><td>More complex</td></tr>
@@ -478,16 +525,16 @@ function toggleTheme() {
   </table>
 
   <div class="callout rule">
-    <span class="icon">âœ…</span>
+    <span class="icon">✅</span>
     <p><strong>Kimball's recommendation:</strong> Start with a star schema. Only snowflake when there's a <em>compelling</em> reason (e.g., a very large, frequently-changing dimension hierarchy). Most modern cloud DWs handle denormalized dims easily.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 4 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 4 ═══════════════════ -->
 <div id="s4" class="section">
   <h2>Fact Table <span>Design</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 04</span><span>ðŸŽ“ Design</span>
+    <span>⏱ 5 min</span><span>📌 Module 04</span><span>🎓 Design</span>
   </div>
 
   <h3>Types of Fact Tables</h3>
@@ -506,7 +553,7 @@ function toggleTheme() {
     </div>
     <div class="card purple-border">
       <h4>Factless Fact</h4>
-      <p>Records events with no numeric measures â€” just FK relationships. Examples: student attendance, promotion coverage.</p>
+      <p>Records events with no numeric measures — just FK relationships. Examples: student attendance, promotion coverage.</p>
     </div>
   </div>
 
@@ -515,7 +562,7 @@ function toggleTheme() {
     <tr><th>Type</th><th>Behavior</th><th>Examples</th></tr>
     <tr><td><strong>Additive</strong></td><td>Can SUM across all dimensions</td><td>Revenue, quantity, cost, discount amount</td></tr>
     <tr><td><strong>Semi-Additive</strong></td><td>Can SUM across some dimensions but NOT time</td><td>Account balance, inventory count, headcount</td></tr>
-    <tr><td><strong>Non-Additive</strong></td><td>Cannot SUM â€” must AVG, or use ratios</td><td>Unit price, percentages, ratios, temperature</td></tr>
+    <tr><td><strong>Non-Additive</strong></td><td>Cannot SUM — must AVG, or use ratios</td><td>Unit price, percentages, ratios, temperature</td></tr>
   </table>
 
   <h3>Accumulating Snapshot Example</h3>
@@ -525,7 +572,7 @@ function toggleTheme() {
   order_key           <span class="fn">INT</span> <span class="kw">PRIMARY KEY</span>,
   customer_key        <span class="fn">INT</span> <span class="kw">REFERENCES</span> dim_customer,
 
-  <span class="cm">-- Multiple date FKs â€” one per milestone</span>
+  <span class="cm">-- Multiple date FKs — one per milestone</span>
   order_date_key      <span class="fn">INT</span> <span class="kw">REFERENCES</span> dim_date,   <span class="cm">-- when ordered</span>
   ship_date_key       <span class="fn">INT</span> <span class="kw">REFERENCES</span> dim_date,   <span class="cm">-- when shipped</span>
   delivery_date_key   <span class="fn">INT</span> <span class="kw">REFERENCES</span> dim_date,   <span class="cm">-- when delivered</span>
@@ -538,16 +585,16 @@ function toggleTheme() {
 );</pre>
 
   <div class="callout tip">
-    <span class="icon">ðŸ’¡</span>
-    <p><strong>Design tip:</strong> Store both the raw additive measures (quantity, revenue) <em>and</em> the pre-computed useful measures (discount_amount, net_amount). Avoid storing only percentages â€” store the numerator and denominator so users can re-aggregate correctly.</p>
+    <span class="icon">💡</span>
+    <p><strong>Design tip:</strong> Store both the raw additive measures (quantity, revenue) <em>and</em> the pre-computed useful measures (discount_amount, net_amount). Avoid storing only percentages — store the numerator and denominator so users can re-aggregate correctly.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 5 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 5 ═══════════════════ -->
 <div id="s5" class="section">
   <h2>Dimension Table <span>Design</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 05</span><span>ðŸŽ“ Design</span>
+    <span>⏱ 5 min</span><span>📌 Module 05</span><span>🎓 Design</span>
   </div>
 
   <h3>The Date Dimension</h3>
@@ -595,26 +642,26 @@ function toggleTheme() {
   </div>
 
   <h3>Dimension Hierarchies</h3>
-  <pre><span class="cm">-- Product hierarchy (all in one table â€” star schema)</span>
+  <pre><span class="cm">-- Product hierarchy (all in one table — star schema)</span>
 
   dim_product
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ product_key  PK                               â”‚
-  â”‚ product_name                                   â”‚
-  â”‚ brand                                          â”‚
-  â”‚ subcategory      â† level 1                    â”‚
-  â”‚ category         â† level 2                    â”‚
-  â”‚ department       â† level 3                    â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  ┌──────────────────────────────────────────────┐
+  │ product_key  PK                               │
+  │ product_name                                   │
+  │ brand                                          │
+  │ subcategory      ← level 1                    │
+  │ category         ← level 2                    │
+  │ department       ← level 3                    │
+  └──────────────────────────────────────────────┘
 
-<span class="cm">-- Enables drill-down: Department â†’ Category â†’ Subcategory â†’ Product</span></pre>
+<span class="cm">-- Enables drill-down: Department → Category → Subcategory → Product</span></pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 6 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 6 ═══════════════════ -->
 <div id="s6" class="section">
   <h2>Surrogate <span>Keys</span></h2>
   <div class="section-meta">
-    <span>â± 3 min</span><span>ðŸ“Œ Module 06</span><span>ðŸŽ“ Design</span>
+    <span>⏱ 3 min</span><span>📌 Module 06</span><span>🎓 Design</span>
   </div>
 
   <p>A <strong>surrogate key</strong> is an artificial, system-generated integer key (e.g., auto-increment) used as the primary key of a dimension table, replacing the natural/business key.</p>
@@ -622,7 +669,7 @@ function toggleTheme() {
   <h3>Why Surrogate Keys?</h3>
   <table>
     <tr><th>Reason</th><th>Explanation</th></tr>
-    <tr><td><strong>SCD support</strong></td><td>Track historical changes â€” the same business key can have multiple surrogate keys (one per version)</td></tr>
+    <tr><td><strong>SCD support</strong></td><td>Track historical changes — the same business key can have multiple surrogate keys (one per version)</td></tr>
     <tr><td><strong>Source independence</strong></td><td>Decouple from source system keys. If the source changes IDs, your warehouse is unaffected</td></tr>
     <tr><td><strong>Performance</strong></td><td>Integer joins are faster than string joins. Smaller fact table footprint</td></tr>
     <tr><td><strong>Handle "Unknown"</strong></td><td>Assign surrogate key <code>-1</code> for unknown/missing dimension members</td></tr>
@@ -645,47 +692,47 @@ dim_customer
 
 <span class="cm">-- The fact table uses ONLY the surrogate key:</span>
 fact_sales
-  customer_key   <span class="fn">INT</span>  FK â†’ dim_customer</pre>
+  customer_key   <span class="fn">INT</span>  FK → dim_customer</pre>
 
   <div class="callout rule">
-    <span class="icon">âœ…</span>
+    <span class="icon">✅</span>
     <p><strong>Always keep the natural key</strong> in the dimension table alongside the surrogate key. You need it for ETL lookups and data lineage back to the source system.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 7 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 7 ═══════════════════ -->
 <div id="s7" class="section">
-  <h2>SCD â€” <span>Slowly Changing Dimensions</span></h2>
+  <h2>SCD — <span>Slowly Changing Dimensions</span></h2>
   <div class="section-meta">
-    <span>â± 6 min</span><span>ðŸ“Œ Module 07</span><span>ðŸŽ“ Advanced</span>
+    <span>⏱ 6 min</span><span>📌 Module 07</span><span>🎓 Advanced</span>
   </div>
 
-  <p>Dimensions change over time â€” a customer moves to a new city, a product gets re-categorized. <strong>SCDs</strong> define how to handle these changes.</p>
+  <p>Dimensions change over time — a customer moves to a new city, a product gets re-categorized. <strong>SCDs</strong> define how to handle these changes.</p>
 
-  <h3>SCD Type 0 â€” Retain Original</h3>
+  <h3>SCD Type 0 — Retain Original</h3>
   <div class="card">
     <h4>Never update</h4>
     <p>The attribute is fixed forever. Example: <code>original_signup_date</code>, <code>date_of_birth</code>. Set once, never overwrite.</p>
   </div>
 
-  <h3>SCD Type 1 â€” Overwrite</h3>
+  <h3>SCD Type 1 — Overwrite</h3>
   <div class="card">
     <h4>Overwrite the old value</h4>
     <p>No history kept. Simple but you lose the previous value. Use for corrections (typos, data quality fixes).</p>
   </div>
   <pre><span class="cm">-- Customer moved from NYC to LA</span>
 <span class="cm">-- BEFORE:</span>
-â”‚ customer_key â”‚ name  â”‚ city â”‚
-â”‚ <span class="num">101</span>          â”‚ Alice â”‚ NYC  â”‚
+│ customer_key │ name  │ city │
+│ <span class="num">101</span>          │ Alice │ NYC  │
 
 <span class="cm">-- AFTER (Type 1: just overwrite):</span>
-â”‚ customer_key â”‚ name  â”‚ city â”‚
-â”‚ <span class="num">101</span>          â”‚ Alice â”‚ LA   â”‚
+│ customer_key │ name  │ city │
+│ <span class="num">101</span>          │ Alice │ LA   │
 
-<span class="cm">-- âš  Historical sales still linked to key 101</span>
-<span class="cm">-- but now show "LA" â€” history is lost</span></pre>
+<span class="cm">-- ⚠ Historical sales still linked to key 101</span>
+<span class="cm">-- but now show "LA" — history is lost</span></pre>
 
-  <h3>SCD Type 2 â€” Add New Row</h3>
+  <h3>SCD Type 2 — Add New Row</h3>
   <div class="card">
     <h4>Track full history</h4>
     <p>The most powerful SCD. Insert a new row with a new surrogate key. Add <code>effective_date</code>, <code>end_date</code>, and <code>is_current</code> flag.</p>
@@ -693,22 +740,22 @@ fact_sales
   <pre><span class="cm">-- Customer moved from NYC to LA</span>
 <span class="cm">-- Type 2: add a new row, close the old one</span>
 
-â”‚ customer_key â”‚ customer_id â”‚ name  â”‚ city â”‚ eff_date   â”‚ end_date   â”‚ is_current â”‚
-â”‚ <span class="num">101</span>          â”‚ CUST-42     â”‚ Alice â”‚ NYC  â”‚ 2024-01-15 â”‚ 2026-03-31 â”‚ <span class="str">N</span>          â”‚
-â”‚ <span class="num">438</span>          â”‚ CUST-42     â”‚ Alice â”‚ LA   â”‚ 2026-04-01 â”‚ 9999-12-31 â”‚ <span class="str">Y</span>          â”‚
+│ customer_key │ customer_id │ name  │ city │ eff_date   │ end_date   │ is_current │
+│ <span class="num">101</span>          │ CUST-42     │ Alice │ NYC  │ 2024-01-15 │ 2026-03-31 │ <span class="str">N</span>          │
+│ <span class="num">438</span>          │ CUST-42     │ Alice │ LA   │ 2026-04-01 │ 9999-12-31 │ <span class="str">Y</span>          │
 
-<span class="cm">-- Sales before April 2026 â†’ linked to key 101 (NYC)</span>
-<span class="cm">-- Sales after April 2026  â†’ linked to key 438 (LA)</span>
-<span class="cm">-- âœ… Full history preserved!</span></pre>
+<span class="cm">-- Sales before April 2026 → linked to key 101 (NYC)</span>
+<span class="cm">-- Sales after April 2026  → linked to key 438 (LA)</span>
+<span class="cm">-- ✅ Full history preserved!</span></pre>
 
-  <h3>SCD Type 3 â€” Add Column</h3>
+  <h3>SCD Type 3 — Add Column</h3>
   <div class="card">
     <h4>Track limited history (previous + current)</h4>
     <p>Add a <code>previous_city</code> column. Only stores one level of history. Rarely used in practice.</p>
   </div>
   <pre><span class="cm">-- Type 3: store current + previous</span>
-â”‚ customer_key â”‚ name  â”‚ current_city â”‚ previous_city â”‚
-â”‚ <span class="num">101</span>          â”‚ Alice â”‚ LA           â”‚ NYC           â”‚</pre>
+│ customer_key │ name  │ current_city │ previous_city │
+│ <span class="num">101</span>          │ Alice │ LA           │ NYC           │</pre>
 
   <h3>SCD Comparison</h3>
   <table>
@@ -716,39 +763,39 @@ fact_sales
     <tr><td><strong>Type 0</strong></td><td>No change</td><td>None</td><td>Immutable attributes</td></tr>
     <tr><td><strong>Type 1</strong></td><td>None</td><td>Simple</td><td>Corrections, non-critical attributes</td></tr>
     <tr><td><strong>Type 2</strong></td><td>Full</td><td>Complex</td><td>Must track changes over time (most common for reporting)</td></tr>
-    <tr><td><strong>Type 3</strong></td><td>Limited (prev only)</td><td>Medium</td><td>Rare â€” need "before and after" comparison</td></tr>
+    <tr><td><strong>Type 3</strong></td><td>Limited (prev only)</td><td>Medium</td><td>Rare — need "before and after" comparison</td></tr>
     <tr><td><strong>Type 6 (hybrid)</strong></td><td>Full + current</td><td>Most complex</td><td>Type 2 + Type 1 + Type 3 combined</td></tr>
   </table>
 
   <div class="callout tip">
-    <span class="icon">ðŸ’¡</span>
+    <span class="icon">💡</span>
     <p><strong>In practice:</strong> Most teams use <em>Type 1 for non-critical attributes</em> (e.g., phone number) and <em>Type 2 for business-critical attributes</em> (e.g., customer segment, product category) in the same dimension table.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 8 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 8 ═══════════════════ -->
 <div id="s8" class="section">
   <h2>Junk, Degenerate & <span>Role-Playing Dims</span></h2>
   <div class="section-meta">
-    <span>â± 4 min</span><span>ðŸ“Œ Module 08</span><span>ðŸŽ“ Advanced</span>
+    <span>⏱ 4 min</span><span>📌 Module 08</span><span>🎓 Advanced</span>
   </div>
 
   <h3>Degenerate Dimension</h3>
   <div class="card accent-border">
-    <h4>A dimension with no attributes â€” lives in the fact table</h4>
+    <h4>A dimension with no attributes — lives in the fact table</h4>
     <p>When a dimension key has no meaningful attributes beyond itself, store it directly in the fact table. No separate dim table needed.</p>
   </div>
   <pre><span class="cm">-- Order number and Invoice number are degenerate dimensions</span>
 <span class="cm">-- They identify the transaction but have no extra attributes</span>
 
 fact_sales
-  date_key         FK â†’ dim_date
-  product_key      FK â†’ dim_product
-  customer_key     FK â†’ dim_customer
-  <span class="kw">order_number</span>     <span class="cm">â† degenerate dimension (no dim table)</span>
-  <span class="kw">invoice_number</span>   <span class="cm">â† degenerate dimension (no dim table)</span>
-  quantity         <span class="cm">â† measure</span>
-  amount           <span class="cm">â† measure</span></pre>
+  date_key         FK → dim_date
+  product_key      FK → dim_product
+  customer_key     FK → dim_customer
+  <span class="kw">order_number</span>     <span class="cm">← degenerate dimension (no dim table)</span>
+  <span class="kw">invoice_number</span>   <span class="cm">← degenerate dimension (no dim table)</span>
+  quantity         <span class="cm">← measure</span>
+  amount           <span class="cm">← measure</span></pre>
 
   <h3>Junk Dimension</h3>
   <div class="card green-border">
@@ -759,13 +806,13 @@ fact_sales
 <span class="cm">--   is_gift, is_rush, is_online, is_loyalty</span>
 
 <span class="cm">-- Create dim_order_flags (junk dimension):</span>
-â”‚ flag_key â”‚ is_gift â”‚ is_rush â”‚ is_online â”‚ is_loyalty â”‚
-â”‚ <span class="num">1</span>        â”‚ Y       â”‚ N       â”‚ Y         â”‚ N          â”‚
-â”‚ <span class="num">2</span>        â”‚ N       â”‚ N       â”‚ Y         â”‚ Y          â”‚
-â”‚ <span class="num">3</span>        â”‚ Y       â”‚ Y       â”‚ N         â”‚ N          â”‚
-â”‚ ...      â”‚ ...     â”‚ ...     â”‚ ...       â”‚ ...        â”‚
+│ flag_key │ is_gift │ is_rush │ is_online │ is_loyalty │
+│ <span class="num">1</span>        │ Y       │ N       │ Y         │ N          │
+│ <span class="num">2</span>        │ N       │ N       │ Y         │ Y          │
+│ <span class="num">3</span>        │ Y       │ Y       │ N         │ N          │
+│ ...      │ ...     │ ...     │ ...       │ ...        │
 
-<span class="cm">-- 2Ã—2Ã—2Ã—2 = 16 possible combinations</span>
+<span class="cm">-- 2×2×2×2 = 16 possible combinations</span>
 <span class="cm">-- Fact table just stores one FK: flag_key</span></pre>
 
   <h3>Role-Playing Dimension</h3>
@@ -776,9 +823,9 @@ fact_sales
   <pre><span class="cm">-- dim_date plays THREE roles in fact_order_fulfillment:</span>
 
 fact_order_fulfillment
-  order_date_key     FK â†’ dim_date   <span class="cm">â† role: "Order Date"</span>
-  ship_date_key      FK â†’ dim_date   <span class="cm">â† role: "Ship Date"</span>
-  delivery_date_key  FK â†’ dim_date   <span class="cm">â† role: "Delivery Date"</span>
+  order_date_key     FK → dim_date   <span class="cm">← role: "Order Date"</span>
+  ship_date_key      FK → dim_date   <span class="cm">← role: "Ship Date"</span>
+  delivery_date_key  FK → dim_date   <span class="cm">← role: "Delivery Date"</span>
 
 <span class="cm">-- In SQL, use aliases:</span>
 <span class="kw">FROM</span> fact_order_fulfillment f
@@ -787,51 +834,51 @@ fact_order_fulfillment
 <span class="kw">JOIN</span> dim_date deliver_dt  <span class="kw">ON</span> f.delivery_date_key = deliver_dt.date_key</pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 9 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 9 ═══════════════════ -->
 <div id="s9" class="section">
   <h2>Conformed <span>Dimensions</span></h2>
   <div class="section-meta">
-    <span>â± 3 min</span><span>ðŸ“Œ Module 09</span><span>ðŸŽ“ Advanced</span>
+    <span>⏱ 3 min</span><span>📌 Module 09</span><span>🎓 Advanced</span>
   </div>
 
-  <p>A <strong>conformed dimension</strong> is a dimension shared across multiple fact tables. It has the same keys, attributes, and meaning everywhere â€” enabling cross-process analysis.</p>
+  <p>A <strong>conformed dimension</strong> is a dimension shared across multiple fact tables. It has the same keys, attributes, and meaning everywhere — enabling cross-process analysis.</p>
 
   <h3>Why Conformed Dimensions Matter</h3>
   <pre>
   <span class="kw">fact_sales</span>                        <span class="kw">fact_inventory</span>
-  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”                â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-  â”‚ product_key FK â”‚â”€â”          â”Œâ”€â”€â”‚ product_key FK â”‚
-  â”‚ store_key   FK â”‚â”€â”¤          â”œâ”€â”€â”‚ store_key   FK â”‚
-  â”‚ date_key    FK â”‚â”€â”¤          â”œâ”€â”€â”‚ date_key    FK â”‚
-  â”‚ customer_key FKâ”‚ â”‚          â”‚  â”‚ quantity_on_handâ”‚
-  â”‚ quantity       â”‚ â”‚          â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-  â”‚ revenue        â”‚ â”‚          â”‚
-  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚          â”‚
-                     â–¼          â–¼
-        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-        â”‚    <span class="fn">CONFORMED DIMENSIONS</span>      â”‚
-        â”‚                             â”‚
-        â”‚  dim_product  (shared)      â”‚
-        â”‚  dim_store    (shared)      â”‚
-        â”‚  dim_date     (shared)      â”‚
-        â”‚                             â”‚
-        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+  ┌────────────────┐                ┌────────────────┐
+  │ product_key FK │─┐          ┌──│ product_key FK │
+  │ store_key   FK │─┤          ├──│ store_key   FK │
+  │ date_key    FK │─┤          ├──│ date_key    FK │
+  │ customer_key FK│ │          │  │ quantity_on_hand│
+  │ quantity       │ │          │  └────────────────┘
+  │ revenue        │ │          │
+  └────────────────┘ │          │
+                     ▼          ▼
+        ┌─────────────────────────────┐
+        │    <span class="fn">CONFORMED DIMENSIONS</span>      │
+        │                             │
+        │  dim_product  (shared)      │
+        │  dim_store    (shared)      │
+        │  dim_date     (shared)      │
+        │                             │
+        └─────────────────────────────┘
 
   <span class="cm">Because dim_product is conformed, you can write:</span>
   <span class="cm">"Show me sales AND inventory for Electronics in Q1"</span>
-  <span class="cm">â€” and the numbers are consistent across both fact tables.</span></pre>
+  <span class="cm">— and the numbers are consistent across both fact tables.</span></pre>
 
   <div class="callout rule">
-    <span class="icon">âœ…</span>
-    <p><strong>The "data warehouse bus":</strong> Kimball's approach is to build the DW incrementally â€” one business process (fact table) at a time â€” united by conformed dimensions. <code>dim_date</code>, <code>dim_customer</code>, and <code>dim_product</code> are the most commonly conformed.</p>
+    <span class="icon">✅</span>
+    <p><strong>The "data warehouse bus":</strong> Kimball's approach is to build the DW incrementally — one business process (fact table) at a time — united by conformed dimensions. <code>dim_date</code>, <code>dim_customer</code>, and <code>dim_product</code> are the most commonly conformed.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 10 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 10 ═══════════════════ -->
 <div id="s10" class="section">
   <h2>Kimball vs <span>Inmon</span></h2>
   <div class="section-meta">
-    <span>â± 3 min</span><span>ðŸ“Œ Module 10</span><span>ðŸŽ“ Theory</span>
+    <span>⏱ 3 min</span><span>📌 Module 10</span><span>🎓 Theory</span>
   </div>
 
   <p>Two competing philosophies for designing a data warehouse:</p>
@@ -840,13 +887,13 @@ fact_order_fulfillment
   <pre>
   <span class="kw">KIMBALL (Bottom-Up)</span>                   <span class="kw">INMON (Top-Down)</span>
 
-  Source â†’ ETL â†’  <span class="fn">Dimensional DW</span>        Source â†’ ETL â†’ <span class="fn">3NF Enterprise DW</span>
-                     â”‚                                      â”‚
-                     â–¼                                      â–¼
+  Source → ETL →  <span class="fn">Dimensional DW</span>        Source → ETL → <span class="fn">3NF Enterprise DW</span>
+                     │                                      │
+                     ▼                                      ▼
                   BI Tools                             Data Marts
                                                       (dimensional)
-                                                         â”‚
-                                                         â–¼
+                                                         │
+                                                         ▼
                                                       BI Tools</pre>
 
   <table>
@@ -854,24 +901,24 @@ fact_order_fulfillment
     <tr><td><strong>DW Design</strong></td><td>Dimensional (star/snowflake)</td><td>3NF (normalized enterprise model)</td></tr>
     <tr><td><strong>Approach</strong></td><td>Build one business process at a time</td><td>Build the full enterprise model first</td></tr>
     <tr><td><strong>Data Marts</strong></td><td>DW IS the collection of marts</td><td>Data marts are built from the DW</td></tr>
-    <tr><td><strong>Speed to Value</strong></td><td>Fast â€” deliver one process at a time</td><td>Slow â€” need full model before any reporting</td></tr>
-    <tr><td><strong>Complexity</strong></td><td>Simpler â€” fewer joins</td><td>Complex â€” fully normalized</td></tr>
+    <tr><td><strong>Speed to Value</strong></td><td>Fast — deliver one process at a time</td><td>Slow — need full model before any reporting</td></tr>
+    <tr><td><strong>Complexity</strong></td><td>Simpler — fewer joins</td><td>Complex — fully normalized</td></tr>
     <tr><td><strong>Redundancy</strong></td><td>Some (denormalized)</td><td>Minimal (3NF)</td></tr>
     <tr><td><strong>ETL Complexity</strong></td><td>Moderate</td><td>High (load 3NF first, then build marts)</td></tr>
     <tr><td><strong>Best For</strong></td><td>BI/reporting focus, agile teams</td><td>Enterprise-wide single source of truth</td></tr>
   </table>
 
   <div class="callout tip">
-    <span class="icon">ðŸ’¡</span>
-    <p><strong>Modern reality:</strong> Most modern data warehouses (Snowflake, BigQuery, Databricks) follow a Kimball-style approach with dimensional models. The Inmon vs Kimball debate is less relevant today â€” many teams use a <em>hybrid</em>: a lightly-modeled staging/raw layer (like Inmon) feeding dimensional models (like Kimball).</p>
+    <span class="icon">💡</span>
+    <p><strong>Modern reality:</strong> Most modern data warehouses (Snowflake, BigQuery, Databricks) follow a Kimball-style approach with dimensional models. The Inmon vs Kimball debate is less relevant today — many teams use a <em>hybrid</em>: a lightly-modeled staging/raw layer (like Inmon) feeding dimensional models (like Kimball).</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 11 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 11 ═══════════════════ -->
 <div id="s11" class="section">
   <h2>Retail Sales <span>Example</span></h2>
   <div class="section-meta">
-    <span>â± 5 min</span><span>ðŸ“Œ Module 11</span><span>ðŸŽ“ Real-World</span>
+    <span>⏱ 5 min</span><span>📌 Module 11</span><span>🎓 Real-World</span>
   </div>
 
   <p>Let's design a complete dimensional model for a retail company's sales analysis.</p>
@@ -985,11 +1032,11 @@ fact_order_fulfillment
 <span class="kw">LIMIT</span> <span class="num">10</span>;</pre>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 12 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 12 ═══════════════════ -->
 <div id="s12" class="section">
   <h2>Common <span>Anti-Patterns</span></h2>
   <div class="section-meta">
-    <span>â± 3 min</span><span>ðŸ“Œ Module 12</span><span>ðŸŽ“ Pitfalls</span>
+    <span>⏱ 3 min</span><span>📌 Module 12</span><span>🎓 Pitfalls</span>
   </div>
 
   <table>
@@ -1001,7 +1048,7 @@ fact_order_fulfillment
     </tr>
     <tr>
       <td><strong>NULLs in dimension FKs</strong></td>
-      <td>NULL breaks joins â€” rows silently disappear in INNER JOINs</td>
+      <td>NULL breaks joins — rows silently disappear in INNER JOINs</td>
       <td>Use surrogate key <code>-1</code> pointing to "Unknown" row</td>
     </tr>
     <tr>
@@ -1017,7 +1064,7 @@ fact_order_fulfillment
     <tr>
       <td><strong>One Big Table (OBT)</strong></td>
       <td>Single giant denormalized table is hard to update, has SCD issues, and wastes storage</td>
-      <td>Use proper star schema â€” facts + dimensions</td>
+      <td>Use proper star schema — facts + dimensions</td>
     </tr>
     <tr>
       <td><strong>Too many dimensions in the fact</strong></td>
@@ -1026,7 +1073,7 @@ fact_order_fulfillment
     </tr>
     <tr>
       <td><strong>Calendar fields in the fact table</strong></td>
-      <td>Redundant â€” <code>month</code>, <code>quarter</code>, <code>year</code> belong in <code>dim_date</code></td>
+      <td>Redundant — <code>month</code>, <code>quarter</code>, <code>year</code> belong in <code>dim_date</code></td>
       <td>Store only <code>date_key</code> FK in the fact; derive everything from <code>dim_date</code></td>
     </tr>
     <tr>
@@ -1037,29 +1084,29 @@ fact_order_fulfillment
   </table>
 
   <div class="callout warn">
-    <span class="icon">âš ï¸</span>
+    <span class="icon">⚠️</span>
     <p><strong>The #1 mistake:</strong> Starting to build tables before declaring the grain. If you can't say "one row in this fact table represents ___", you're not ready to design.</p>
   </div>
 </div>
 
-<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SECTION 13 â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+<!-- ═══════════════════ SECTION 13 ═══════════════════ -->
 <div id="s13" class="section">
   <h2>Knowledge <span>Check</span></h2>
   <div class="section-meta">
-    <span>ðŸ“ Quiz</span><span>Score: <strong id="score-display">0 / 10</strong></span>
+    <span>📝 Quiz</span><span>Score: <strong id="score-display">0 / 10</strong></span>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">1. What is the "grain" of a fact table?</div>
     <div class="quiz-option" onclick="answer(this, false, 'That describes the schema, not the grain.')">The number of dimension tables connected to it</div>
-    <div class="quiz-option" onclick="answer(this, true, 'Correct! The grain defines what one single row in the fact table represents â€” the most fundamental design decision.')">What one row in the fact table represents</div>
+    <div class="quiz-option" onclick="answer(this, true, 'Correct! The grain defines what one single row in the fact table represents — the most fundamental design decision.')">What one row in the fact table represents</div>
     <div class="quiz-option" onclick="answer(this, false, 'The total row count is a consequence of the grain, not the grain itself.')">The total number of rows</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">2. In a star schema, which table sits at the center?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Dimensions surround the center â€” they provide context.')">Dimension table</div>
-    <div class="quiz-option" onclick="answer(this, true, 'Correct! The fact table is at the center, surrounded by dimension tables â€” forming a star shape.')">Fact table</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Dimensions surround the center — they provide context.')">Dimension table</div>
+    <div class="quiz-option" onclick="answer(this, true, 'Correct! The fact table is at the center, surrounded by dimension tables — forming a star shape.')">Fact table</div>
     <div class="quiz-option" onclick="answer(this, false, 'A staging table is for ETL, not for the final dimensional model.')">Staging table</div>
   </div>
 
@@ -1067,20 +1114,20 @@ fact_order_fulfillment
     <div class="qtext">3. What is a surrogate key?</div>
     <div class="quiz-option" onclick="answer(this, false, 'That describes a natural/business key, not a surrogate.')">The primary key from the source system</div>
     <div class="quiz-option" onclick="answer(this, true, 'Correct! Surrogate keys are warehouse-generated integers, independent of source systems, enabling SCD tracking and source decoupling.')">An artificial integer key generated by the data warehouse</div>
-    <div class="quiz-option" onclick="answer(this, false, 'A composite key uses multiple columns â€” surrogates are single integers.')">A combination of two natural keys</div>
+    <div class="quiz-option" onclick="answer(this, false, 'A composite key uses multiple columns — surrogates are single integers.')">A combination of two natural keys</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">4. Which SCD type preserves full history of changes?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Type 1 overwrites the old value â€” no history is kept.')">Type 1</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Type 1 overwrites the old value — no history is kept.')">Type 1</div>
     <div class="quiz-option" onclick="answer(this, true, 'Correct! SCD Type 2 inserts a new row for each change, with effective/end dates, preserving full history.')">Type 2</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Type 3 only stores one previous value â€” very limited history.')">Type 3</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Type 3 only stores one previous value — very limited history.')">Type 3</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">5. Account balance is what type of measure?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'You can\'t SUM account balances across time periods â€” that would give nonsense.')">Additive</div>
-    <div class="quiz-option" onclick="answer(this, true, 'Correct! Account balance can be summed across customers or accounts, but NOT across time â€” making it semi-additive.')">Semi-Additive</div>
+    <div class="quiz-option" onclick="answer(this, false, 'You can\'t SUM account balances across time periods — that would give nonsense.')">Additive</div>
+    <div class="quiz-option" onclick="answer(this, true, 'Correct! Account balance can be summed across customers or accounts, but NOT across time — making it semi-additive.')">Semi-Additive</div>
     <div class="quiz-option" onclick="answer(this, false, 'Balance can be summed across non-time dimensions, so it\'s not fully non-additive.')">Non-Additive</div>
   </div>
 
@@ -1100,23 +1147,23 @@ fact_order_fulfillment
 
   <div class="quiz-q">
     <div class="qtext">8. What is a conformed dimension?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'A dimension doesn\'t need all fact tables â€” it\'s used where relevant.')">A dimension connected to every fact table</div>
+    <div class="quiz-option" onclick="answer(this, false, 'A dimension doesn\'t need all fact tables — it\'s used where relevant.')">A dimension connected to every fact table</div>
     <div class="quiz-option" onclick="answer(this, true, 'Correct! Conformed dimensions have consistent keys and attributes across all fact tables that reference them, enabling cross-process analysis.')">A dimension shared across multiple fact tables with consistent meaning</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Being validated doesn\'t make it conformed â€” conformity is about shared usage.')">A dimension that has been validated by the business</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Being validated doesn\'t make it conformed — conformity is about shared usage.')">A dimension that has been validated by the business</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">9. What is the key difference between Kimball and Inmon?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Both approaches build data warehouses â€” they just differ in design philosophy.')">Kimball is for small companies, Inmon for large</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Both approaches build data warehouses — they just differ in design philosophy.')">Kimball is for small companies, Inmon for large</div>
     <div class="quiz-option" onclick="answer(this, true, 'Correct! Kimball designs dimensional models directly (bottom-up, incremental). Inmon designs a normalized 3NF enterprise model first (top-down), then creates dimensional marts from it.')">Kimball: dimensional DW (bottom-up). Inmon: normalized 3NF DW (top-down)</div>
     <div class="quiz-option" onclick="answer(this, false, 'Both can use cloud warehouses.')">Kimball is for cloud, Inmon for on-premise</div>
   </div>
 
   <div class="quiz-q">
     <div class="qtext">10. Why should you avoid storing percentages as fact measures?</div>
-    <div class="quiz-option" onclick="answer(this, false, 'BI tools handle percentages fine â€” the issue is mathematical correctness.')">BI tools can't display percentages</div>
-    <div class="quiz-option" onclick="answer(this, true, 'Correct! Percentages are non-additive â€” you can\'t sum 50% + 30% and get a meaningful result. Store the numerator and denominator, then compute the percentage in the query.')">Percentages can't be summed across groups â€” store numerator &amp; denominator instead</div>
-    <div class="quiz-option" onclick="answer(this, false, 'Storage is not the issue â€” correctness of aggregation is.')">They take up too much storage space</div>
+    <div class="quiz-option" onclick="answer(this, false, 'BI tools handle percentages fine — the issue is mathematical correctness.')">BI tools can't display percentages</div>
+    <div class="quiz-option" onclick="answer(this, true, 'Correct! Percentages are non-additive — you can\'t sum 50% + 30% and get a meaningful result. Store the numerator and denominator, then compute the percentage in the query.')">Percentages can't be summed across groups — store numerator &amp; denominator instead</div>
+    <div class="quiz-option" onclick="answer(this, false, 'Storage is not the issue — correctness of aggregation is.')">They take up too much storage space</div>
   </div>
 </div>
 
