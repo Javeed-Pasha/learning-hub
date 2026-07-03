@@ -10,9 +10,32 @@ Thumbs.db
 
 # Misc
 *.log
+*.bak
+*.tmp
+* - Copy.*
+
+# Env / secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
 
 # Jupyter
 **/.ipynb_checkpoints/
 
+# Local runtime data (docker-compose spark/iceberg stack)
+/data/*
+/warehouse/*
+
 # Oracle (private scripts, not for GitHub)
 oracle/
+
+# Trainer submission (private, not for GitHub)
+trainer-submission/
+/_*.pdf
+
+# Local preview files (not for GitHub)
+*-preview.html
+*-demo.html
