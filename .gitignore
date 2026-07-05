@@ -29,6 +29,9 @@ __pycache__/
 /data/*
 /warehouse/*
 
+# Old pages (superseded by pages/, not for GitHub Pages)
+oldpages/
+
 # Oracle (private scripts, not for GitHub)
 oracle/
 
