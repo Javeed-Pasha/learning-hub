@@ -1,9 +1,26 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Working Reference Implementation</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23059669' d='M12 2C7.58 2 4 3.79 4 6s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 8.5v3C4 13.71 7.58 15.5 12 15.5s8-1.79 8-4.5v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4zM4 14v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z'/%3E%3C/svg%3E">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://javeed-pasha.github.io/learning-hub/pages/working-reference-implementation.html">
+<meta property="og:title" content="Working Reference Implementation">
+<meta property="og:description" content="Part of the Learning Hub by Javeed Pasha - architecture blueprints, reference implementations, and hands-on tutorials covering Spark, Iceberg, SQL, Informatica, SSIS, and Tableau.">
+<meta property="og:image" content="https://javeed-pasha.github.io/learning-hub/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Working Reference Implementation">
+<meta name="twitter:description" content="Part of the Learning Hub by Javeed Pasha - architecture blueprints, reference implementations, and hands-on tutorials covering Spark, Iceberg, SQL, Informatica, SSIS, and Tableau.">
+<meta name="twitter:image" content="https://javeed-pasha.github.io/learning-hub/og-image.png">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>
@@ -13,7 +30,7 @@
 <style>
 body { font-family: 'Inter', system-ui, sans-serif; transition: background-color 0.3s, color 0.3s; }
 
-/* â”€â”€ Light theme (default) â”€â”€ */
+/* -- Light theme (default) -- */
 :root {
   --bg: #f8fafc; --bg2: #ffffff; --bg3: #f1f5f9; --bg4: #e2e8f0;
   --border: #e2e8f0; --border2: #cbd5e1;
@@ -27,7 +44,7 @@ body { font-family: 'Inter', system-ui, sans-serif; transition: background-color
   --nav-text: #0f172a; --nav-text2: #475569;
 }
 
-/* â”€â”€ Dark theme â”€â”€ */
+/* -- Dark theme -- */
 .dark-mode {
   --bg: #0f172a; --bg2: #1e293b; --bg3: #111827; --bg4: #334155;
   --border: #334155; --border2: #475569;
@@ -65,8 +82,17 @@ body { font-family: 'Inter', system-ui, sans-serif; transition: background-color
 .dark-mode tr:hover td { background: #111827; }
 
 /* Theme toggle button */
-#theme-toggle { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text2); font-size: 16px; transition: all 0.2s; display: flex; align-items: center; }
-#theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.theme-toggle-btn { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text2); font-size: 16px; transition: all 0.2s; display: flex; align-items: center; }
+.theme-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Mobile nav */
+#mobile-menu-toggle { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px; cursor: pointer; color: var(--text2); font-size: 16px; }
+#mobile-menu-toggle:hover { border-color: var(--accent); color: var(--accent); }
+#mobile-menu a { display: block; padding: 10px 8px; color: var(--text2); text-decoration: none; border-radius: 8px; }
+#mobile-menu a:hover { background: var(--bg3); color: var(--accent); }
+#mobile-menu a i { margin-right: 8px; width: 16px; text-align: center; }
+#mobile-menu .mobile-menu-label { padding: 10px 8px 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text3); }
+.dark-mode #mobile-menu { border-color: var(--border) !important; }
 
 /* Tutorials dropdown */
 .nav-dropdown { position: relative; }
@@ -283,7 +309,7 @@ li { margin-bottom: 8px; }
       <i class="fa-solid fa-database text-3xl db-icon" style="color:#2563eb;"></i>
       <span class="text-2xl font-semibold tracking-tight nav-brand">Learning Hub</span>
     </a>
-    <div class="flex items-center gap-8 text-sm font-medium">
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium">
       <a href="enterprise-data-platform-blueprint.html" class="hover:text-blue-600 transition-colors" style="text-decoration:none;color:inherit;">Blueprint</a>
       <a href="working-reference-implementation.html" class="hover:text-blue-600 transition-colors" style="text-decoration:none;color:inherit;">Reference Implementation</a>
       <div class="nav-dropdown">
@@ -304,10 +330,37 @@ li { margin-bottom: 8px; }
       <a href="https://www.linkedin.com/in/javeed-pasha/" target="_blank" class="hover:text-blue-600 transition-colors flex items-center gap-1" style="text-decoration:none;color:inherit;">
         <i class="fa-brands fa-linkedin"></i> LinkedIn
       </a>
-      <button id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode">
         <i class="fa-solid fa-moon"></i>
       </button>
     </div>
+
+    <!-- Mobile controls -->
+    <div class="flex items-center gap-3 md:hidden">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+      <button id="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu" aria-expanded="false">
+        <i class="fa-solid fa-bars text-xl"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu panel -->
+  <div id="mobile-menu" class="md:hidden hidden border-t px-8 py-4 flex flex-col gap-1 text-sm font-medium">
+    <a href="enterprise-data-platform-blueprint.html">Blueprint</a>
+    <a href="working-reference-implementation.html">Reference Implementation</a>
+    <div class="mobile-menu-label">Tutorials</div>
+    <a href="spark-101.html">Apache Spark 101</a>
+    <a href="sql-101.html">SQL 101</a>
+    <a href="dimensional-modeling-101.html">Dimensional Modeling 101</a>
+    <a href="informatica-powercenter-101.html">Informatica PowerCenter 101</a>
+    <a href="ssis-101.html">SSIS 101</a>
+    <a href="tableau-101.html">Tableau 101</a>
+    <a href="spark-iceberg-demo-setup.html">Spark + Iceberg Demo Setup</a>
+    <div class="mobile-menu-label">Links</div>
+    <a href="https://github.com/javeed-pasha" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+    <a href="https://www.linkedin.com/in/javeed-pasha/" target="_blank"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
   </div>
 </nav>
 
@@ -316,12 +369,23 @@ function toggleTheme() {
   document.documentElement.classList.toggle('dark-mode');
   const isDark = document.documentElement.classList.contains('dark-mode');
   localStorage.setItem('lh-theme', isDark ? 'dark' : 'light');
-  document.querySelector('#theme-toggle i').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  document.querySelectorAll('.theme-toggle-btn i').forEach(function(i) { i.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; });
 }
 (function() {
   const isDark = document.documentElement.classList.contains('dark-mode');
-  if (isDark) document.querySelector('#theme-toggle i').className = 'fa-solid fa-sun';
+  if (isDark) document.querySelectorAll('.theme-toggle-btn i').forEach(function(i) { i.className = 'fa-solid fa-sun'; });
 })();
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const btn = document.getElementById('mobile-menu-toggle');
+  const isHidden = menu.classList.toggle('hidden');
+  btn.querySelector('i').className = isHidden ? 'fa-solid fa-bars text-xl' : 'fa-solid fa-xmark text-xl';
+  btn.setAttribute('aria-expanded', String(!isHidden));
+}
+document.querySelectorAll('#mobile-menu a').forEach(function(a) {
+  a.addEventListener('click', function() { document.getElementById('mobile-menu').classList.add('hidden'); });
+});
 </script>
 
 <div class="home-bar">

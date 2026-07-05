@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Enterprise Data Engineering Learning Hub by Javeed Pasha - Architecture blueprints, reference implementations, and hands-on tutorials">
     <title>Javeed Pasha | Enterprise Data Engineering Learning Hub</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%232563eb' d='M12 2C7.58 2 4 3.79 4 6s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 8.5v3C4 13.71 7.58 15.5 12 15.5s8-1.79 8-4.5v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4zM4 14v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z'/%3E%3C/svg%3E">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://javeed-pasha.github.io/learning-hub/">
+    <meta property="og:title" content="Learning Hub | Enterprise Data Engineering by Javeed Pasha">
+    <meta property="og:description" content="Architecture blueprints, reference implementations, and hands-on tutorials covering Spark, Iceberg, SQL, Informatica, SSIS, and Tableau.">
+    <meta property="og:image" content="https://javeed-pasha.github.io/learning-hub/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Learning Hub | Enterprise Data Engineering by Javeed Pasha">
+    <meta name="twitter:description" content="Architecture blueprints, reference implementations, and hands-on tutorials covering Spark, Iceberg, SQL, Informatica, SSIS, and Tableau.">
+    <meta name="twitter:image" content="https://javeed-pasha.github.io/learning-hub/og-image.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
@@ -16,8 +33,21 @@
         .card-hover:hover { transform: translateY(-4px); transition: all 0.3s ease; }
 
         /* Theme toggle button */
-        #theme-toggle { background: none; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; cursor: pointer; color: #475569; font-size: 16px; transition: all 0.2s; display: flex; align-items: center; }
-        #theme-toggle:hover { border-color: #2563eb; color: #2563eb; }
+        .theme-toggle-btn { background: none; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; cursor: pointer; color: #475569; font-size: 16px; transition: all 0.2s; display: flex; align-items: center; }
+        .theme-toggle-btn:hover { border-color: #2563eb; color: #2563eb; }
+
+        /* Mobile nav */
+        #mobile-menu-toggle { background: none; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; cursor: pointer; color: #475569; font-size: 16px; }
+        #mobile-menu-toggle:hover { border-color: #2563eb; color: #2563eb; }
+        #mobile-menu a { display: block; padding: 10px 8px; color: #475569; text-decoration: none; border-radius: 8px; }
+        #mobile-menu a:hover { background: #f1f5f9; color: #2563eb; }
+        #mobile-menu a i { margin-right: 8px; width: 16px; text-align: center; }
+        #mobile-menu .mobile-menu-label { padding: 10px 8px 2px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #94a3b8; }
+        .dark-mode #mobile-menu { border-color: #334155 !important; }
+        .dark-mode #mobile-menu a { color: #94a3b8; }
+        .dark-mode #mobile-menu a:hover { background: #111827; color: #60a5fa; }
+        .dark-mode .theme-toggle-btn, .dark-mode #mobile-menu-toggle { border-color: #475569; color: #94a3b8; }
+        .dark-mode .theme-toggle-btn:hover, .dark-mode #mobile-menu-toggle:hover { border-color: #60a5fa; color: #60a5fa; }
 
         /* Tutorials dropdown */
         .nav-dropdown { position: relative; }
@@ -67,8 +97,6 @@
         .dark-mode .text-blue-700 { color: #93c5fd !important; }
         .dark-mode .text-emerald-700 { color: #6ee7b7 !important; }
         .dark-mode footer.bg-slate-900 { background-color: #020617 !important; }
-        .dark-mode #theme-toggle { border-color: #475569; color: #94a3b8; }
-        .dark-mode #theme-toggle:hover { border-color: #60a5fa; color: #60a5fa; }
         .dark-mode .rounded-3xl { border-color: #334155; }
         .dark-mode a.block.bg-white:hover { background-color: #263550 !important; }
         /* Hero section in dark mode - use a lighter gradient so it stands out from dark body */
@@ -84,7 +112,7 @@
                 <i class="fa-solid fa-database text-3xl text-blue-600"></i>
                 <span class="text-2xl font-semibold tracking-tight">Learning Hub</span>
             </a>
-            <div class="flex items-center gap-8 text-sm font-medium">
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
                 <a href="./pages/enterprise-data-platform-blueprint.html" class="hover:text-blue-600 transition-colors">Blueprint</a>
                 <a href="./pages/working-reference-implementation.html" class="hover:text-blue-600 transition-colors">Reference Implementation</a>
                 <div class="nav-dropdown">
@@ -105,10 +133,37 @@
                 <a href="https://www.linkedin.com/in/javeed-pasha/" target="_blank" class="hover:text-blue-600 transition-colors flex items-center gap-1">
                     <i class="fa-brands fa-linkedin"></i> LinkedIn
                 </a>
-                <button id="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode">
                     <i class="fa-solid fa-moon"></i>
                 </button>
             </div>
+
+            <!-- Mobile controls -->
+            <div class="flex items-center gap-3 md:hidden">
+                <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle dark/light mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Toggle menu" aria-expanded="false">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu panel -->
+        <div id="mobile-menu" class="md:hidden hidden border-t px-8 py-4 flex flex-col gap-1 text-sm font-medium">
+            <a href="./pages/enterprise-data-platform-blueprint.html">Blueprint</a>
+            <a href="./pages/working-reference-implementation.html">Reference Implementation</a>
+            <div class="mobile-menu-label">Tutorials</div>
+            <a href="./pages/spark-101.html">Apache Spark 101</a>
+            <a href="./pages/sql-101.html">SQL 101</a>
+            <a href="./pages/dimensional-modeling-101.html">Dimensional Modeling 101</a>
+            <a href="./pages/informatica-powercenter-101.html">Informatica PowerCenter 101</a>
+            <a href="./pages/ssis-101.html">SSIS 101</a>
+            <a href="./pages/tableau-101.html">Tableau 101</a>
+            <a href="./pages/spark-iceberg-demo-setup.html">Spark + Iceberg Demo Setup</a>
+            <div class="mobile-menu-label">Links</div>
+            <a href="https://github.com/javeed-pasha" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+            <a href="https://www.linkedin.com/in/javeed-pasha/" target="_blank"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
         </div>
     </nav>
 
@@ -116,6 +171,7 @@
     <header class="hero-bg text-white py-20">
         <div class="max-w-screen-2xl mx-auto px-8">
             <div class="max-w-3xl">
+                <p class="text-sm font-semibold tracking-widest uppercase text-blue-400 mb-4">Javeed Pasha &middot; Senior Data Engineer</p>
                 <h1 class="text-5xl font-bold tracking-tighter leading-none mb-6">
                     Enterprise data engineering,<br>from learning to runnable platforms
                 </h1>
@@ -136,8 +192,8 @@
             <div class="md:col-span-8">
                 <h2 class="text-3xl font-semibold mb-6">About the Curator</h2>
                 <div class="prose text-lg leading-relaxed text-slate-700">
-                    <p><strong>Hi, I'm Javeed Pasha</strong> — a Senior Data Engineer with extensive experience building scalable, governed enterprise data platforms, including lakehouse architectures, metadata-driven ETL/ELT, control-table orchestration, and production-grade implementations using Spark and Iceberg.</p>
-                    <p>This Learning Hub is a curated collection of battle-tested patterns, reference architectures, and working code drawn directly from real-world enterprise projects. Everything here is designed to be immediately usable in production environments — whether you're onboarding new engineers, aligning with architecture review boards, or delivering data platforms that are built to last.</p>
+                    <p><strong>Hi, I'm Javeed Pasha</strong>, a Senior Data Engineer with experience spanning both enterprise data platforms and the modern data stack. My core strength is building data integration solutions with Informatica PowerCenter and designing dimensional, star-schema data warehouses that are ready for analytics and reporting. Much of my work has centered on turning complex source systems into reliable, well-governed foundations that teams can trust.</p>
+                    <p>Building on that foundation, I work with technologies like Apache Spark and Apache Iceberg to design and implement lakehouse architectures for large-scale data processing. This Learning Hub brings the two worlds together — practical tutorials, reference architectures, and runnable examples that show how proven data engineering principles carry across traditional and modern platforms.</p>
                 </div>
             </div>
             <div class="md:col-span-4 flex flex-col items-center md:items-end gap-4">
@@ -184,7 +240,7 @@
                 <div class="text-blue-600 mb-4"><i class="fa-solid fa-cube text-4xl"></i></div>
                 <h3 class="font-semibold text-xl mb-3">Tech Stack</h3>
                 <p class="text-slate-600">Spark • Iceberg • Docker • SQL • Informatica • SSIS • Tableau</p>
-                <p class="text-sm text-slate-500 mt-6">This hub now combines training guides with selected architecture and implementation references for a stronger enterprise delivery narrative.</p>
+                <p class="text-sm text-slate-500 mt-6">Guides, reference architectures, and runnable code — all in one place.</p>
             </div>
             
             <div class="bg-white p-8 rounded-3xl shadow-sm">
@@ -262,7 +318,6 @@
                 <h3 class="font-semibold text-xl mb-6 flex items-center gap-2"><span class="text-purple-600">Analytics</span></h3>
                 <ul class="space-y-4 text-slate-700">
                     <li><a href="./pages/tableau-101.html" class="hover:text-blue-600">→ Tableau 101</a></li>
-                    <li class="text-slate-400">More analytics content coming next</li>
                 </ul>
             </div>
         </div>
@@ -271,7 +326,7 @@
     <!-- Footer -->
     <footer class="bg-slate-900 text-slate-400 py-12">
         <div class="max-w-screen-2xl mx-auto px-8 text-center text-sm">
-            <p>Built as a living knowledge base for enterprise data engineering • Last updated: April 2026</p>
+            <p>Built as a living knowledge base for enterprise data engineering • Last updated: July 2026</p>
             <p class="mt-3">
                 <a href="https://github.com/javeed-pasha/learning-hub" target="_blank" class="hover:text-white">View source on GitHub</a>
             </p>
@@ -283,12 +338,23 @@ function toggleTheme() {
   document.documentElement.classList.toggle('dark-mode');
   const isDark = document.documentElement.classList.contains('dark-mode');
   localStorage.setItem('lh-theme', isDark ? 'dark' : 'light');
-  document.querySelector('#theme-toggle i').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  document.querySelectorAll('.theme-toggle-btn i').forEach(function(i) { i.className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon'; });
 }
 (function() {
   const isDark = document.documentElement.classList.contains('dark-mode');
-  if (isDark) document.querySelector('#theme-toggle i').className = 'fa-solid fa-sun';
+  if (isDark) document.querySelectorAll('.theme-toggle-btn i').forEach(function(i) { i.className = 'fa-solid fa-sun'; });
 })();
+
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  const btn = document.getElementById('mobile-menu-toggle');
+  const isHidden = menu.classList.toggle('hidden');
+  btn.querySelector('i').className = isHidden ? 'fa-solid fa-bars text-xl' : 'fa-solid fa-xmark text-xl';
+  btn.setAttribute('aria-expanded', String(!isHidden));
+}
+document.querySelectorAll('#mobile-menu a').forEach(function(a) {
+  a.addEventListener('click', function() { document.getElementById('mobile-menu').classList.add('hidden'); });
+});
 </script>
 
 </body>
