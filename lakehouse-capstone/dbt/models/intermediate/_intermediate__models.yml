@@ -1,0 +1,23 @@
+models:
+  - name: int_orders__delivery_metrics
+    description: One row per order with delivery timing. Grain is order_id.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+
+# Unit tests run with a Spark *session* connection. Over the Thrift Server, dbt-spark 1.11.1
+# fails them with "'NoneType' object is not iterable"; see the README.
+unit_tests:
+  - name: delivery_days_null_until_delivered
+    model: int_orders__delivery_metrics
+    given:
+      - input: ref('stg_thelook__orders')
+        rows:
+          - {order_id: 1, order_status: complete, ordered_at: "2026-01-01 10:00:00", delivered_at: "2026-01-04 09:00:00"}
+          - {order_id: 2, order_status: shipped,  ordered_at: "2026-01-02 10:00:00", delivered_at: null}
+          - {order_id: 3, order_status: returned, ordered_at: "2026-01-03 10:00:00", delivered_at: "2026-01-05 08:00:00"}
+    expect:
+      rows:
+        - {order_id: 1, days_to_deliver: 3,    is_returned: false}
+        - {order_id: 2, days_to_deliver: null, is_returned: false}
+        - {order_id: 3, days_to_deliver: 2,    is_returned: true}

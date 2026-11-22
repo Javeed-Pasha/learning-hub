@@ -1,0 +1,9 @@
+snapshots:
+  - name: customers_snapshot
+    description: SCD Type 2 history of customer attributes. The source has no reliable updated_at, so the check strategy compares columns.
+    relation: ref('stg_thelook__users')
+    config:
+      schema: snapshots
+      unique_key: customer_id
+      strategy: check
+      check_cols: ['email', 'city', 'state', 'country', 'traffic_source']

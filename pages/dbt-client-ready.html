@@ -185,10 +185,10 @@ footer li{break-inside:avoid}
  <div class="wrap hgrid">
   <div class="ht">
    <h1>dbt, from zero <b>to client-ready</b></h1>
-   <p class="lede">A hands-on course for an Informatica and Oracle engineer moving to dbt. Nineteen modules on DuckDB, BigQuery and Snowflake, with production-grade Git and CI/CD from the first day, a capstone you can show clients, and a playbook for winning dbt work on Fiverr and Upwork. Current to dbt v2, November 2026.</p>
+   <p class="lede">A hands-on course for an Informatica and Oracle engineer moving to dbt. Nineteen modules on DuckDB, BigQuery and Snowflake, with production-grade Git and CI/CD from the first day, a warehouse capstone, a final on-prem lakehouse capstone on Spark and Iceberg, and a playbook for winning dbt work on Fiverr and Upwork. Current to dbt v2, November 2026.</p>
   </div>
   <div class="prog" aria-live="polite">
-   <div class="fig-num"><b id="pDone">0</b> of <span id="pTotal">23</span> done</div>
+   <div class="fig-num"><b id="pDone">0</b> of <span id="pTotal">24</span> done</div>
    <div class="bar" aria-hidden="true"><i id="pBar"></i></div>
    <a class="btn solid" id="pNext" href="#m0">Start with module 0</a>
   </div>
@@ -211,8 +211,8 @@ footer li{break-inside:avoid}
    <p>Protected main, pull requests, pre-commit checks, separate dev, CI and prod environments, service identities, keyless CI, deploys only by automation. You practise the way client teams actually work.</p>
   </div>
   <div class="card">
-   <h3>What you will have in eight weeks</h3>
-   <p>A public repo with a tested warehouse that runs on three engines, four GitHub Actions workflows, a live docs site, a migration demo, a dashboard, and ready-to-use gig and proposal copy.</p>
+   <h3>What you will have in nine weeks</h3>
+   <p>A tested warehouse that runs on three engines, four GitHub Actions workflows, a live docs site, an on-prem lakehouse with Spark, Iceberg, Trino and Airflow, a migration demo, and ready-to-use gig and proposal copy.</p>
   </div>
  </div>
 </section>
@@ -2555,6 +2555,112 @@ alter schema analytics.marts swap with analytics.marts_staging;
 <div class="modfoot" data-for="cap"></div>
 </section>
 
+<!-- ============ CAP2 LAKEHOUSE ============ -->
+<section class="mod" id="cap2">
+<span class="kicker">Final capstone</span>
+<h2>Run dbt on your own on-prem lakehouse: Spark, Iceberg, MinIO, Trino and Airflow</h2>
+<p class="meta">About 15 hours in week 9. Needs Docker Desktop with at least 10 GB of memory and 4 CPUs.</p>
+
+<p>The first capstone ran on managed warehouses. This one runs the kind of platform many enterprises build on-prem: Spark for compute, Iceberg tables in S3-compatible storage, Starburst (Trino) for analysts and Airflow on top. dbt does the modelling through the Spark Thrift Server, and everything runs in Docker Compose on your laptop.</p>
+<p><a href="https://github.com/javeed-pasha/learning-hub/tree/main/lakehouse-capstone">The full project is in your Learning Hub repo</a>. It includes the compose file, Spark and Airflow images, the dbt project, the data generator, the DAG and a runbook. This section explains how it fits together.</p>
+
+<div class="scroll"><table class="stack">
+<thead><tr><th>Service</th><th>Version</th><th>Role</th></tr></thead>
+<tbody>
+<tr><td>Spark master, worker</td><td>3.5.8 + Iceberg 1.12.0</td><td>The compute cluster</td></tr>
+<tr><td>Spark Thrift Server</td><td>same image</td><td>SQL endpoint for dbt-spark and the ingestion job, port 10000</td></tr>
+<tr><td>Iceberg REST catalog</td><td>apache/iceberg-rest-fixture 1.10.1</td><td>One catalog that Spark and Trino share</td></tr>
+<tr><td>MinIO</td><td>Chainguard build</td><td>S3-compatible storage for every table</td></tr>
+<tr><td>Trino</td><td>480</td><td>Analyst SQL; the engine inside Starburst Enterprise</td></tr>
+<tr><td>Airflow</td><td>3.4.0</td><td>Daily pipeline; dbt lives in its own virtualenv</td></tr>
+<tr><td>dbt</td><td>dbt-core 1.12.7, dbt-spark 1.11.1</td><td>bronze to silver to gold, tests, snapshot, docs</td></tr>
+</tbody></table></div>
+<p class="small mute">MinIO stopped publishing community Docker images in October 2025 and archived the project in 2026, so <code>minio/minio</code> no longer pulls. The lab uses Chainguard's free build; a real platform needs a maintained S3 store.</p>
+
+<h3>The pipeline</h3>
+<ol>
+ <li><b>Ingest.</b> Spark copies Parquet extracts from a landing folder into <code>lakehouse.bronze</code> Iceberg tables, adding <code>_loaded_at</code> and <code>_batch_id</code>.</li>
+ <li><b>Check freshness.</b> <code>dbt source freshness</code> stops the run if bronze is stale.</li>
+ <li><b>Build.</b> <code>dbt build --target prod</code> creates silver staging tables, an SCD2 snapshot, gold facts and dimensions, and runs every data test.</li>
+ <li><b>Prove analyst access.</b> A last task queries the gold tables through Trino, so the run only succeeds if Starburst users can read what Spark wrote.</li>
+</ol>
+
+<h3>The three settings that make Spark and Trino share tables</h3>
+<figure class="code"><figcaption><span>spark/spark-defaults.conf (excerpt)</span><button class="copy" type="button">Copy</button></figcaption><pre><code>spark.sql.catalog.lakehouse                       org.apache.iceberg.spark.SparkCatalog
+spark.sql.catalog.lakehouse.type                  rest
+spark.sql.catalog.lakehouse.uri                   http://iceberg-rest:8181
+spark.sql.catalog.lakehouse.io-impl               org.apache.iceberg.aws.s3.S3FileIO
+spark.sql.catalog.lakehouse.s3.endpoint           http://minio:9000
+spark.sql.catalog.lakehouse.s3.path-style-access  true
+spark.sql.defaultCatalog                          lakehouse</code></pre></figure>
+<figure class="code"><figcaption><span>trino/catalog/lakehouse.properties</span><button class="copy" type="button">Copy</button></figcaption><pre><code>connector.name=iceberg
+iceberg.catalog.type=rest
+iceberg.rest-catalog.uri=http://iceberg-rest:8181
+fs.native-s3.enabled=true
+s3.endpoint=http://minio:9000
+s3.path-style-access=true</code></pre></figure>
+<figure class="code"><figcaption><span>dbt/profiles.yml (prod target)</span><button class="copy" type="button">Copy</button></figcaption><pre><code>lakehouse:
+  outputs:
+    prod:
+      type: spark
+      method: thrift
+      host: spark-thrift
+      port: 10000
+      user: airflow
+      schema: analytics</code></pre></figure>
+
+<p>The last Spark setting points dbt's two-part names at the Iceberg catalog. On Trino 481 and later, <code>fs.native-s3.enabled</code> is renamed <code>fs.s3.enabled</code>. Properties files have no inline comments, so keep notes like these on their own lines.</p>
+
+<h3>What changes when dbt runs on Spark and Iceberg</h3>
+<ul>
+ <li><b>Every model is <code>file_format: iceberg</code>.</b> MERGE-based incremental models and snapshots need Iceberg, Delta or Hudi. Plain Parquet supports only append and partition overwrite.</li>
+ <li><b>No views.</b> Spark stores views in Spark SQL, which Trino cannot read, so staging is materialized as tables.</li>
+ <li><b>Hidden partitioning.</b> <code>partition_by=['months(order_date)']</code> uses an Iceberg transform, so analysts never filter on a partition column and Trino still prunes.</li>
+ <li><b>Relation listing falls back.</b> Spark 3.5 cannot run <code>SHOW TABLE EXTENDED</code> on Iceberg tables, so dbt-spark uses <code>SHOW TABLES</code> and <code>DESCRIBE</code> instead. You will see it in the logs.</li>
+ <li><b>Unit tests need a session connection.</b> Over the Thrift Server, dbt-spark 1.11.1 fails unit tests with "'NoneType' object is not iterable". The same test passes with <code>method: session</code>, which is why the production DAG excludes unit tests.</li>
+</ul>
+<figure class="code"><figcaption><span>dbt/models/marts/fct_events.sql (config)</span><button class="copy" type="button">Copy</button></figcaption><pre><code>{{ config(
+    materialized='incremental',
+    incremental_strategy='merge',
+    unique_key='event_id',
+    partition_by=['days(created_at)'],
+    on_schema_change='append_new_columns'
+) }}</code></pre></figure>
+
+<h3>Run it</h3>
+<figure class="code"><figcaption><span>terminal</span><button class="copy" type="button">Copy</button></figcaption><pre><code>cd lakehouse-capstone
+cp .env.example .env
+docker compose build &amp;&amp; docker compose up -d
+docker compose exec spark-master /opt/spark/bin/spark-submit --master "local[2]" \
+  /opt/spark/jobs/generate_thelook.py --batch 1
+<span class="c"># Airflow at http://localhost:8080: unpause and trigger lakehouse_daily</span>
+docker compose exec trino trino --catalog lakehouse --schema gold</code></pre></figure>
+<p>Then generate batch 2 and trigger the DAG again. The incremental events model merges only new and late rows, and customers who moved get a second row in <code>dim_customers_history</code>.</p>
+
+<div class="lens"><h4>Informatica lens</h4>
+<p>This is the platform shape that replaces PowerCenter plus an Oracle warehouse in many on-prem shops. The landing folder plays the role of your flat-file sources. Bronze is your staging area, dbt models are your mappings, and Airflow is the workflow scheduler. Trino reading the same tables replaces the reporting database.</p></div>
+
+<h3>Definition of done</h3>
+<ul class="ck">
+ <li><label><input type="checkbox" data-ck="lk1"><span>Stack builds and starts; <code>spark-thrift</code> is healthy</span></label></li>
+ <li><label><input type="checkbox" data-ck="lk2"><span>Batch 1 runs end to end in Airflow, including the Trino check</span></label></li>
+ <li><label><input type="checkbox" data-ck="lk3"><span>Batch 2 shows incremental merges and SCD2 history</span></label></li>
+ <li><label><input type="checkbox" data-ck="lk4"><span>You can query Iceberg metadata tables (<code>$snapshots</code>, <code>$partitions</code>) from Trino</span></label></li>
+ <li><label><input type="checkbox" data-ck="lk5"><span><code>dbt build</code> works from your laptop against <code>localhost:10000</code> into <code>dbt_jp_*</code> namespaces</span></label></li>
+ <li><label><input type="checkbox" data-ck="lk6"><span>One challenge from the README done: Iceberg maintenance DAG, Cosmos, Spark Connect or unit tests in CI</span></label></li>
+ <li><label><input type="checkbox" data-ck="lk7"><span>Architecture diagram and a 5-minute walkthrough video added to your portfolio</span></label></li>
+</ul>
+
+<div class="client"><h4>Client angle</h4>
+<p>"I've run dbt on Spark and Iceberg with Trino on top, orchestrated by Airflow" answers a whole class of on-prem and hybrid job posts that pure-warehouse developers can't. Pair it with the production table in the README: catalog choice, storage, Starburst security, Kerberos on Thrift, Kubernetes for Spark. That is the conversation enterprise clients want to have.</p></div>
+
+<p class="checkh">Self-check</p>
+<details><summary>Why does Spark need spark.sql.defaultCatalog for dbt?</summary><div><p>dbt-spark writes two-part names like <code>gold.fct_orders</code>. Without the setting they resolve to Spark's built-in Hive catalog, not the Iceberg catalog that Trino reads.</p></div></details>
+<details><summary>Why are staging models tables instead of views here?</summary><div><p>Views created by Spark are stored as Spark SQL text in the catalog, and Trino cannot run them. Tables in Iceberg format are readable by every engine.</p></div></details>
+<details><summary>What makes the Iceberg REST catalog the centre of this design?</summary><div><p>Spark, Trino and any future engine resolve table names and metadata through it. Swap Spark for another engine, or Trino for Starburst, and the tables don't move.</p></div></details>
+<div class="modfoot" data-for="cap2"></div>
+</section>
+
 <section class="mod" id="gig">
 <span class="kicker">Freelance playbook</span>
 <h2>Turn the course into paid dbt work on Fiverr and Upwork</h2>
@@ -2689,6 +2795,7 @@ JP</code></pre></figure>
 <details><summary>How do you keep credentials out of a dbt project?</summary><div><p>Profiles read environment variables; CI uses keyless federation on GCP and key pairs stored as secrets on Snowflake; pre-commit runs gitleaks; humans and machines use separate identities.</p></div></details>
 <details><summary>How would you set up Snowflake for dbt?</summary><div><p>Separate RAW and ANALYTICS databases, loader, transformer and reporter roles, one XS warehouse per workload with short auto-suspend, a service user with key-pair auth, and future grants so new tables are readable by reporting.</p></div></details>
 <details><summary>What changes when moving a dbt project from BigQuery to Snowflake?</summary><div><p>Profiles and auth, engine-specific configs (partitioning becomes nothing or clustering), dialect functions (handled by cross-database macros and dispatch), type names in contracts, identifier case, and cost levers (bytes versus warehouse seconds).</p></div></details>
+<details><summary>How does dbt fit a Spark and Starburst platform?</summary><div><p>Spark ingests to bronze; dbt-spark builds silver and gold as Iceberg tables through the Spark Thrift Server (or dbt-trino through Starburst); all engines share one Iceberg catalog; Airflow runs ingestion then <code>dbt build</code>; analysts query gold in Starburst.</p></div></details>
 <details><summary>What is write-audit-publish?</summary><div><p>Build into a private location, run tests, then expose the results in one step (a schema swap or clone), so consumers never see partly built or failing data.</p></div></details>
 <div class="modfoot" data-for="qa"></div>
 </section>
@@ -2767,7 +2874,7 @@ config.materialized:incremental     test_type:unit     state:modified+     resul
 
 <section class="mod" id="plan">
 <span class="kicker">Study plan</span>
-<h2>Eight weeks, one hour a weekday and one long lab a week</h2>
+<h2>Nine weeks, one hour a weekday and one long lab a week</h2>
 <p>If a week slips, move the whole plan back rather than skipping labs. The labs are what make you client-ready.</p>
 <ul class="ck">
  <li><label><input type="checkbox" data-ck="w1"><span><b>Week 1.</b> Modules 0 to 3. Weekend: repository skeleton, protected main, BigQuery export, DuckDB track running.</span></label></li>
@@ -2778,6 +2885,7 @@ config.materialized:incremental     test_type:unit     state:modified+     resul
  <li><label><input type="checkbox" data-ck="w6"><span><b>Week 6.</b> Modules 13 and 14. Weekend: all four workflows live; Snowflake trial started and loaded.</span></label></li>
  <li><label><input type="checkbox" data-ck="w7"><span><b>Week 7.</b> Modules 15 and 16. Weekend: capstone checklist complete on all three engines.</span></label></li>
  <li><label><input type="checkbox" data-ck="w8"><span><b>Week 8.</b> Modules 17 and 18, migration demo, freelance launch, interview practice. Book the certification.</span></label></li>
+ <li><label><input type="checkbox" data-ck="w9"><span><b>Week 9.</b> Final capstone: the on-prem lakehouse with Spark, Iceberg, MinIO, Trino and Airflow.</span></label></li>
 </ul>
 </section>
 
@@ -2832,7 +2940,8 @@ const MODS = [
   {id:'m16',n:'16', t:'dbt v2 and what is new', s:'dbt v2',      c:3},
   {id:'m17',n:'17', t:'Migration playbook',     s:'Migration',   c:4},
   {id:'m18',n:'18', t:'Debugging',              s:'Debugging',   c:4},
-  {id:'cap',n:'Cap',t:'Capstone',               s:'Capstone',    c:4},
+  {id:'cap',n:'Cap',t:'Warehouse capstone',     s:'Capstone',    c:4},
+  {id:'cap2',n:'Lake',t:'Lakehouse capstone',   s:'Lakehouse',   c:4},
   {id:'gig',n:'Gig',t:'Freelance playbook',     s:'Freelance',   c:4},
   {id:'qa', n:'Q&A',t:'Interview practice',     s:'Interview',   c:4},
   {id:'cert',n:'Cert',t:'Certification',        s:'Cert',        c:4}

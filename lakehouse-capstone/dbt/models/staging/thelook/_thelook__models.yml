@@ -1,0 +1,56 @@
+models:
+  - name: stg_thelook__users
+    description: One row per customer. Grain is customer_id.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+      - name: country
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('country_regions')
+                field: country
+              config:
+                severity: warn
+
+  - name: stg_thelook__products
+    description: One row per product. Grain is product_id.
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: stg_thelook__orders
+    description: One row per order. Grain is order_id.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__users')
+                field: customer_id
+      - name: order_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['processing', 'shipped', 'complete', 'cancelled', 'returned']
+
+  - name: stg_thelook__order_items
+    description: One row per order line. Grain is order_item_id.
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: product_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_thelook__products')
+                field: product_id
+
+  - name: stg_thelook__events
+    description: One row per web event. Grain is event_id.
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]

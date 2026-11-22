@@ -1,0 +1,4 @@
+# Runs inside /opt/airflow/venvs/dbt. Pin exact versions after the first successful build.
+dbt-core==1.12.7
+dbt-spark[PyHive]==1.11.1
+trino==0.340.0

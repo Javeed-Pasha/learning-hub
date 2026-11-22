@@ -15,6 +15,7 @@ learning-hub/
 ├── docker/             # Compose snippet and Docker notes for the Spark-Iceberg stack
 ├── data/               # Repo-local data mount target for the saved compose file
 ├── index.html          # Landing page with links to all topics
+├── lakehouse-capstone/ # dbt course final capstone: Spark + Thrift, Iceberg REST, MinIO, Trino, Airflow
 ├── ddl/                # Demo Iceberg control-table, staging, seed, and serving SQL
 ├── notebooks/          # Runnable Jupyter notebook for the demo flow
 ├── pages/              # Individual content pages
@@ -24,6 +25,12 @@ learning-hub/
 ├── README.md
 └── .gitignore
 ```
+
+## Lakehouse Capstone
+
+The final capstone of the dbt course ([pages/dbt-client-ready.html](pages/dbt-client-ready.html)) lives in [lakehouse-capstone/](lakehouse-capstone/README.md). It is a Docker Compose stack with Spark 3.5 and the Thrift Server, an Iceberg REST catalog, MinIO, Trino (the engine inside Starburst) and Airflow 3.4. dbt-spark builds silver and gold Iceberg tables, and Trino reads them. See its README for the runbook.
+
+Note: MinIO stopped publishing `minio/minio` images in October 2025, so the older `docker-compose.learning-hub.yml` below may fail to pull MinIO. The capstone uses Chainguard's free MinIO build instead.
 
 ## Reference Runtime
 

@@ -1,0 +1,71 @@
+models:
+  - name: fct_order_items
+    description: One row per order line with margin. Grain is order_item_id. Partitioned by order_date.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ['order_id', 'order_item_id']
+    columns:
+      - name: order_item_id
+        data_tests: [unique, not_null]
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+      - name: sale_price
+        data_tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: fct_orders
+    description: One row per order with revenue, margin and delivery metrics. Grain is order_id.
+    columns:
+      - name: order_id
+        data_tests: [unique, not_null]
+
+  - name: fct_events
+    description: One row per web event, built incrementally with a 3-day lookback. Grain is event_id.
+    columns:
+      - name: event_id
+        data_tests: [unique, not_null]
+
+  - name: dim_products
+    description: One row per product. Grain is product_id.
+    columns:
+      - name: product_id
+        data_tests: [unique, not_null]
+
+  - name: dim_customers
+    description: Current state of each customer with region. Grain is customer_id.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+
+  - name: dim_customers_history
+    description: SCD Type 2 customer history from the snapshot. Grain is customer_key.
+    columns:
+      - name: customer_key
+        data_tests: [unique, not_null]
+
+  - name: dim_date
+    description: One row per calendar day, 2024 to 2027. Grain is date_day.
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]
+
+exposures:
+  - name: starburst_sales_analysis
+    label: Analyst sales analysis in Starburst
+    type: analysis
+    maturity: medium
+    description: Analysts query gold facts and dimensions through the lakehouse catalog in Starburst.
+    depends_on:
+      - ref('fct_orders')
+      - ref('fct_order_items')
+      - ref('dim_customers')
+      - ref('dim_products')
+    owner:
+      name: JP

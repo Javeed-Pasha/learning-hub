@@ -1,0 +1,185 @@
+# On-prem lakehouse capstone: Spark + Thrift Server + Iceberg REST catalog + MinIO + Trino + Airflow + dbt
+#
+#   docker compose build          # first time: downloads Iceberg jars, builds Spark and Airflow images
+#   docker compose up -d
+#
+# Host ports
+#   8080  Airflow            http://localhost:8080
+#   8085  Trino (Starburst)  http://localhost:8085
+#   8090  Spark master UI    http://localhost:8090
+#   4040  Thrift Server UI   http://localhost:4040
+#   9001  MinIO console      http://localhost:9001
+#   9000  MinIO S3 API, 8181 Iceberg REST catalog, 10000 Spark Thrift (dbt from your laptop)
+
+name: lakehouse
+
+x-s3-credentials: &s3-credentials
+  AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-admin}
+  AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-password}
+  AWS_REGION: us-east-1
+
+x-spark-common: &spark-common
+  build: ./spark
+  image: lakehouse-spark:3.5.8-iceberg1.12.0
+  environment:
+    <<: *s3-credentials
+  volumes:
+    - ./landing:/landing
+  networks: [lakehouse]
+
+services:
+
+  # ---------------------------------------------------------------- storage
+  minio:
+    # MinIO stopped publishing community images in October 2025; Chainguard publishes a free build.
+    image: cgr.dev/chainguard/minio:latest
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-password}
+    volumes:
+      - minio-data:/data
+    ports: ["9000:9000", "9001:9001"]
+    networks:
+      lakehouse:
+        aliases: [warehouse.minio]
+
+  minio-init:
+    # Creates the warehouse bucket, retrying until MinIO is up, then exits.
+    image: cgr.dev/chainguard/minio-client:latest
+    environment:
+      MC_HOST_lake: http://${MINIO_ROOT_USER:-admin}:${MINIO_ROOT_PASSWORD:-password}@minio:9000
+    command: ["mb", "--ignore-existing", "lake/warehouse"]
+    restart: on-failure
+    depends_on: [minio]
+    networks: [lakehouse]
+
+  # ---------------------------------------------------------------- catalog
+  iceberg-rest:
+    # Apache Iceberg's reference REST catalog. Fine for a lab; use Polaris, Lakekeeper,
+    # Nessie or Hive Metastore on a real platform.
+    image: apache/iceberg-rest-fixture:1.10.1
+    user: root                     # lets the catalog write its SQLite file to the volume
+    environment:
+      <<: *s3-credentials
+      CATALOG_WAREHOUSE: s3://warehouse/
+      CATALOG_IO__IMPL: org.apache.iceberg.aws.s3.S3FileIO
+      CATALOG_S3_ENDPOINT: http://minio:9000
+      CATALOG_S3_PATH__STYLE__ACCESS: "true"
+      CATALOG_URI: jdbc:sqlite:file:/catalog/iceberg_catalog.db
+      CATALOG_JDBC_USER: user
+      CATALOG_JDBC_PASSWORD: password
+    volumes:
+      - iceberg-catalog:/catalog
+    ports: ["8181:8181"]
+    depends_on:
+      minio-init: {condition: service_completed_successfully}
+    networks: [lakehouse]
+
+  # ---------------------------------------------------------------- compute
+  spark-master:
+    <<: *spark-common
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.master.Master"]
+    ports: ["8090:8080"]
+
+  spark-worker:
+    <<: *spark-common
+    command: ["/opt/spark/bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+    environment:
+      <<: *s3-credentials
+      SPARK_WORKER_CORES: "2"
+      SPARK_WORKER_MEMORY: 3g
+    mem_limit: 4g
+    depends_on: [spark-master]
+
+  spark-thrift:
+    # The JDBC/Thrift endpoint dbt-spark connects to. It is a long-running Spark application
+    # that takes up to spark.cores.max cores from the worker.
+    <<: *spark-common
+    command:
+      - /opt/spark/sbin/start-thriftserver.sh
+      - --master
+      - spark://spark-master:7077
+      - --hiveconf
+      - hive.server2.thrift.port=10000
+      - --hiveconf
+      - hive.server2.thrift.bind.host=0.0.0.0
+    environment:
+      <<: *s3-credentials
+      SPARK_NO_DAEMONIZE: "true"   # keep the server in the foreground so the container stays up
+    ports: ["10000:10000", "4040:4040"]
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/10000"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    depends_on:
+      spark-master: {condition: service_started}
+      spark-worker: {condition: service_started}
+      iceberg-rest: {condition: service_started}
+
+  # ---------------------------------------------------------------- analyst SQL
+  trino:
+    # Open-source Trino, the engine inside Starburst Enterprise. The catalog file works on both.
+    image: trinodb/trino:480
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-password}
+    volumes:
+      - ./trino/catalog/lakehouse.properties:/etc/trino/catalog/lakehouse.properties:ro
+    mem_limit: 2g                  # the image sizes its heap from the container limit
+    ports: ["8085:8080"]
+    depends_on: [iceberg-rest]
+    networks: [lakehouse]
+
+  # ---------------------------------------------------------------- orchestration
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 20
+    networks: [lakehouse]
+
+  airflow:
+    build: ./airflow
+    image: lakehouse-airflow:3.4.0
+    command: standalone            # scheduler, API server, DAG processor and triggerer in one container (lab only)
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__AUTH_MANAGER: airflow.api_fastapi.auth.managers.simple.simple_auth_manager.SimpleAuthManager
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "true"   # no login in the lab; never in production
+      DBT_PROFILES_DIR: /opt/airflow/dbt
+      DBT_TARGET_PATH: /tmp/dbt/target                        # keep build output out of the mounted project
+      DBT_LOG_PATH: /tmp/dbt/logs
+      DBT_PACKAGES_INSTALL_PATH: /tmp/dbt/packages
+      SPARK_THRIFT_HOST: spark-thrift
+      TRINO_HOST: trino
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/jobs:/opt/airflow/jobs
+      - ./dbt:/opt/airflow/dbt
+    ports: ["8080:8080"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      spark-thrift: {condition: service_healthy}
+      trino: {condition: service_started}
+    networks: [lakehouse]
+
+networks:
+  lakehouse:
+    name: lakehouse
+
+volumes:
+  minio-data:
+  iceberg-catalog:
+  airflow-db:

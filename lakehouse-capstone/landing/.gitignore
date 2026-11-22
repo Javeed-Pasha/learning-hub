@@ -1,0 +1,3 @@
+# Generated or copied source files land here; keep them out of Git.
+*
+!.gitignore

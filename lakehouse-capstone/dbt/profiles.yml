@@ -1,0 +1,23 @@
+lakehouse:
+  target: dev
+  outputs:
+    dev:                           # from your laptop: pip install dbt-core dbt-spark[PyHive]
+      type: spark
+      method: thrift
+      host: localhost
+      port: 10000
+      user: dbt
+      schema: dbt_jp               # namespaces become dbt_jp_silver, dbt_jp_gold, ...
+      threads: 2
+      connect_retries: 5
+      connect_timeout: 10
+    prod:                          # used by Airflow inside the Docker network
+      type: spark
+      method: thrift
+      host: "{{ env_var('SPARK_THRIFT_HOST', 'spark-thrift') }}"
+      port: 10000
+      user: airflow
+      schema: analytics
+      threads: 2
+      connect_retries: 5
+      connect_timeout: 10

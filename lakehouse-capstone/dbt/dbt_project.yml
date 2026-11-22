@@ -1,0 +1,36 @@
+name: lakehouse
+version: "1.0.0"
+profile: lakehouse
+require-dbt-version: [">=1.10.0", "<2.0.0"]   # dbt Core with dbt-spark over the Thrift Server
+
+packages-install-path: "{{ env_var('DBT_PACKAGES_INSTALL_PATH', 'dbt_packages') }}"
+
+flags:
+  require_generic_test_arguments_property: true
+
+# Medallion layout in the Iceberg catalog:
+#   bronze      raw copies, written by the Spark ingestion job (not dbt)
+#   silver      cleaned, conformed tables (dbt staging and intermediate)
+#   gold        facts and dimensions for analysts in Starburst/Trino
+#   reference   seeds,  snapshots  SCD2 history
+models:
+  lakehouse:
+    +file_format: iceberg          # every table dbt builds is an Iceberg table
+    staging:
+      +materialized: table         # not views: Spark-created views cannot be read by Trino
+      +schema: silver
+    intermediate:
+      +materialized: ephemeral
+      +schema: silver
+    marts:
+      +materialized: table
+      +schema: gold
+
+seeds:
+  lakehouse:
+    +file_format: iceberg
+    +schema: reference
+
+snapshots:
+  lakehouse:
+    +file_format: iceberg

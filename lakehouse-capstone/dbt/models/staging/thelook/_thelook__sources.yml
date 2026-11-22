@@ -1,0 +1,15 @@
+sources:
+  - name: thelook
+    description: Raw e-commerce extracts, copied into Iceberg by the Spark ingestion job.
+    schema: bronze
+    config:
+      freshness:
+        warn_after: {count: 1, period: day}
+        error_after: {count: 3, period: day}
+      loaded_at_field: _loaded_at
+    tables:
+      - name: users
+      - name: products
+      - name: orders
+      - name: order_items
+      - name: events
